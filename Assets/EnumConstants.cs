@@ -10,6 +10,7 @@ public static class EnumConstants : object
 		ENVIRONMENT = 9,
 		SOLID_ENTITY = 10,
 		INCORPOREAL_ENTITY = 11,
+		SWING = 12,
 		DEFAULT = 1
 	}
 }

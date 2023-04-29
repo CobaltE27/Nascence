@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static EnumConstants;
 
 public class CharMovement : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class CharMovement : MonoBehaviour
     public CircleCollider2D swingArea;
 
     private CollisionCalculator charCollCalc;
-    private MovementCastUtility swingCastUtils;
+    private PhysicsCastUtility swingCastUtils;
 
     private float jumpVelocity;
 
@@ -67,7 +68,7 @@ public class CharMovement : MonoBehaviour
         currentCam = GetComponentInChildren<Camera>();
 
         charCollCalc = new CollisionCalculator(charCollider);
-        swingCastUtils = new MovementCastUtility(swingArea);
+        swingCastUtils = new PhysicsCastUtility();
 
         jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * (50) * JUMP_HEIGHT);// v^2 = 2a (height) -> v = sqrt(2 * a * height)
 
@@ -223,8 +224,10 @@ public class CharMovement : MonoBehaviour
         {
             mouse0FramesHeld = 0;
 
-            RaycastHit2D[] swingCastResults = new RaycastHit2D[10];
-            swingArea.Cast(swingIndicatorDir, swingCastResults, 2.0f);
+            //RaycastHit2D[] swingCastResults = new RaycastHit2D[10];
+            //swingArea.Cast(swingIndicatorDir, swingCastResults, 2.0f);
+            RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast(transform.position, swingIndicatorDir * 2.0f, swingArea,
+                new string[] {"Environment", "Solid Entity", "Incorporeal Entity", "Swing"});
 
             float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, new Vector2(0, 1));
             Vector2 swingNewVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);

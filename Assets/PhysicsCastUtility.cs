@@ -8,10 +8,11 @@ using System;
 /// This class provides many of the same utilities as the MovementCastUtility Class, but uses Physics2D.BoxCastAll() or similar methods instead
 /// of casting a set collider.
 /// </summary>
-public class CastUtility : object
+[System.Serializable]
+public class PhysicsCastUtility : object
 {
 
-    public CastUtility() { }
+    public PhysicsCastUtility() { }
 
     /// <summary>
     /// returns the a vector of the distance to the nearest surface along a displacement path.
@@ -96,8 +97,7 @@ public class CastUtility : object
             }
         }
 
-        return null;
-        //throw new ArgumentException("None of the given casts hit walls.");
+        throw new ArgumentException("None of the given casts hit walls.");
     }
 
     /// <summary>
@@ -116,37 +116,45 @@ public class CastUtility : object
             }
         }
 
-        return null;
-        //throw new ArgumentException("None of the given casts hit floors.");
+        throw new ArgumentException("None of the given casts hit floors.");
     }
 
     /// <summary>
     /// This casts a given shape forward along a given displacement.
     /// The result may then be used by the other methods in this class
 	/// to determine properties about the result of the cast.
-	/// Layer, shape, shape angle, and z-depth can all be specified.
+	/// Layers, shape, and shape angle can all be specified.
     /// </summary>
     /// <param name="displacement"> The displacement from the origin to the end of where the given shape should be cast</param>
 	/// <param name="castShape"></param>
     /// <returns>The array of RaycastHit2D that results from the cast.</returns>
-    public RaycastHit2D[] DisplacementShapeCast(Vector2 origin, Vector2 displacement, Collider2D castShape, EnumConstants.Layer layer, float angle = 0.0f, float minZDepth = 0, float maxZDepth = 0)
+    public RaycastHit2D[] DisplacementShapeCast(Vector2 origin, Vector2 displacement, Collider2D castShape, String[] layers, float angle = 0.0f)
     {
+        RaycastHit2D[] results;
         if (castShape is BoxCollider2D)
 		{
             BoxCollider2D castBox = (BoxCollider2D)castShape;
-            return Physics2D.BoxCastAll(origin, castBox.size, angle, displacement, displacement.magnitude, (int)layer, minZDepth, maxZDepth);
+            results = Physics2D.BoxCastAll(origin, castBox.size, angle, displacement, displacement.magnitude, LayerMask.GetMask(layers));
         }
-        if (castShape is CircleCollider2D)
+        else if (castShape is CircleCollider2D)
 		{
             CircleCollider2D castCircle = (CircleCollider2D)castShape;
-            return Physics2D.CircleCastAll(origin, castCircle.radius, displacement, displacement.magnitude, (int)layer, minZDepth, maxZDepth);
+            results = Physics2D.CircleCastAll(origin, castCircle.radius, displacement, displacement.magnitude, LayerMask.GetMask(layers));
         }
-        if (castShape is CapsuleCollider2D)
+        else if (castShape is CapsuleCollider2D)
         {
             CapsuleCollider2D castCapsule = (CapsuleCollider2D)castShape;
-            return Physics2D.CapsuleCastAll(origin, castCapsule.size, castCapsule.direction, angle, displacement, displacement.magnitude, (int)layer, minZDepth, maxZDepth);
+            results = Physics2D.CapsuleCastAll(origin, castCapsule.size, castCapsule.direction, angle, displacement, displacement.magnitude, LayerMask.GetMask(layers));
         }
+        else
+            throw new ArgumentException("castShape must be a BoxCollider2D, CircleCollider2D, or CapsuleCollider2D!");
 
-        throw new ArgumentException("castShape must be a BoxCollider2D, CircleCollider2D, or CapsuleCollider2D!");
+        Debug.DrawLine(origin, origin + displacement, Color.red, 1.0f);
+        Debug.Log(results[0].normal);
+
+        if (results.Length >= 1)
+            return results;
+        else
+            return new RaycastHit2D[] {new RaycastHit2D()};
     }
 }
