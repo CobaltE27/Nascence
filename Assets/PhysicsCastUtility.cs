@@ -149,9 +149,6 @@ public class PhysicsCastUtility : object
         else
             throw new ArgumentException("castShape must be a BoxCollider2D, CircleCollider2D, or CapsuleCollider2D!");
 
-        Debug.DrawLine(origin, origin + displacement, Color.red, 1.0f);
-        Debug.Log(results[0].normal);
-
         if (results.Length >= 1)
             return results;
         else

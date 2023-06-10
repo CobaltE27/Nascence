@@ -17,6 +17,8 @@ public class CharMovement : MonoBehaviour
     public float SWING_STRENGTH = 25.0f;
     public int SWING_STEAM_COST = 50;
     private float MINIMUM_SPEED = 0.01f;
+    public int SWING_COOLDOWN_FRAMES = 10;
+    public float MINI_HIT_KB_STRENGTH = 6.0f;
 
     BoxCollider2D charCollider;
     Rigidbody2D rb;
@@ -55,10 +57,14 @@ public class CharMovement : MonoBehaviour
     private int POST_WALL_SWING_COOLDOWN = 12;
     private int postLeftWallSwingCooldown;
     private int postRightWallSwingCooldown;
+    public int swingCooldown = 0;
 
     public int steam;
     public int baseSteam = 100;
     public int steamCapacity;
+
+    public float SWING_DAMAGE = 5.0f;
+    public float MINI_HIT_DAMAGE = 2.5f;
 
     private void Start()
     {
@@ -92,7 +98,6 @@ public class CharMovement : MonoBehaviour
         {
             mouse0Pressed = false;
         }
-
     }
 
     void FixedUpdate()
@@ -126,6 +131,8 @@ public class CharMovement : MonoBehaviour
             postLeftWallSwingCooldown--;
         if (postRightWallSwingCooldown > 0)
             postRightWallSwingCooldown--;
+        if (swingCooldown > 0)
+            swingCooldown--;
 
         if (Input.GetKey("a") || Input.GetKey("d"))
         {
@@ -204,7 +211,7 @@ public class CharMovement : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            mouse0FramesHeld += 1; //this should happen in the physics area?
+            mouse0FramesHeld += 1;
         }
 
         swingIndicatorDir.x = Mathf.Cos(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
@@ -220,117 +227,152 @@ public class CharMovement : MonoBehaviour
         }
         //Debug.Log(swingIndicatorDir);
         //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
-        if (charInputBuffer.GetInputUp(mouse0FramesHeld >= SWING_CHARGE_FRAMES && steam >= SWING_STEAM_COST, "mouse0"))
+        if (charInputBuffer.GetInputUp(true, "mouse0"))
         {
-            mouse0FramesHeld = 0;
-
-            //RaycastHit2D[] swingCastResults = new RaycastHit2D[10];
-            //swingArea.Cast(swingIndicatorDir, swingCastResults, 2.0f);
-            RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast(transform.position, swingIndicatorDir * 2.0f, swingArea,
-                new string[] {"Environment", "Solid Entity", "Incorporeal Entity", "Swing"});
-
-            float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, new Vector2(0, 1));
-            Vector2 swingNewVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
-
-            float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
-            bool hitAnything = swingCastResults[0].collider != null;
-            bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
-            bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
-            bool wouldHitFloor = angleToHitNormal < 60; 
-
-            if (wouldHitWall && hitAnything)
+            if (swingCooldown == 0)
             {
-                steam -= SWING_STEAM_COST;
+                swingCooldown = SWING_COOLDOWN_FRAMES;
 
-                if (wouldHitLeftWall)
-                {
-                    indicatorAngle *= -1;
-                    postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-                }
-				else //hit right wall
-				{
-                    postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-                }
+                RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast(transform.position, swingIndicatorDir * 2.0f, swingArea,
+                   new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
 
-                if(Mathf.Abs(indicatorAngle) >= 180) // pointing straight down
+                float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, new Vector2(0, 1));
+                Vector2 swingNewVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
+
+                float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
+                bool hitAnything = swingCastResults[0].collider != null;
+                bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
+                bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
+                bool wouldHitFloor = angleToHitNormal < 60;
+
+                GameObject hitObject = null;
+                if (hitAnything)
+                    hitObject = swingCastResults[0].collider.gameObject;
+                Enemy hitEnemy = hitObject.GetComponent<Enemy>();
+                bool hitWasEnemy = hitEnemy != null;
+
+                if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
                 {
-                    if(!usedWallVault)
+                    Debug.Log("SWING!");
+                    steam -= SWING_STEAM_COST;
+
+                    if (hitWasEnemy)
                     {
-                        swingNewVel.y = 11.0f;
-                        usedWallVault = true;
+                        hitEnemy.DealDamage(SWING_DAMAGE, swingIndicatorDir);
+                        steam += SWING_STEAM_COST;
+                    }
+
+                    if (wouldHitWall && hitAnything)
+                    {
+
+                        if (wouldHitLeftWall)
+                        {
+                            indicatorAngle *= -1;
+                            postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+                        }
+                        else //hit right wall
+                        {
+                            postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+                        }
+
+                        if (Mathf.Abs(indicatorAngle) >= 180) // pointing straight down
+                        {
+                            if (!usedWallVault)
+                            {
+                                swingNewVel.y = 11.0f;
+                                usedWallVault = true;
+                            }
+                            else
+                            {
+                                steam += SWING_STEAM_COST;
+                                swingNewVel.Set(velocity.x, velocity.y);
+                            }
+                        }
+                        else if (indicatorAngle >= 135)
+                        {
+                            swingNewVel.x *= 0.8f;
+                        }
+                        else if (indicatorAngle >= 90)
+                        {
+                            swingNewVel.y += 1.0f;
+                        }
+                        else if (indicatorAngle >= 45)
+                        {
+                            swingNewVel.x *= 1.5f;
+                        }
+                        else
+                        {
+                            swingNewVel.Set(velocity.x, velocity.y);
+                        }
+                    }
+                    else if (wouldHitFloor && hitAnything)
+                    {
+                        if (charGrounded)
+                        {
+                            steam += SWING_STEAM_COST;
+                        }
+
+                        indicatorAngle = Mathf.Abs(indicatorAngle);
+
+                        if (indicatorAngle >= 180)
+                        {
+                            swingNewVel.y *= 0.6f;
+                        }
+                        else if (indicatorAngle >= 135)
+                        {
+                            swingNewVel.y *= 0.7f;
+                            swingNewVel.x *= 1.35f;
+                        }
+                        else if (indicatorAngle >= 90)
+                        {
+                            swingNewVel.Set(velocity.x, velocity.y);
+                        }
+                        else if (indicatorAngle >= 45)
+                        {
+                            swingNewVel.Set(velocity.x, velocity.y);
+                        }
+                        else
+                        {
+                            swingNewVel.Set(velocity.x, velocity.y);
+                        }
+
+                        usedWallVault = false;
+                    }
+                    else if (velocity.y <= 2.0f)
+                    {
+                        swingNewVel.Set(velocity.x * 0.6f, 6.0f);
                     }
                     else
                     {
-                        steam += SWING_STEAM_COST;
                         swingNewVel.Set(velocity.x, velocity.y);
                     }
                 }
-                else if (indicatorAngle >= 135)
-                {
-                    swingNewVel.x *= 0.8f;
-                }
-                else if (indicatorAngle >= 90)
-                {
-                    swingNewVel.y += 1.0f;
-                }
-                else if (indicatorAngle >= 45)
-                {
-                    swingNewVel.x *= 1.5f;
-                }
-                else
-                {
-                    swingNewVel.Set(velocity.x, velocity.y);
-                }
+				else
+				{
+                    Debug.Log("mini-hit!");
+                    if (hitWasEnemy) //hit ENEMY in future
+					{
+                        swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1) + (swingNewVel / SWING_STRENGTH) * MINI_HIT_KB_STRENGTH;
+
+                        hitEnemy.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
+
+                        steam += (int)(SWING_STEAM_COST * (SWING_DAMAGE / MINI_HIT_DAMAGE));
+                    }
+                    else
+					{
+                        swingNewVel.Set(velocity.x, velocity.y);
+                    }
+				}
+
+                lastMoveAction = "swing";
+                steam = Mathf.Min(steam, steamCapacity);
+                velocity.Set(swingNewVel.x, swingNewVel.y);
             }
-            else if (wouldHitFloor && hitAnything)
-            {
-                if(!charGrounded)
-                {
-                    steam -= SWING_STEAM_COST;
-                }
+			else
+			{
+                Debug.Log("on cooldown!");
+			}
 
-                indicatorAngle = Mathf.Abs(indicatorAngle);
-
-                if (indicatorAngle >= 180)
-                {
-                    swingNewVel.y *= 0.6f;
-                }
-                else if (indicatorAngle >= 135)
-                {
-                    swingNewVel.y *= 0.7f;
-                    swingNewVel.x *= 1.35f;
-                }
-                else if (indicatorAngle >= 90)
-                {
-                    swingNewVel.Set(velocity.x, velocity.y);
-                }
-                else if (indicatorAngle >= 45)
-                {
-                    swingNewVel.Set(velocity.x, velocity.y);
-                }
-                else
-                {
-                    swingNewVel.Set(velocity.x, velocity.y);
-                }
-
-                usedWallVault = false;
-            }
-            else if (velocity.y <= 2.0f)
-            {
-                steam -= SWING_STEAM_COST;
-                swingNewVel.Set(velocity.x * 0.6f, 6.0f);
-            }
-            else
-            {
-                swingNewVel.Set(velocity.x, velocity.y);
-            }
-
-
-            lastMoveAction = "swing";
-            velocity.Set(swingNewVel.x, swingNewVel.y);
-        }
-        if (charInputBuffer.GetInputUp(true, "mouse0"))
-        {
             mouse0FramesHeld = 0;
         }
         #endregion 

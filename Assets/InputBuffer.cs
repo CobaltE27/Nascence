@@ -54,7 +54,7 @@ public class InputBuffer : MonoBehaviour
 
         foreach (string key in validKeyUpInputs)
         {
-            if (Input.GetKeyDown(key))
+            if (Input.GetKeyUp(key))
                 upBuffer[key] = BUFFER_FRAMES;
         }
 
@@ -93,7 +93,7 @@ public class InputBuffer : MonoBehaviour
 	{
         if (precondition && downBuffer[input] > 0)
 		{
-            //downBuffer[input] = 0;
+            downBuffer[input] = 0;
             return true;
 		}
 
@@ -104,7 +104,7 @@ public class InputBuffer : MonoBehaviour
     {
         if (precondition && upBuffer[input] > 0)
         {
-            //upBuffer[input] = 0;
+            upBuffer[input] = 0;
             return true;
         }
 

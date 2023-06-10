@@ -270,6 +270,8 @@ MonoBehaviour:
   SWING_CHARGE_FRAMES: 30
   SWING_STRENGTH: 18
   SWING_STEAM_COST: 50
+  SWING_COOLDOWN_FRAMES: 10
+  MINI_HIT_KB_STRENGTH: 14
   swingIndicatorPivot: {fileID: 8293681666466941674}
   charSprite: {fileID: 8293681667074079869}
   swingArea: {fileID: 8293681666352901809}
@@ -280,6 +282,7 @@ MonoBehaviour:
   canWalkUnobstructedR: 0
   canWalkUnobstructedL: 0
   lastMoveAction: 
+  swingCooldown: 0
   steam: 0
   baseSteam: 100
   steamCapacity: 0

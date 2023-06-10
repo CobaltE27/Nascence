@@ -193,6 +193,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8293681667074079867, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: MINI_HIT_KB_STRENGTH
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 8293681667074079871, guid: d99d8fd7346643540b059d3954eaaf6f,
         type: 3}
       propertyPath: m_Name
@@ -212,6 +217,7 @@ GameObject:
   - component: {fileID: 1875488979}
   - component: {fileID: 1875488978}
   - component: {fileID: 1875488981}
+  - component: {fileID: 1875488982}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Untagged
@@ -330,6 +336,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1875488982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875488977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72eb238561ba65a499dfb8cc8fbf3fc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1875488981}
+  health: 10
+  steamOnHit: 50
 --- !u!1 &1974597427
 GameObject:
   m_ObjectHideFlags: 0

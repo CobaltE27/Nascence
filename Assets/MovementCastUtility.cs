@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// This class has many methods which deal with the boxcasting involved in an object's movement and collision.
@@ -72,7 +73,7 @@ public class MovementCastUtility : MonoBehaviour
 
     /// <summary>
 	/// DEPRECIATED
-    /// Returns the average of all the colliders hit by this cast.
+    /// Returns the average normal of all the colliders hit by this cast.
     /// </summary>
     /// <param name="castResults"></param>
     /// <returns></returns>
@@ -114,7 +115,7 @@ public class MovementCastUtility : MonoBehaviour
                 return result;
             }
         }
-        return new RaycastHit2D();
+        throw new ArgumentException("No casts in the provided array actually hit a wall.");
     }
 
     /// <summary>
@@ -131,12 +132,12 @@ public class MovementCastUtility : MonoBehaviour
                 return result;
             }
         }
-        return new RaycastHit2D();
+        throw new ArgumentException("No casts in the provided array actually hit a floor.");
     }
 
     /// <summary>
     /// This casts the parent's collider forward using their displacement
-    /// This must be done at some point in the current frame before using
+    /// This must be done at some point in the current frame before using other functions from this class.
     /// </summary>
     /// <param name="displacement"></param>
     /// <returns>The array of RaycastHit2D that results from the cast.</returns>
