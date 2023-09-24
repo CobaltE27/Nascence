@@ -5,26 +5,46 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public Rigidbody2D rb;
-    public float health = 10.0f;
+    public Collider2D collider;
+    private CollisionCalculator collCalc;
+	public float health = 10.0f;
     public int steamOnHit = 50;
-    private float kbStrength = 0.3f;
+
+    public Vector2 velocity = new Vector2();
+
+    private float kbStrength = 0.8f;
+    private Vector2 kbVelocity = new Vector2();
+    private int kbDurationLeft = 0;
+    public readonly int KB_DURATION_FRAMES = 20;
     private Vector2 kbDirectionalBias = new Vector2(1, 0);
 
     int count = 0;
+
+    void Start()
+    {
+		collider = GetComponent<Collider2D>();
+		collCalc = new CollisionCalculator(collider);
+	}
 
     void FixedUpdate()
     {
         if (count % 100 < 50)
 		{
-            rb.MovePosition(rb.position + new Vector2(0, 0.01f));
+            velocity = new Vector2(0, 0.5f);
 		}
         else
 		{
-            rb.MovePosition(rb.position + new Vector2(0, -0.01f));
+            velocity = new Vector2(0, -0.5f);
         }
 
-        count++;
-    }
+        rb.MovePosition(rb.position + collCalc.MoveAndSlide(velocity + kbVelocity, Time.deltaTime));
+
+		count++;
+        if (kbDurationLeft < 1)
+            kbVelocity.Set(0, 0);
+        else
+            kbDurationLeft--;
+	}
 
     /// <summary>
 	/// Damages this enemy for the specified amount, if knockback is applied, it moves this
@@ -39,6 +59,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0.0f)
             Destroy(this.gameObject);
 
-        rb.MovePosition(rb.position + (direction.normalized * kbStrength * kbDirectionalBias)); ; //needs to use proper colliison calculation at some point.
+        kbVelocity = direction.normalized * kbStrength * kbDirectionalBias;
+        kbDurationLeft = KB_DURATION_FRAMES; 
 	}
 }

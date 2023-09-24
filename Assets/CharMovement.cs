@@ -18,7 +18,6 @@ public class CharMovement : MonoBehaviour
     public int SWING_STEAM_COST = 50;
     private float MINIMUM_SPEED = 0.01f;
     public int SWING_COOLDOWN_FRAMES = 10;
-    public float MINI_HIT_KB_STRENGTH = 6.0f;
 
     BoxCollider2D charCollider;
     Rigidbody2D rb;
@@ -65,6 +64,11 @@ public class CharMovement : MonoBehaviour
 
     public float SWING_DAMAGE = 5.0f;
     public float MINI_HIT_DAMAGE = 2.5f;
+    public int RECOIL_DURATION_FRAMES = 40;
+    public float RECOIL_DECAY = 0.09f;
+    public float RECOIL_STRENGTH = 10.0f;
+    public Vector2 recoilVelocity = new Vector2();
+    public int recoilDurationLeft = 0;
 
     private void Start()
     {
@@ -107,21 +111,21 @@ public class CharMovement : MonoBehaviour
         belowFlatCeiling = charCollCalc.BelowFlatCeiling();
         canWalkUnobstructedR = !charCollCalc.NextToRightWall() && !charCollCalc.OnRightSlope();
         canWalkUnobstructedL = !charCollCalc.NextToLeftWall() && !charCollCalc.OnLeftSlope();
-        
+
         if (charGrounded)
         {
             usedWallVault = false;
             steam = baseSteam;
         }
-        
-        //directional movement input and gravity; evrything that will affect velocity based on current state
+
+        //directional movement input and gravity; everything that will affect velocity based on current state
         //this may eventually be outsourced to a input handler separate from the player object once menus and stuff are made
         #region VELOCITY ADJUSTMENTS
         if (!charGrounded)
         {
             aerialModifier = AERIAL_CONTROL;
         }
-        else 
+        else
         {
             aerialModifier = 1.0f;
         }
@@ -134,7 +138,15 @@ public class CharMovement : MonoBehaviour
         if (swingCooldown > 0)
             swingCooldown--;
 
-        if (Input.GetKey("a") || Input.GetKey("d"))
+        if (recoilDurationLeft < 1)
+            recoilVelocity.Set(0, 0);
+        else
+        {
+            recoilDurationLeft--;
+            recoilVelocity *= RECOIL_DECAY;
+        }
+
+		if (Input.GetKey("a") || Input.GetKey("d"))
         {
             if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
             {
@@ -204,7 +216,7 @@ public class CharMovement : MonoBehaviour
         }
         
         //gravity applied
-        if (velocity.y > MAX_FALL && !charGrounded)
+        if (velocity.y > MAX_FALL && !charGrounded && recoilVelocity.y <= 0)
         {
             velocity.y += GRAVITY;
         }
@@ -246,9 +258,11 @@ public class CharMovement : MonoBehaviour
                 bool wouldHitFloor = angleToHitNormal < 60;
 
                 GameObject hitObject = null;
-                if (hitAnything)
+                Enemy hitEnemy = null;
+				if (hitAnything)
                     hitObject = swingCastResults[0].collider.gameObject;
-                Enemy hitEnemy = hitObject.GetComponent<Enemy>();
+                if (hitObject != null)
+                    hitEnemy = hitObject.GetComponent<Enemy>();
                 bool hitWasEnemy = hitEnemy != null;
 
                 if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
@@ -352,9 +366,13 @@ public class CharMovement : MonoBehaviour
                     Debug.Log("mini-hit!");
                     if (hitWasEnemy) //hit ENEMY in future
 					{
-                        swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1) + (swingNewVel / SWING_STRENGTH) * MINI_HIT_KB_STRENGTH;
+						recoilVelocity = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
+						swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1);
+                        recoilDurationLeft = RECOIL_DURATION_FRAMES;
+                        if (recoilVelocity.y != 0)
+                            swingNewVel.y = 0;
 
-                        hitEnemy.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
+						hitEnemy.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
 
                         steam += (int)(SWING_STEAM_COST * (SWING_DAMAGE / MINI_HIT_DAMAGE));
                     }
@@ -374,12 +392,13 @@ public class CharMovement : MonoBehaviour
 			}
 
             mouse0FramesHeld = 0;
+            Debug.Log(mouse0FramesHeld);
         }
         #endregion 
 
         //movement happens
 
-        rb.MovePosition(rb.position + charCollCalc.MoveAndSlide(velocity, Time.deltaTime));
+        rb.MovePosition(rb.position + charCollCalc.MoveAndSlide(velocity + recoilVelocity, Time.deltaTime));
 
 
     }
