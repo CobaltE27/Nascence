@@ -70,7 +70,7 @@ public class CharMovement : MonoBehaviour
     public Vector2 recoilVelocity = new Vector2();
     public int recoilDurationLeft = 0;
 
-    private void Start() //pointless change
+    private void Start()
     {
         //references to attached components are made
         charCollider = GetComponent<BoxCollider2D>();
