@@ -403,7 +403,7 @@ public class CharMovement : MonoBehaviour
         //movement happens
         if (recoilDurationLeft > 0)
             Debug.Log("recoilVelocity: " + recoilVelocity + ", velocity: " + velocity);
-		rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
+		rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
 		
 
 

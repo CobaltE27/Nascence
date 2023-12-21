@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
             velocity = new Vector2(0, -0.5f);
         }
 
-        rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(velocity + kbVelocity, Time.deltaTime));
+        rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + collCalc.MoveAndSlide(kbVelocity, Time.deltaTime));
 
 		count++;
         if (kbDurationLeft < 1)

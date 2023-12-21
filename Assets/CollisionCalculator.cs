@@ -18,7 +18,7 @@ public class CollisionCalculator : MonoBehaviour
         WALKABLE_ANGLE_THRESHOLD = 30.0f;
     }
 
-    public Vector2 MoveAndSlideRedirectVelocity(Vector2 parentVelocity, float deltaTime)
+    public Vector2 MoveAndSlideRedirectVelocity(ref Vector2 parentVelocity, float deltaTime)
     {
         Vector2 remainingDisplacement = parentVelocity * deltaTime; //begins as parent displacement
         Vector2 rectifiedDisplacement = new Vector2(0, 0);
@@ -46,7 +46,6 @@ public class CollisionCalculator : MonoBehaviour
             remainingDisplacement = RedirectWithNormal(remainingDisplacement, collisionNormalAngle);
 
             parentVelocity = RedirectWithNormal(parentVelocity, collisionNormalAngle);
-            parentCollider.gameObject.GetComponent<CharMovement>().velocity = parentVelocity;
 
             parentCollider.offset.Set(distToCollision.x, distToCollision.y);
             predictCastResults = castUtils.DisplacementCast(remainingDisplacement);
@@ -62,7 +61,7 @@ public class CollisionCalculator : MonoBehaviour
         }
 		else
 		{
-            parentCollider.gameObject.GetComponent<CharMovement>().velocity *= 0.2f;
+            parentVelocity *= 0.2f;
         }
 
         parentCollider.offset.Set(0, 0);
