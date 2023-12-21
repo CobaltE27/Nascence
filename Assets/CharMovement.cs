@@ -5,6 +5,9 @@ using static EnumConstants;
 
 public class CharMovement : MonoBehaviour
 {
+
+    private DebugLogger dLog;
+
     public float GRAVITY = -0.4f;
     public float MAX_FALL = -20.0f;
     public float MAX_SPEED = 0.4f;
@@ -83,6 +86,19 @@ public class CharMovement : MonoBehaviour
         jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * (50) * JUMP_HEIGHT);// v^2 = 2a (height) -> v = sqrt(2 * a * height)
 
         charInputBuffer = GetComponent<InputBuffer>();
+
+
+        dLog = new DebugLogger();
+        #region DebugLogger Keys
+        dLog.loggableSystems = new Dictionary<string, bool>
+        {
+            { "swing - type", true },
+            { "recoil", false},
+            { "swing", false},
+            { "swing indicator", false}
+        };
+        #endregion
+    
     }
     // Update is called once per frame
     void Update() 
@@ -205,7 +221,6 @@ public class CharMovement : MonoBehaviour
             velocity.y += jumpVelocity;
         }
 
-        //Debug.Log("yVel = " + velocity.y);
         if (jumpKeyReleased)
         {
             if (velocity.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
@@ -237,7 +252,7 @@ public class CharMovement : MonoBehaviour
         {
             charSprite.color = Color.white;
         }
-        //Debug.Log(swingIndicatorDir);
+        dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
         //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
         if (charInputBuffer.GetInputUp(true, "mouse0"))
         {
@@ -265,11 +280,11 @@ public class CharMovement : MonoBehaviour
                 if (hitObject != null)
                     hitEnemy = hitObject.GetComponent<Enemy>();
                 bool hitWasEnemy = hitEnemy != null;
-                //Debug.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy);
+                dLog.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy, "swing");
 
                 if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
                 {
-                    Debug.Log("SWING!");
+                    dLog.Log("SWING!", "swing - type");
                     steam -= SWING_STEAM_COST;
 
                     if (hitWasEnemy)
@@ -365,10 +380,10 @@ public class CharMovement : MonoBehaviour
                 }
 				else
 				{
-                    Debug.Log("mini-hit!");
+                    dLog.Log("MINI-HIT!", "swing - type" );
                     if (hitWasEnemy)
 					{
-                        Debug.Log("swingNewVel: " + swingNewVel + ", recoilVelocity: " + ((swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH));
+                        dLog.Log("swingNewVel: " + swingNewVel + ", recoilVelocity: " + ((swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH), "recoil");
 						recoilVelocity = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
 						swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1);
                         recoilDurationLeft = RECOIL_DURATION_FRAMES;
@@ -387,22 +402,20 @@ public class CharMovement : MonoBehaviour
 
                 lastMoveAction = "swing";
                 steam = Mathf.Min(steam, steamCapacity);
-                Debug.Log("Final swingNewVel: " + swingNewVel);
+                dLog.Log("Final swingNewVel: " + swingNewVel, "swing");
                 velocity.Set(swingNewVel.x, swingNewVel.y);
             }
 			else
 			{
-                Debug.Log("on cooldown!");
+                dLog.Log("on cooldown!", "swing - type");
 			}
 
             mouse0FramesHeld = 0;
-            Debug.Log(mouse0FramesHeld);
         }
         #endregion 
 
         //movement happens
-        if (recoilDurationLeft > 0)
-            Debug.Log("recoilVelocity: " + recoilVelocity + ", velocity: " + velocity);
+        if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + recoilVelocity + ", velocity: " + velocity, "recoil");
 		rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
 		
 
