@@ -245,7 +245,8 @@ public class CharMovement : MonoBehaviour
             {
                 swingCooldown = SWING_COOLDOWN_FRAMES;
 
-                RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast(transform.position, swingIndicatorDir * 2.0f, swingArea,
+                //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
+                RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * 2.0f + new Vector2(0, 0.2f), swingArea,
                    new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
 
                 float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, new Vector2(0, 1));
@@ -264,6 +265,7 @@ public class CharMovement : MonoBehaviour
                 if (hitObject != null)
                     hitEnemy = hitObject.GetComponent<Enemy>();
                 bool hitWasEnemy = hitEnemy != null;
+                //Debug.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy);
 
                 if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
                 {
@@ -364,8 +366,9 @@ public class CharMovement : MonoBehaviour
 				else
 				{
                     Debug.Log("mini-hit!");
-                    if (hitWasEnemy) //hit ENEMY in future
+                    if (hitWasEnemy)
 					{
+                        Debug.Log("swingNewVel: " + swingNewVel + ", recoilVelocity: " + ((swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH));
 						recoilVelocity = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
 						swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1);
                         recoilDurationLeft = RECOIL_DURATION_FRAMES;
@@ -384,6 +387,7 @@ public class CharMovement : MonoBehaviour
 
                 lastMoveAction = "swing";
                 steam = Mathf.Min(steam, steamCapacity);
+                Debug.Log("Final swingNewVel: " + swingNewVel);
                 velocity.Set(swingNewVel.x, swingNewVel.y);
             }
 			else
@@ -397,11 +401,13 @@ public class CharMovement : MonoBehaviour
         #endregion 
 
         //movement happens
+        if (recoilDurationLeft > 0)
+            Debug.Log("recoilVelocity: " + recoilVelocity + ", velocity: " + velocity);
+		rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
+		
 
-        rb.MovePosition(rb.position + charCollCalc.MoveAndSlide(velocity + recoilVelocity, Time.deltaTime));
 
-
-    }
+	}
 
     /// <summary>
     /// This updates the angle of the swing indicator to match where the mouse is

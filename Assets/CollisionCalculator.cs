@@ -18,7 +18,7 @@ public class CollisionCalculator : MonoBehaviour
         WALKABLE_ANGLE_THRESHOLD = 30.0f;
     }
 
-    public Vector2 MoveAndSlide(Vector2 parentVelocity, float deltaTime)
+    public Vector2 MoveAndSlideRedirectVelocity(Vector2 parentVelocity, float deltaTime)
     {
         Vector2 remainingDisplacement = parentVelocity * deltaTime; //begins as parent displacement
         Vector2 rectifiedDisplacement = new Vector2(0, 0);
@@ -72,7 +72,61 @@ public class CollisionCalculator : MonoBehaviour
         return rectifiedDisplacement;
     }
 
-    public bool IsOnWalkableGround()
+    /// <summary>
+    /// Gives the displacement that something moving at the given velocity should move in one frame, accounting for collisions.
+    /// Does not redirect parent velocity.
+    /// </summary>
+    /// <param name="moveVelocity"></param>
+    /// <param name="deltaTime"></param>
+    /// <returns></returns>
+	public Vector2 MoveAndSlide(Vector2 moveVelocity, float deltaTime)
+	{
+		Vector2 remainingDisplacement = moveVelocity * deltaTime; //begins as parent displacement
+		Vector2 rectifiedDisplacement = new Vector2(0, 0);
+		RaycastHit2D[] predictCastResults = castUtils.DisplacementCast(remainingDisplacement);
+		Vector2 distToCollision = castUtils.DistanceToCollider(predictCastResults, remainingDisplacement);
+
+		bool displacementNeedsRectification = predictCastResults[0].collider != null;
+
+		if (!displacementNeedsRectification)
+			return remainingDisplacement;
+
+		int terminator = 0;
+		Vector2 collisionNormal;
+		float collisionNormalAngle;
+		while (displacementNeedsRectification && terminator < 3)
+		{
+			remainingDisplacement -= distToCollision;
+
+			collisionNormal = castUtils.FirstCastNormal(predictCastResults);
+			collisionNormalAngle = Vector2.SignedAngle(new Vector2(1, 0), collisionNormal);
+			distToCollision += new Vector2(0.01f * Mathf.Cos(collisionNormalAngle * (Mathf.PI / 180)), 0.01f * Mathf.Sin(collisionNormalAngle * (Mathf.PI / 180)));
+
+			rectifiedDisplacement += distToCollision;
+
+			remainingDisplacement = RedirectWithNormal(remainingDisplacement, collisionNormalAngle);
+
+			parentCollider.offset.Set(distToCollision.x, distToCollision.y);
+			predictCastResults = castUtils.DisplacementCast(remainingDisplacement);
+			displacementNeedsRectification = predictCastResults[0].collider != null;
+			distToCollision = castUtils.DistanceToCollider(predictCastResults, remainingDisplacement);
+
+			terminator++;
+		}
+
+		if (terminator < 3)
+		{
+			rectifiedDisplacement += remainingDisplacement;
+		}
+
+		parentCollider.offset.Set(0, 0);
+
+		if (!(terminator < 5))
+			Debug.Log("CollisionCalculator: Rectification terminated early due to redirecting too many times");
+		return rectifiedDisplacement;
+	}
+
+	public bool IsOnWalkableGround()
     {
         if (castUtils.DisplacementCast(new Vector2(0, -0.02f))[0].collider == null)
             return false;
