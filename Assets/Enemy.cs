@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     public int steamOnHit = 50;
 
     public Vector2 velocity = new Vector2();
+    public float MAX_MOVEMENT_SPEED = 2.0f; //m per second
 
     private float kbStrength = 0.8f;
     private Vector2 kbVelocity = new Vector2();
@@ -22,19 +23,21 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-		collider = GetComponent<Collider2D>();
 		collCalc = new CollisionCalculator(collider);
 	}
 
     void FixedUpdate()
     {
+        velocity *= 0; //reset velocity
+        SetVelocityTowardTarget(new Vector2(0, 0));
+
         if (count % 100 < 50)
 		{
-            velocity = new Vector2(0, 0.5f);
+            velocity += new Vector2(0, 0.5f);
 		}
         else
 		{
-            velocity = new Vector2(0, -0.5f);
+            velocity += new Vector2(0, -0.5f);
         }
 
         rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + collCalc.MoveAndSlide(kbVelocity, Time.deltaTime));
@@ -62,4 +65,21 @@ public class Enemy : MonoBehaviour
         kbVelocity = direction.normalized * kbStrength * kbDirectionalBias;
         kbDurationLeft = KB_DURATION_FRAMES; 
 	}
+
+    /// <summary>
+    /// Sets velocity to point toward a target position in world-space.
+    /// Consider adding momentum system in the future so that enemies respond to moving targets in a smoother way
+    /// </summary>
+    /// <param name="target"></param>
+    private void SetVelocityTowardTarget(Vector2 target)
+    {
+        Vector2 targetDir = target - (Vector2)rb.transform.position;
+		float approachFactor = 1.0f;
+        if (targetDir.sqrMagnitude < 0.5)
+            approachFactor = targetDir.sqrMagnitude * 2; //using the squared version so that movement slows less further from the target.
+			
+        targetDir.Normalize();
+
+		velocity += targetDir * (MAX_MOVEMENT_SPEED * Time.deltaTime * approachFactor);
+    }
 }

@@ -154,10 +154,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1091540888}
-  collider: {fileID: 0}
+  collider: {fileID: 1091540889}
   health: 10
   steamOnHit: 50
   velocity: {x: 0, y: 0}
+  MAX_MOVEMENT_SPEED: 2
 --- !u!50 &1091540888
 Rigidbody2D:
   serializedVersion: 4
@@ -502,10 +503,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1875488981}
-  collider: {fileID: 0}
+  collider: {fileID: 1875488978}
   health: 10
   steamOnHit: 50
   velocity: {x: 0, y: 0}
+  MAX_MOVEMENT_SPEED: 40
 --- !u!1 &1974597427
 GameObject:
   m_ObjectHideFlags: 0
