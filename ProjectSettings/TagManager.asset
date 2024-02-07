@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Platformable
   - Hazard
+  - Character
+  - Enemy
   layers:
   - Default
   - TransparentFX

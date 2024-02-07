@@ -15,7 +15,8 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region BebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", true }
+			{ "CheckForNewPuppets", true },
+			{ "targeting", true }
 		};
 		#endregion
 
@@ -27,7 +28,8 @@ public class EnemyPuppeteer : MonoBehaviour
         foreach (GameObject puppet in puppets)
         {
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
-            enemyBehavior.target = character.transform.position;
+			enemyBehavior.target = character.transform.position;
+            dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
         }
     }
 
@@ -35,12 +37,14 @@ public class EnemyPuppeteer : MonoBehaviour
     {
         while (true)
         {
-            List<GameObject> candidates = new List<GameObject>(FindObjectsOfType<GameObject>());
+            List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
             Vector2 charPos = character.transform.position;
             foreach (GameObject candidate in candidates)
             {
                 //this would be the place to let enemies refuse to be added if that's ever a thing
-                if (Vector2.Distance(candidate.transform.position, charPos) > candidate.GetComponent<Enemy>().NOTICE_RANGE)
+                Enemy enemyBehavior = candidate.GetComponent<Enemy>();
+				float distanceToChar = Vector2.Distance(candidate.transform.position, charPos);
+                if (distanceToChar > enemyBehavior.NOTICE_RANGE)
                     candidates.Remove(candidate);
             }
 
