@@ -15,7 +15,7 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region BebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", false },
+			{ "CheckForNewPuppets", true },
 			{ "targeting", false }
 		};
 		#endregion
@@ -31,17 +31,19 @@ public class EnemyPuppeteer : MonoBehaviour
 			//this would be the place to let enemies refuse to be added if that's ever a thing
 			Enemy enemyBehavior = candidate.GetComponent<Enemy>();
 			float distanceToChar = Vector2.Distance(candidate.transform.position, charPos);
+			dLog.Log("Dist to char: " + distanceToChar + "notice range: " + enemyBehavior.NOTICE_RANGE, "CheckForNewPuppets");
+			dLog.Log("In range: " + (distanceToChar < enemyBehavior.NOTICE_RANGE), "CheckForNewPuppets");
 			if (distanceToChar < enemyBehavior.NOTICE_RANGE)
 				newPuppets.Add(candidate);
 		}
 
 		puppets.UnionWith(newPuppets); //automatically avoids duplicates
-		dLog.Log("Finished looking for candidates", "CheckForNewPuppets");
 
 		foreach (GameObject puppet in puppets)
         {
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
 			enemyBehavior.target = character.transform.position;
+			enemyBehavior.isTargeting = true;
             dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
         }
     }
