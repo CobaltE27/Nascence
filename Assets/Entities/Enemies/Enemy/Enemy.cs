@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     public float NOTICE_RANGE = 10.0f;
 
     public Vector2 velocity = new Vector2();
-    public float MAX_MOVEMENT_SPEED = 2.0f; //m per second
+    public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
 
     private float kbStrength = 0.8f;
     private Vector2 kbVelocity = new Vector2();
@@ -32,7 +32,8 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         velocity *= 0; //reset velocity
-        SetVelocityTowardTarget(new Vector2(0, 0));
+        if (target != null)
+            SetVelocityTowardTarget(target);
 
         if (count % 100 < 50)
 		{
@@ -83,6 +84,6 @@ public class Enemy : MonoBehaviour
 			
         targetDir.Normalize();
 
-		velocity += targetDir * (MAX_MOVEMENT_SPEED * Time.deltaTime * approachFactor);
+		velocity += targetDir * (MAX_MOVEMENT_SPEED * approachFactor);
     }
 }

@@ -147,5 +147,7 @@ MonoBehaviour:
   collider: {fileID: 8679087147612377045}
   health: 10
   steamOnHit: 50
+  target: {x: 0, y: 0}
+  NOTICE_RANGE: 10
   velocity: {x: 0, y: 0}
-  MAX_MOVEMENT_SPEED: 40
+  MAX_MOVEMENT_SPEED: 1
