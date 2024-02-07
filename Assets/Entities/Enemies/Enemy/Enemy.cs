@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
 	public float health = 10.0f;
     public int steamOnHit = 50;
 
-    public Vector2 target;
+    public Vector2 moveTarget;
     public bool isTargeting = false;
     public float NOTICE_RANGE = 10.0f;
 
@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     {
         velocity *= 0; //reset velocity
         if (isTargeting)
-            SetVelocityTowardTarget(target);
+            SetVelocityTowardTarget(moveTarget);
 
         if (count % 100 < 50)
 		{

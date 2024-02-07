@@ -42,7 +42,7 @@ public class EnemyPuppeteer : MonoBehaviour
 		foreach (GameObject puppet in puppets)
         {
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
-			enemyBehavior.target = character.transform.position;
+			enemyBehavior.moveTarget = character.transform.position;
 			enemyBehavior.isTargeting = true;
             dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
         }
