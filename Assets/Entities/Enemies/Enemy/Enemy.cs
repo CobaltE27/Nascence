@@ -10,6 +10,9 @@ public class Enemy : MonoBehaviour
 	public float health = 10.0f;
     public int steamOnHit = 50;
 
+    public Vector2 target;
+    public float NOTICE_RANGE = 10.0f;
+
     public Vector2 velocity = new Vector2();
     public float MAX_MOVEMENT_SPEED = 2.0f; //m per second
 

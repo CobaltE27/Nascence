@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class EnemyPuppeteer : MonoBehaviour
 {
-    private HashSet<GameObject> puppets;
+    private HashSet<GameObject> puppets = new HashSet<GameObject>();
     private DebugLogger dLog;
+    public GameObject character;
 
 
 	void Start()
@@ -18,27 +19,34 @@ public class EnemyPuppeteer : MonoBehaviour
 		};
 		#endregion
 
-		StartCoroutine(CheckForNewPuppets());
+		StartCoroutine(UpdatePuppetSet());
     }
 
     void Update()
     {
-        
+        foreach (GameObject puppet in puppets)
+        {
+            Enemy enemyBehavior = puppet.GetComponent<Enemy>();
+            enemyBehavior.target = character.transform.position;
+        }
     }
 
-    IEnumerator CheckForNewPuppets()
+    IEnumerator UpdatePuppetSet()
     {
         while (true)
         {
             List<GameObject> candidates = new List<GameObject>(FindObjectsOfType<GameObject>());
+            Vector2 charPos = character.transform.position;
             foreach (GameObject candidate in candidates)
             {
                 //this would be the place to let enemies refuse to be added if that's ever a thing
+                if (Vector2.Distance(candidate.transform.position, charPos) > candidate.GetComponent<Enemy>().NOTICE_RANGE)
+                    candidates.Remove(candidate);
             }
 
             puppets.UnionWith(candidates); //automatically avoids duplicates
-
             dLog.Log("Finished looking for candidates", "CheckForNewPuppets");
+
             yield return new WaitForSeconds(0.5f); 
         }
     }
