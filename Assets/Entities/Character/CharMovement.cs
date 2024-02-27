@@ -80,10 +80,10 @@ public class CharMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         currentCam = GetComponentInChildren<Camera>();
 
-        charCollCalc = new CollisionCalculator(charCollider);
+        charCollCalc = GetComponent<CollisionCalculator>();
         swingCastUtils = new PhysicsCastUtility();
 
-        jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * (50) * JUMP_HEIGHT);// v^2 = 2a (height) -> v = sqrt(2 * a * height)
+        jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * (50) * JUMP_HEIGHT);// v^2 = 2a * (height) -> v = sqrt(2 * a * height)
 
         charInputBuffer = GetComponent<InputBuffer>();
 

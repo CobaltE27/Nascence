@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
 
     public Vector2 velocity = new Vector2();
     public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
+    private EntityMover mover;
 
     private float kbStrength = 0.8f;
     private Vector2 kbVelocity = new Vector2();
@@ -27,29 +28,31 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-		collCalc = new CollisionCalculator(collider);
+		collCalc = GetComponent<CollisionCalculator>();
+        mover = GetComponent<EntityMover>();
+        mover.constantVels.Add("kbVelocity", new Vector2());
 	}
 
     void FixedUpdate()
     {
-        velocity *= 0; //reset velocity
+        mover.persistentVel *= 0; //reset velocity
         if (isTargeting)
             SetVelocityTowardTarget(moveTarget);
 
         if (count % 100 < 50)
 		{
-            velocity += new Vector2(0, 0.5f);
+			mover.persistentVel += new Vector2(0, 0.5f);
 		}
         else
 		{
-            velocity += new Vector2(0, -0.5f);
+			mover.persistentVel += new Vector2(0, -0.5f);
         }
 
-        rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + collCalc.MoveAndSlide(kbVelocity, Time.deltaTime));
+        //rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + collCalc.MoveAndSlide(kbVelocity, Time.deltaTime));
 
 		count++;
         if (kbDurationLeft < 1)
-            kbVelocity.Set(0, 0);
+            mover.constantVels["kbVelocity"].Set(0, 0);
         else
             kbDurationLeft--;
 	}
@@ -67,7 +70,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0.0f)
             Destroy(this.gameObject);
 
-        kbVelocity = direction.normalized * kbStrength * kbDirectionalBias;
+		mover.constantVels["kbVelocity"] = direction.normalized * kbStrength * kbDirectionalBias;
         kbDurationLeft = KB_DURATION_FRAMES; 
 	}
 
@@ -79,12 +82,12 @@ public class Enemy : MonoBehaviour
     private void SetVelocityTowardTarget(Vector2 target)
     {
         Vector2 targetDir = target - (Vector2)rb.transform.position;
-		float approachFactor = 1.0f;
+		float approachSlowFactor = 1.0f;
         if (targetDir.sqrMagnitude < 0.5)
-            approachFactor = targetDir.sqrMagnitude * 2; //using the squared version so that movement slows less further from the target.
+            approachSlowFactor = targetDir.sqrMagnitude * 2; //using the squared version so that movement slows less further from the target.
 			
         targetDir.Normalize();
 
-		velocity += targetDir * (MAX_MOVEMENT_SPEED * approachFactor);
+		mover.persistentVel += targetDir * (MAX_MOVEMENT_SPEED * approachSlowFactor);
     }
 }

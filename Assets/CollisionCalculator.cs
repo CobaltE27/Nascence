@@ -11,10 +11,11 @@ public class CollisionCalculator : MonoBehaviour
     private MovementCastUtility castUtils;
     private Collider2D parentCollider;
 
-    public CollisionCalculator(Collider2D parentCollider)
+    void Start()
     {
-        castUtils = new MovementCastUtility(parentCollider);
-        this.parentCollider = parentCollider;
+		parentCollider = GetComponent<Collider2D>();
+		castUtils = new MovementCastUtility(parentCollider);
+        
         WALKABLE_ANGLE_THRESHOLD = 30.0f;
     }
 

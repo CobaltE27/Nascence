@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 8679087147612377045}
   - component: {fileID: 8679087147612377042}
   - component: {fileID: 8679087147612377041}
+  - component: {fileID: 5714957895738574549}
+  - component: {fileID: 3639262499301385957}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
@@ -147,7 +149,33 @@ MonoBehaviour:
   collider: {fileID: 8679087147612377045}
   health: 10
   steamOnHit: 50
-  target: {x: 0, y: 0}
+  moveTarget: {x: 0, y: 0}
+  isTargeting: 0
   NOTICE_RANGE: 10
   velocity: {x: 0, y: 0}
   MAX_MOVEMENT_SPEED: 1
+--- !u!114 &5714957895738574549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8679087147612377046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0891daee670fe914081a231f2f442be6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3639262499301385957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8679087147612377046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c6f72500f72f4748b7ac300853b5f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  persistentVel: {x: 0, y: 0}
