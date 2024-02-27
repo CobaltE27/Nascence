@@ -19,10 +19,10 @@ public class EntityMover : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector2 frameDisplacement = collCalc.MoveAndSlideRedirectVelocity(ref persistentVel, Time.deltaTime);
+        Vector2 displacement = collCalc.MoveAndSlideRedirectVelocity(ref persistentVel, Time.deltaTime);
         foreach (Vector2 vel in constantVels.Values)
-            frameDisplacement += collCalc.MoveAndSlide(vel, Time.deltaTime);
+            displacement += collCalc.MoveAndSlide(vel, Time.deltaTime);
 
-        rb.MovePosition(rb.position + frameDisplacement);
+        rb.MovePosition(rb.position + displacement);
     }
 }

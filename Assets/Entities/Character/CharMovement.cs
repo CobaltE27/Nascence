@@ -24,6 +24,7 @@ public class CharMovement : MonoBehaviour
 
     BoxCollider2D charCollider;
     Rigidbody2D rb;
+    EntityMover mover;
     Camera currentCam;
     public Transform swingIndicatorPivot;
     public SpriteRenderer charSprite;
@@ -78,6 +79,12 @@ public class CharMovement : MonoBehaviour
         //references to attached components are made
         charCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
+        mover = GetComponent<EntityMover>();
+        mover.constantVels.Add("recoilVelocity", new Vector2());
+        foreach (string key in mover.constantVels.Keys)
+        {
+            Debug.Log(key); 
+        }
         currentCam = GetComponentInChildren<Camera>();
 
         charCollCalc = GetComponent<CollisionCalculator>();
@@ -92,7 +99,7 @@ public class CharMovement : MonoBehaviour
         #region DebugLogger Keys
         dLog.loggableSystems = new Dictionary<string, bool>
         {
-            { "swing - type", true },
+            { "swing - type", false },
             { "recoil", false},
             { "swing", false},
             { "swing indicator", false}
@@ -122,8 +129,8 @@ public class CharMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Check whether the character is still on the ground
-        charGrounded = charCollCalc.IsOnWalkableGround();
+		//Check whether the character is still on the ground
+		charGrounded = charCollCalc.IsOnWalkableGround();
         belowFlatCeiling = charCollCalc.BelowFlatCeiling();
         canWalkUnobstructedR = !charCollCalc.NextToRightWall() && !charCollCalc.OnRightSlope();
         canWalkUnobstructedL = !charCollCalc.NextToLeftWall() && !charCollCalc.OnLeftSlope();
@@ -155,60 +162,60 @@ public class CharMovement : MonoBehaviour
             swingCooldown--;
 
         if (recoilDurationLeft < 1)
-            recoilVelocity.Set(0, 0);
+            mover.constantVels["recoilVelocity"] *= 0;
         else
         {
             recoilDurationLeft--;
-            recoilVelocity *= RECOIL_DECAY;
+            mover.constantVels["recoilVelocity"] *= RECOIL_DECAY;
         }
 
 		if (Input.GetKey("a") || Input.GetKey("d"))
         {
             if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
             {
-                if (velocity.x > -MAX_SPEED)
+                if (mover.persistentVel.x > -MAX_SPEED)
                 {
-                    velocity.x -= RUN_SPEED * aerialModifier;
+                    mover.persistentVel.x -= RUN_SPEED * aerialModifier;
                 }
 
-                if (velocity.x > 0 && Mathf.Abs(velocity.x) < MAX_SPEED)
+                if (mover.persistentVel.x > 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
                 {
-                    velocity.x -= RUN_SPEED / 2;
+                    mover.persistentVel.x -= RUN_SPEED / 2;
                 }
             }
             if (Input.GetKey("d") && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
             {
-                if (velocity.x < MAX_SPEED)
+                if (mover.persistentVel.x < MAX_SPEED)
                 {
-                    velocity.x += RUN_SPEED * aerialModifier;
+                    mover.persistentVel.x += RUN_SPEED * aerialModifier;
                 }
 
-                if (velocity.x < 0 && Mathf.Abs(velocity.x) < MAX_SPEED)
+                if (mover.persistentVel.x < 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
                 {
-                    velocity.x += RUN_SPEED / 2;
+                    mover.persistentVel.x += RUN_SPEED / 2;
                 }
             }
         }
-        else if(charGrounded || Mathf.Abs(velocity.x) <= MAX_SPEED)
+        else if(charGrounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED)
         { 
-                velocity.x *= GROUND_DRAG;
+                mover.persistentVel.x *= GROUND_DRAG;
         }
 
         // applying ground friction if the character is going down a slope, may not want/need this
-        if ((charCollCalc.OnRightSlope() || charCollCalc.OnLeftSlope()) && velocity.y < 0)
-            velocity.x *= GROUND_DRAG;
+        if ((charCollCalc.OnRightSlope() || charCollCalc.OnLeftSlope()) && mover.persistentVel.y < 0)
+            mover.persistentVel.x *= GROUND_DRAG;
 
-        if (Mathf.Abs(velocity.x) >= MAX_SPEED)
+        if (Mathf.Abs(mover.persistentVel.x) >= MAX_SPEED)
         {
-            velocity.x *= LIMITER_DRAG;
+            mover.persistentVel.x *= LIMITER_DRAG;
 
             if (charGrounded)
-                velocity.x *= GROUND_DRAG;
+                mover.persistentVel.x *= GROUND_DRAG;
         }
 
-        if (Mathf.Abs(velocity.x) <= MINIMUM_SPEED)
+        if (Mathf.Abs(mover.persistentVel.x) <= MINIMUM_SPEED)
         {
-            velocity.x = 0;
+            mover.persistentVel.x = 0;
         }
 
 
@@ -218,22 +225,22 @@ public class CharMovement : MonoBehaviour
         {
             lastMoveAction = "jump";
             charGrounded = false;
-            velocity.y += jumpVelocity;
+            mover.persistentVel.y += jumpVelocity;
         }
 
         if (jumpKeyReleased)
         {
-            if (velocity.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
+            if (mover.persistentVel.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
             {
-                velocity.y = 6.0f;
+                mover.persistentVel.y = 6.0f;
             }
             jumpKeyReleased = false;
         }
         
         //gravity applied
-        if (velocity.y > MAX_FALL && !charGrounded && recoilVelocity.y <= 0)
+        if (mover.persistentVel.y > MAX_FALL && !charGrounded && mover.constantVels["recoilVelocity"].y <= 0)
         {
-            velocity.y += GRAVITY;
+            mover.persistentVel.y += GRAVITY;
         }
 
         if (Input.GetMouseButton(0))
@@ -316,7 +323,7 @@ public class CharMovement : MonoBehaviour
                             else
                             {
                                 steam += SWING_STEAM_COST;
-                                swingNewVel.Set(velocity.x, velocity.y);
+                                swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                             }
                         }
                         else if (indicatorAngle >= 135)
@@ -333,7 +340,7 @@ public class CharMovement : MonoBehaviour
                         }
                         else
                         {
-                            swingNewVel.Set(velocity.x, velocity.y);
+                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                         }
                     }
                     else if (wouldHitFloor && hitAnything)
@@ -356,26 +363,26 @@ public class CharMovement : MonoBehaviour
                         }
                         else if (indicatorAngle >= 90)
                         {
-                            swingNewVel.Set(velocity.x, velocity.y);
+                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                         }
                         else if (indicatorAngle >= 45)
                         {
-                            swingNewVel.Set(velocity.x, velocity.y);
+                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                         }
                         else
                         {
-                            swingNewVel.Set(velocity.x, velocity.y);
+                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                         }
 
                         usedWallVault = false;
                     }
-                    else if (velocity.y <= 2.0f)
+                    else if (mover.persistentVel.y <= 2.0f)
                     {
-                        swingNewVel.Set(velocity.x * 0.6f, 6.0f);
+                        swingNewVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
                     }
                     else
                     {
-                        swingNewVel.Set(velocity.x, velocity.y);
+                        swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                     }
                 }
 				else
@@ -384,10 +391,10 @@ public class CharMovement : MonoBehaviour
                     if (hitWasEnemy)
 					{
                         dLog.Log("swingNewVel: " + swingNewVel + ", recoilVelocity: " + ((swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH), "recoil");
-						recoilVelocity = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
-						swingNewVel = VectorUtility.DeflectWithNormal(velocity, swingNewVel * -1);
+						mover.constantVels["recoilVelocity"] = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
+						swingNewVel = VectorUtility.DeflectWithNormal(mover.persistentVel, swingNewVel * -1);
                         recoilDurationLeft = RECOIL_DURATION_FRAMES;
-                        if (recoilVelocity.y != 0)
+                        if (mover.constantVels["recoilVelocity"].y != 0)
                             swingNewVel.y = 0;
 
 						hitEnemy.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
@@ -396,14 +403,14 @@ public class CharMovement : MonoBehaviour
                     }
                     else
 					{
-                        swingNewVel.Set(velocity.x, velocity.y);
+                        swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
                     }
 				}
 
                 lastMoveAction = "swing";
                 steam = Mathf.Min(steam, steamCapacity);
                 dLog.Log("Final swingNewVel: " + swingNewVel, "swing");
-                velocity.Set(swingNewVel.x, swingNewVel.y);
+                mover.persistentVel.Set(swingNewVel.x, swingNewVel.y);
             }
 			else
 			{
@@ -415,11 +422,8 @@ public class CharMovement : MonoBehaviour
         #endregion 
 
         //movement happens
-        if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + recoilVelocity + ", velocity: " + velocity, "recoil");
-		rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
-		
-
-
+        if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
+		//rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
 	}
 
     /// <summary>

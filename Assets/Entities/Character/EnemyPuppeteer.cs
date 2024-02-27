@@ -15,7 +15,7 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region BebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", true },
+			{ "CheckForNewPuppets", false },
 			{ "targeting", false }
 		};
 		#endregion

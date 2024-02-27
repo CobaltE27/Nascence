@@ -6,7 +6,6 @@ public class Enemy : MonoBehaviour
 {
     public Rigidbody2D rb;
     public Collider2D collider;
-    private CollisionCalculator collCalc;
 	public float health = 10.0f;
     public int steamOnHit = 50;
 
@@ -14,12 +13,10 @@ public class Enemy : MonoBehaviour
     public bool isTargeting = false;
     public float NOTICE_RANGE = 10.0f;
 
-    public Vector2 velocity = new Vector2();
     public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
     private EntityMover mover;
 
     private float kbStrength = 0.8f;
-    private Vector2 kbVelocity = new Vector2();
     private int kbDurationLeft = 0;
     public readonly int KB_DURATION_FRAMES = 20;
     private Vector2 kbDirectionalBias = new Vector2(1, 0);
@@ -28,7 +25,6 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-		collCalc = GetComponent<CollisionCalculator>();
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("kbVelocity", new Vector2());
 	}
@@ -48,11 +44,9 @@ public class Enemy : MonoBehaviour
 			mover.persistentVel += new Vector2(0, -0.5f);
         }
 
-        //rb.MovePosition(rb.position + collCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + collCalc.MoveAndSlide(kbVelocity, Time.deltaTime));
-
 		count++;
         if (kbDurationLeft < 1)
-            mover.constantVels["kbVelocity"].Set(0, 0);
+            mover.constantVels["kbVelocity"] *= 0;
         else
             kbDurationLeft--;
 	}
