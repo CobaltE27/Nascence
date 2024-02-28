@@ -6,18 +6,16 @@ public class FlyingTestEnemy : Enemy
 {
 	public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
 
-	private new float kbStrength = 1.0f;
-	public new readonly int KB_DURATION_FRAMES = 25;
-
 	int count = 0;
 
-	void Start()
+	protected override void Start()
 	{
-		mover = GetComponent<EntityMover>();
-		mover.constantVels.Add("kbVelocity", new Vector2());
+		base.Start();
+		kbStrength = 1.0f;
+		KB_DURATION_FRAMES = 25;
 	}
 
-	void FixedUpdate()
+	protected override void FixedUpdate()
 	{
 		mover.persistentVel *= 0; //reset velocity
 		if (isTargeting)
@@ -37,6 +35,23 @@ public class FlyingTestEnemy : Enemy
 			mover.constantVels["kbVelocity"] *= 0;
 		else
 			kbDurationLeft--;
+	}
+
+	/// <summary>
+	/// Damages this enemy for the specified amount, if knockback is applied, it moves this
+	/// enemy in the specified direction.
+	/// </summary>
+	/// <param name="damage"></param>
+	/// <param name="direction"></param>
+	public override void DealDamage(float damage, Vector2 direction = new Vector2())
+	{
+		health -= damage;
+
+		if (health <= 0.0f)
+			Destroy(this.gameObject);
+
+		mover.constantVels["kbVelocity"] = direction.normalized * kbStrength * kbDirectionalBias;
+		kbDurationLeft = KB_DURATION_FRAMES;
 	}
 
 	/// <summary>

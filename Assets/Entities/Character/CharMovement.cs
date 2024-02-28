@@ -81,10 +81,7 @@ public class CharMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("recoilVelocity", new Vector2());
-        foreach (string key in mover.constantVels.Keys)
-        {
-            Debug.Log(key); 
-        }
+
         currentCam = GetComponentInChildren<Camera>();
 
         charCollCalc = GetComponent<CollisionCalculator>();

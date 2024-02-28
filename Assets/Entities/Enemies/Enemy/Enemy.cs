@@ -16,22 +16,20 @@ public abstract class Enemy : MonoBehaviour
 
     protected float kbStrength = 0.8f;
     protected int kbDurationLeft = 0;
-    public readonly int KB_DURATION_FRAMES = 20;
+    public int KB_DURATION_FRAMES = 20;
     protected Vector2 kbDirectionalBias = new Vector2(1, 0);
 
-    int count = 0;
-
-    void Start()
+    protected virtual void Start()
     {
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("kbVelocity", new Vector2());
+        Debug.Log("Enemy Start()!");
 	}
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         mover.persistentVel *= 0; //reset velocity
         
-		count++;
         if (kbDurationLeft < 1)
             mover.constantVels["kbVelocity"] *= 0;
         else
@@ -44,7 +42,7 @@ public abstract class Enemy : MonoBehaviour
 	/// </summary>
 	/// <param name="damage"></param>
 	/// <param name="direction"></param>
-    public void DealDamage(float damage, Vector2 direction = new Vector2())
+    public virtual void DealDamage(float damage, Vector2 direction = new Vector2())
 	{
         health -= damage;
 
