@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 8679087147612377044}
   - component: {fileID: 8679087147612377045}
   - component: {fileID: 8679087147612377042}
-  - component: {fileID: 8679087147612377041}
   - component: {fileID: 5714957895738574549}
   - component: {fileID: 3639262499301385957}
+  - component: {fileID: 5366550559549104346}
   m_Layer: 11
-  m_Name: Enemy
+  m_Name: TestEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,27 +133,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &8679087147612377041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8679087147612377046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72eb238561ba65a499dfb8cc8fbf3fc6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 8679087147612377042}
-  collider: {fileID: 8679087147612377045}
-  health: 10
-  steamOnHit: 50
-  moveTarget: {x: 0, y: 0}
-  isTargeting: 0
-  NOTICE_RANGE: 10
-  velocity: {x: 0, y: 0}
-  MAX_MOVEMENT_SPEED: 1
 --- !u!114 &5714957895738574549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,3 +158,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistentVel: {x: 0, y: 0}
+--- !u!114 &5366550559549104346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8679087147612377046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96a42f7d6b2eff4a8209477a96c52c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
