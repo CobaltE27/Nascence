@@ -39,13 +39,23 @@ public class EnemyPuppeteer : MonoBehaviour
 
 		puppets.UnionWith(newPuppets); //automatically avoids duplicates
 
+		List<GameObject> deadPuppets = new List<GameObject>();
 		foreach (GameObject puppet in puppets)
         {
+			if (puppet == null)
+			{
+				deadPuppets.Add(puppet);
+				continue;
+			}
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
 			enemyBehavior.moveTarget = character.transform.position;
 			enemyBehavior.isTargeting = true;
             dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
         }
+		foreach (GameObject deadP in deadPuppets)
+		{
+			puppets.Remove(deadP);
+		}
     }
 
 }
