@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingTestEnemy : Enemy
+public class FlyingTestEnemy : Enemy, IFlier
 {
 	public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
 
@@ -19,7 +19,7 @@ public class FlyingTestEnemy : Enemy
 	{
 		mover.persistentVel *= 0; //reset velocity
 		if (isTargeting)
-			SetVelocityTowardTarget(moveTarget);
+			MoveTowardTarget();
 
 		if (count % 100 < 50)
 		{
@@ -59,9 +59,9 @@ public class FlyingTestEnemy : Enemy
 	/// Consider adding momentum system in the future so that enemies respond to moving targets in a smoother way
 	/// </summary>
 	/// <param name="target"></param>
-	private void SetVelocityTowardTarget(Vector2 target)
+	public void MoveTowardTarget()
 	{
-		Vector2 targetDir = target - (Vector2)rb.transform.position;
+		Vector2 targetDir = moveTarget - (Vector2)rb.transform.position;
 		float approachSlowFactor = 1.0f;
 		if (targetDir.sqrMagnitude < 0.5)
 			approachSlowFactor = targetDir.sqrMagnitude * 2; //using the squared version so that movement slows less further from the target.
