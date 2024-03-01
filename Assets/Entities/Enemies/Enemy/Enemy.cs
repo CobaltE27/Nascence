@@ -23,7 +23,7 @@ public abstract class Enemy : MonoBehaviour
     {
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("kbVelocity", new Vector2());
-        Debug.Log("Enemy Start()!");
+        moveTarget = (Vector2)transform.position;
 	}
 
     protected virtual void FixedUpdate()
