@@ -405,7 +405,7 @@ public class CharMovement : MonoBehaviour
 				}
 
                 lastMoveAction = "swing";
-                steam = Mathf.Min(steam, steamCapacity);
+                steam = Mathf.Min(steam, baseSteam + steamCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
                 dLog.Log("Final swingNewVel: " + swingNewVel, "swing");
                 mover.persistentVel.Set(swingNewVel.x, swingNewVel.y);
             }
