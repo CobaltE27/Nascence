@@ -28,7 +28,6 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        mover.persistentVel *= 0; //reset velocity
         
         if (kbDurationLeft < 1)
             mover.constantVels["kbVelocity"] *= 0;

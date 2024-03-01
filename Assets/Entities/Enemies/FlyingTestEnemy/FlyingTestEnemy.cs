@@ -17,18 +17,8 @@ public class FlyingTestEnemy : Enemy, IFlier
 
 	protected override void FixedUpdate()
 	{
-		mover.persistentVel *= 0; //reset velocity
 		if (isTargeting)
 			MoveTowardTarget();
-
-		if (count % 100 < 50)
-		{
-			mover.persistentVel += new Vector2(0, 0.5f);
-		}
-		else
-		{
-			mover.persistentVel += new Vector2(0, -0.5f);
-		}
 
 		count++;
 		if (kbDurationLeft < 1)
@@ -68,6 +58,6 @@ public class FlyingTestEnemy : Enemy, IFlier
 
 		targetDir.Normalize();
 
-		mover.persistentVel += targetDir * (MAX_MOVEMENT_SPEED * approachSlowFactor);
+		mover.persistentVel = targetDir * (MAX_MOVEMENT_SPEED * approachSlowFactor);
 	}
 }
