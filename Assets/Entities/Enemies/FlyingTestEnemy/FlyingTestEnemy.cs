@@ -5,6 +5,7 @@ using UnityEngine;
 public class FlyingTestEnemy : Enemy, IFlier
 {
 	public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
+	private bool amMoving = false;
 
 	protected override void Start()
 	{
@@ -17,11 +18,7 @@ public class FlyingTestEnemy : Enemy, IFlier
 
 	protected override void FixedUpdate()
 	{
-		if (isTargeting)
-		{
-			StopCoroutine(Idle());
-			MoveTowardTarget(1.0f);
-		}
+
 	}
 
 	/// <summary>
@@ -99,5 +96,23 @@ public class FlyingTestEnemy : Enemy, IFlier
 
 			yield return new WaitForFixedUpdate();
 		}
+	}
+
+	IEnumerator IMoving.MoveToTarget(float speedMultiplier, float margin)
+	{
+		amMoving = true;
+		if (Mathf.Abs(Vector2.Distance((Vector2)transform.position, moveTarget)) < margin) //done moving if within the margin of targetted position
+		{
+			amMoving = false;
+			yield break;
+		}
+
+		MoveTowardTarget(speedMultiplier);
+		yield return new WaitForFixedUpdate();
+	}
+
+	public bool IsMoving()
+	{
+		return amMoving;
 	}
 }

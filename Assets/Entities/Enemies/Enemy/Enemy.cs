@@ -9,7 +9,6 @@ public abstract class Enemy : MonoBehaviour
     public int steamOnHit = 50;
 
 	public Vector2 moveTarget;
-	public bool isTargeting = false;
 	public float NOTICE_RANGE = 10.0f;
 
     protected EntityMover mover;

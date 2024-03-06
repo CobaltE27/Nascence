@@ -47,9 +47,14 @@ public class EnemyPuppeteer : MonoBehaviour
 				deadPuppets.Add(puppet);
 				continue;
 			}
+
+			//placeholder for ai component
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
 			enemyBehavior.moveTarget = character.transform.position;
-			enemyBehavior.isTargeting = true;
+			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
+			enemyBehavior.StopCoroutine(enemyMoveBehavior.Idle());
+			if (!enemyMoveBehavior.IsMoving())
+				enemyMoveBehavior.MoveToTarget();
             dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
         }
 		foreach (GameObject deadP in deadPuppets)
