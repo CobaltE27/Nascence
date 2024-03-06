@@ -34,8 +34,7 @@ public class FlyingTestEnemy : Enemy, IFlier
 		if (health <= 0.0f)
 			Destroy(this.gameObject);
 
-		mover.constantVels["kbVelocity"] = direction.normalized * kbStrength * kbDirectionalBias;
-		StartCoroutine(ApplyKnockback());
+		StartCoroutine(ApplyKnockback(direction.normalized * kbStrength * kbDirectionalBias));
 	}
 
 	/// <summary>
@@ -55,9 +54,10 @@ public class FlyingTestEnemy : Enemy, IFlier
 		mover.persistentVel = targetDir * (MAX_MOVEMENT_SPEED * approachSlowFactor * speedMultiplier);
 	}
 
-	private IEnumerator ApplyKnockback()
+	private IEnumerator ApplyKnockback(Vector2 kbVel)
 	{
 		kbDurationLeft = KB_DURATION_FRAMES;
+		mover.constantVels["kbVelocity"] = kbVel;
 		while (kbDurationLeft > 0)
 		{
 			kbDurationLeft--;
@@ -79,7 +79,7 @@ public class FlyingTestEnemy : Enemy, IFlier
 		{
 			MoveTowardTarget(0.3f);
 
-			if (Mathf.Abs(Vector2.Distance(transform.position, moveTarget)) < 0.1f)
+			if (Vector2.Distance(transform.position, moveTarget) < 0.1f)
 			{
 				if (wait > 0)
 				{
@@ -90,7 +90,6 @@ public class FlyingTestEnemy : Enemy, IFlier
 					IdlingDirection *= -1;
 					moveTarget = (Vector2)transform.position + (IdlingDirection * IdlingDistance);
 					wait = rng.Next(50);
-					Debug.Log(wait);
 				}
 			}
 
@@ -101,14 +100,15 @@ public class FlyingTestEnemy : Enemy, IFlier
 	IEnumerator IMoving.MoveToTarget(float speedMultiplier, float margin)
 	{
 		amMoving = true;
-		if (Mathf.Abs(Vector2.Distance((Vector2)transform.position, moveTarget)) < margin) //done moving if within the margin of targetted position
+		while (Vector2.Distance((Vector2)transform.position, moveTarget) > margin)
 		{
-			amMoving = false;
-			yield break;
+			if (kbDurationLeft == 0)
+				MoveTowardTarget(speedMultiplier);
+			yield return new WaitForFixedUpdate();
 		}
 
-		MoveTowardTarget(speedMultiplier);
-		yield return new WaitForFixedUpdate();
+		amMoving = false;
+		yield break;
 	}
 
 	public bool IsMoving()

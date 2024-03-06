@@ -50,4 +50,13 @@ public abstract class Enemy : MonoBehaviour
 		mover.constantVels["kbVelocity"] = direction.normalized * kbStrength * kbDirectionalBias;
         kbDurationLeft = KB_DURATION_FRAMES; 
 	}
+
+    /// <summary>
+    /// Returns whether this enemy would notice and entity at the given position.
+    /// </summary>
+    public virtual bool DoesNotice(Vector2 entityPos)
+    {
+		float distanceToChar = Vector2.Distance(transform.position, entityPos);
+		return distanceToChar < NOTICE_RANGE;
+	}
 }

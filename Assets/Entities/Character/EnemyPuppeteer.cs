@@ -12,7 +12,7 @@ public class EnemyPuppeteer : MonoBehaviour
 	void Start()
     {
         dLog = new DebugLogger();
-		#region BebugLogger Keys
+		#region DebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
 			{ "CheckForNewPuppets", false },
@@ -28,12 +28,8 @@ public class EnemyPuppeteer : MonoBehaviour
 		List<GameObject> newPuppets = new List<GameObject>();
 		foreach (GameObject candidate in candidates)
 		{
-			//this would be the place to let enemies refuse to be added if that's ever a thing
 			Enemy enemyBehavior = candidate.GetComponent<Enemy>();
-			float distanceToChar = Vector2.Distance(candidate.transform.position, charPos);
-			dLog.Log("Dist to char: " + distanceToChar + "notice range: " + enemyBehavior.NOTICE_RANGE, "CheckForNewPuppets");
-			dLog.Log("In range: " + (distanceToChar < enemyBehavior.NOTICE_RANGE), "CheckForNewPuppets");
-			if (distanceToChar < enemyBehavior.NOTICE_RANGE)
+			if (enemyBehavior.DoesNotice(charPos))
 				newPuppets.Add(candidate);
 		}
 
