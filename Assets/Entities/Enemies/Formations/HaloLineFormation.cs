@@ -8,4 +8,14 @@ public class HaloLineFormation : Formation
     {
 
     }
+
+	public override void AddPuppet(Enemy puppet)
+	{
+		throw new System.NotImplementedException();
+	}
+
+	public override void RemovePuppet(Enemy puppet)
+	{
+		throw new System.NotImplementedException();
+	}
 }
