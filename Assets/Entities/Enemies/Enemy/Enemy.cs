@@ -59,4 +59,14 @@ public abstract class Enemy : MonoBehaviour
 		float distanceToChar = Vector2.Distance(transform.position, entityPos);
 		return distanceToChar < NOTICE_RANGE;
 	}
+
+	/// <summary>
+	/// A method that can be called to stop whatever this enemy is doing once it is abducted by the puppeteer.
+	/// </summary>
+	public abstract void EndCurrentBehavior();
+
+	/// <summary>
+	/// A method to resume (usaually idle) behavior when the pupeteer drop this enemy
+	/// </summary>
+	public abstract void ResumeBehavior();
 }

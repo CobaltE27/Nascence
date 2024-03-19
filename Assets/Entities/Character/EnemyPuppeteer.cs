@@ -15,26 +15,16 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region DebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", false },
+			{ "CheckForNewPuppets", true },
 			{ "targeting", false }
 		};
 		#endregion
+
+		StartCoroutine(updatePuppets());
     }
 
     void Update()
     {
-		List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-		Vector2 charPos = character.transform.position;
-		List<GameObject> newPuppets = new List<GameObject>();
-		foreach (GameObject candidate in candidates)
-		{
-			Enemy enemyBehavior = candidate.GetComponent<Enemy>();
-			if (enemyBehavior.DoesNotice(charPos))
-				newPuppets.Add(candidate);
-		}
-
-		puppets.UnionWith(newPuppets); //automatically avoids duplicates
-
 		List<GameObject> deadPuppets = new List<GameObject>();
 		foreach (GameObject puppet in puppets)
         {
@@ -48,7 +38,6 @@ public class EnemyPuppeteer : MonoBehaviour
             Enemy enemyBehavior = puppet.GetComponent<Enemy>();
 			enemyBehavior.moveTarget = character.transform.position;
 			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
-			enemyBehavior.StopCoroutine(enemyMoveBehavior.Idle());
 			if (!enemyMoveBehavior.IsMoving())
 				enemyMoveBehavior.MoveToTarget();
             dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
@@ -58,5 +47,30 @@ public class EnemyPuppeteer : MonoBehaviour
 			puppets.Remove(deadP);
 		}
     }
+
+	private IEnumerator updatePuppets()
+	{
+		while (true)
+		{
+			dLog.Log("checking for puppets", "CheckForNewPuppets");
+			List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+			Vector2 charPos = character.transform.position;
+			List<GameObject> newPuppets = new List<GameObject>();
+			foreach (GameObject candidate in candidates)
+			{
+				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
+				if (enemyBehavior.DoesNotice(charPos))
+				{
+					newPuppets.Add(candidate);
+					enemyBehavior.EndCurrentBehavior();
+					dLog.Log("found new puppet!", "CheckForNewPuppets");
+				}
+			}
+
+			puppets.UnionWith(newPuppets); //automatically avoids duplicates
+
+			yield return new WaitForSeconds(0.5f); 
+		}
+	}
 
 }

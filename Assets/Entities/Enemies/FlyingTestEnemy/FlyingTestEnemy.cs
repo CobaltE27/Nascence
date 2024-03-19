@@ -115,4 +115,14 @@ public class FlyingTestEnemy : Enemy, IFlier
 	{
 		return amMoving;
 	}
+
+	public override void EndCurrentBehavior()
+	{
+		StopCoroutine(Idle());
+	}
+
+	public override void ResumeBehavior()
+	{
+		StartCoroutine(Idle());
+	}
 }
