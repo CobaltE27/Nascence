@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using UnityEngine;
 
-public abstract class Formation
+public abstract class Formation : MonoBehaviour
 {
 	/// <summary>
 	/// Displacement from center of puppetteer to "center" of formation
