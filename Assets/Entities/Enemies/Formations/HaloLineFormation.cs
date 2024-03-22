@@ -1,21 +1,51 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HaloLineFormation : Formation
 {
-    public HaloLineFormation(ref Vector2 displacementFromCenter) : base(ref displacementFromCenter)
-    {
-
+	private float width;
+	public HaloLineFormation(ref Vector2 displacementFromCenter, float width, HashSet<Type> attributes = null) : base(ref displacementFromCenter, attributes)
+	{
+		attributes.Add(typeof(IFlier));
+		this.width = width;
     }
 
 	public override void AddPuppet(Enemy puppet)
 	{
-		throw new System.NotImplementedException();
+		positions.Add(puppet, new Vector2());
+		ReorderPositions();
 	}
 
 	public override void RemovePuppet(Enemy puppet)
 	{
-		throw new System.NotImplementedException();
+		positions.Remove(puppet);
+		ReorderPositions();
+	}
+
+	private void ReorderPositions()
+	{
+		float positionProximity = width / (positions.Count + 1);
+		positions[0] = new Vector2();
+		for (int i = 1; i < positions.Count; i++)
+		{
+			Vector2 newPosition = new Vector2(((i + 1) / 2) * positionProximity, 0);
+			if (i % 2 == 1)
+				newPosition.x *= -1;
+			positions[i] = newPosition;
+		}
+
+		if (positions.Count % 2 == 0)
+		{
+			for (int i = 0; i < positions.Count; i++)
+			{
+				if (positions[i] is Vector2 pos)
+				{
+					pos.x -= positionProximity / 2;
+					positions[i] = pos;
+				}
+			}
+		}
 	}
 }
