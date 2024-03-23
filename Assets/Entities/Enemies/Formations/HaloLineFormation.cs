@@ -47,5 +47,13 @@ public class HaloLineFormation : Formation
 				}
 			}
 		}
+
+		for (int i = 0; i < positions.Count; i++)
+			if (positions[i] is Vector2 pos)
+			{
+				Debug.DrawLine(pos - new Vector2(0.3f, 0), pos + new Vector2(0.3f, 0), new Color(1, positions.Count / i, 1), 0.1f);
+				Debug.DrawLine(pos - new Vector2(0, 0.3f), pos + new Vector2(0, 0.3f), new Color(1, positions.Count / i, 1), 0.1f);
+			}
+				
 	}
 }
