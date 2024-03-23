@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FlyingTestEnemy : Enemy, IFlier
 {
-	public float MAX_MOVEMENT_SPEED = 0.5f; //m per second
+	public float MAX_MOVEMENT_SPEED = 5.0f; //m per second
 	private bool amMoving = false;
 
 	protected override void Start()

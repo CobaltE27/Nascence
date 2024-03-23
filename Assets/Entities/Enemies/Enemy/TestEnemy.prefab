@@ -174,7 +174,6 @@ MonoBehaviour:
   health: 10
   steamOnHit: 50
   moveTarget: {x: 0, y: 0}
-  isTargeting: 0
   NOTICE_RANGE: 10
   KB_DURATION_FRAMES: 20
-  MAX_MOVEMENT_SPEED: 2
+  MAX_MOVEMENT_SPEED: 5

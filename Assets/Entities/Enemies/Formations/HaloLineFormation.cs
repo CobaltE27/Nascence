@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class HaloLineFormation : Formation
 {
 	private float width;
-	public HaloLineFormation(ref Vector2 displacementFromCenter, float width, HashSet<Type> attributes = null) : base(ref displacementFromCenter, attributes)
+	public HaloLineFormation(Vector2 displacementFromCenter, float width, HashSet<Type> attributes = null) : base(displacementFromCenter, attributes)
 	{
 		attributes.Add(typeof(IFlier));
 		this.width = width;
@@ -14,21 +15,23 @@ public class HaloLineFormation : Formation
 
 	public override void AddPuppet(Enemy puppet)
 	{
-		positions.Add(puppet, new Vector2());
-		ReorderPositions();
+		puppets.Add(puppet);
+		positions.Add(new Vector2());
+		ReevaluatePositions();
 	}
 
 	public override void RemovePuppet(Enemy puppet)
 	{
-		positions.Remove(puppet);
-		ReorderPositions();
+		positions.RemoveAt(puppets.IndexOf(puppet));
+		puppets.Remove(puppet);
+		ReevaluatePositions();
 	}
 
-	private void ReorderPositions()
+	protected override void ReevaluatePositions()
 	{
 		float positionProximity = width / (positions.Count + 1);
 		positions[0] = new Vector2();
-		for (int i = 1; i < positions.Count; i++)
+		for (int i = 1; i < puppets.Count; i++)
 		{
 			Vector2 newPosition = new Vector2(((i + 1) / 2) * positionProximity, 0);
 			if (i % 2 == 1)
@@ -40,20 +43,10 @@ public class HaloLineFormation : Formation
 		{
 			for (int i = 0; i < positions.Count; i++)
 			{
-				if (positions[i] is Vector2 pos)
-				{
-					pos.x -= positionProximity / 2;
-					positions[i] = pos;
-				}
+				Vector2 pos = positions[i];
+				pos.x += positionProximity / 2;
+				positions[i] = pos;
 			}
-		}
-
-		for (int i = 0; i < positions.Count; i++)
-			if (positions[i] is Vector2 pos)
-			{
-				Debug.DrawLine(pos - new Vector2(0.3f, 0), pos + new Vector2(0.3f, 0), new Color(1, positions.Count / i, 1), 0.1f);
-				Debug.DrawLine(pos - new Vector2(0, 0.3f), pos + new Vector2(0, 0.3f), new Color(1, positions.Count / i, 1), 0.1f);
-			}
-				
+		}				
 	}
 }

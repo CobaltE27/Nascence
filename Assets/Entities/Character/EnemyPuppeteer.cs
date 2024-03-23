@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class EnemyPuppeteer : MonoBehaviour
 {
-    private HashSet<GameObject> puppets = new HashSet<GameObject>();
-    private DebugLogger dLog;
-    public GameObject character;
+	private HashSet<GameObject> puppets = new HashSet<GameObject>();
+	private DebugLogger dLog;
+	public GameObject character;
 
+	private HaloLineFormation testFormation = new HaloLineFormation(new Vector2(0, 4), 7, new HashSet<System.Type>() {typeof(IFlier)});
 
 	void Start()
     {
@@ -23,7 +24,7 @@ public class EnemyPuppeteer : MonoBehaviour
 		StartCoroutine(updatePuppets());
     }
 
-    void Update()
+    void FixedUpdate()
     {
 		List<GameObject> deadPuppets = new List<GameObject>();
 		foreach (GameObject puppet in puppets)
@@ -35,16 +36,18 @@ public class EnemyPuppeteer : MonoBehaviour
 			}
 
 			//placeholder for ai component
-            Enemy enemyBehavior = puppet.GetComponent<Enemy>();
-			enemyBehavior.moveTarget = character.transform.position;
+			Enemy enemyBehavior = puppet.GetComponent<Enemy>();
+			//enemyBehavior.moveTarget = character.transform.position;
+			enemyBehavior.moveTarget = (Vector2)character.transform.position + testFormation.FormationPositionOf(enemyBehavior);
 			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
 			if (!enemyMoveBehavior.IsMoving())
-				enemyMoveBehavior.MoveToTarget();
-            dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
-        }
+				enemyMoveBehavior.MoveToTarget(6);
+			//dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
+		}
 		foreach (GameObject deadP in deadPuppets)
 		{
 			puppets.Remove(deadP);
+			testFormation.PuppetDied();
 		}
     }
 
@@ -54,8 +57,8 @@ public class EnemyPuppeteer : MonoBehaviour
 		{
 			dLog.Log("checking for puppets", "CheckForNewPuppets");
 			List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-			Vector2 charPos = character.transform.position;
 			List<GameObject> newPuppets = new List<GameObject>();
+			Vector2 charPos = character.transform.position;
 			foreach (GameObject candidate in candidates)
 			{
 				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
@@ -64,11 +67,15 @@ public class EnemyPuppeteer : MonoBehaviour
 					newPuppets.Add(candidate);
 					enemyBehavior.EndCurrentBehavior();
 					dLog.Log("found new puppet!", "CheckForNewPuppets");
+
+					//temporary for testing
+					if (!puppets.Contains(candidate))
+						testFormation.AddPuppet(enemyBehavior);
 				}
 			}
 
 			puppets.UnionWith(newPuppets); //automatically avoids duplicates
-
+					
 			yield return new WaitForSeconds(0.5f); 
 		}
 	}

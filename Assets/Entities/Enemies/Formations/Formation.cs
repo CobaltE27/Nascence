@@ -9,38 +9,59 @@ public abstract class Formation : MonoBehaviour
 	/// <summary>
 	/// Displacement from center of puppetteer to "center" of formation
 	/// </summary>
-	protected Vector2 displacementFromCenter;
+	public Vector2 DisplacementFromCenter { protected get; set; }
     /// <summary>
-    /// Enemy positions relative to the formation center are keyed by the enemy itself.
+    /// Enemy positions relative to the formation center, the index of a position matches the index of its corresponding enemy.
     /// </summary>
-    protected OrderedDictionary positions;
-    /// <summary>
-    /// Attribute interfaces that are required for enemies in this formation
-    /// </summary>
-    public HashSet<Type> Attributes { get; private set; }
+    protected List<Vector2> positions;
+	/// The index of an enemy matches the index of its corresponding position.
+	/// </summary>
+	protected List<Enemy> puppets;
+	/// <summary>
+	/// Attribute interfaces that are required for enemies in this formation
+	/// </summary>
+	public HashSet<Type> Attributes { get; private set; }
 
-    public Formation(ref Vector2 displacementFromCenter, HashSet<Type> attributes = null)
+    public Formation(Vector2 displacementFromCenter, HashSet<Type> attributes = null)
     {
         attributes = attributes ?? new HashSet<Type>(); //lets attributes be an optional argument
 
-        this.displacementFromCenter = displacementFromCenter;
-        positions = new OrderedDictionary();
+        this.DisplacementFromCenter = displacementFromCenter;
+        positions = new List<Vector2>();
+        puppets = new List<Enemy>();
 	}
 
     public abstract void AddPuppet(Enemy puppet);
 
     public abstract void RemovePuppet(Enemy puppet);
 
+    protected abstract void ReevaluatePositions();
+
+	public virtual void PuppetDied()
+    {
+        List<int> deadIndexes = new List<int>();
+        for (int i = 0; i < puppets.Count; i++)
+            if (puppets[i] == null)
+                deadIndexes.Add(i);
+
+        int indexesRemoved = 0;
+        foreach (int index in deadIndexes)
+        {
+            puppets.RemoveAt(index - indexesRemoved);
+			positions.RemoveAt(index - indexesRemoved);
+            indexesRemoved++;
+		}
+
+        ReevaluatePositions();
+	}
+
     /// <summary>
     /// Gets the formation position of the specified enemy relative to puppeteer center.
     /// </summary>
     /// <param name="puppet"></param>
-    public virtual Vector2 FormationPositionOf(Enemy puppet)
+    public Vector2 FormationPositionOf(Enemy puppet)
     {
-        if (positions[puppet] is Vector2 formationPos)
-            return (Vector2) formationPos + displacementFromCenter;
-
-        throw new Exception("Formation had a position stored as something other than a Vector!");
+        return DisplacementFromCenter + positions[puppets.IndexOf(puppet)];
     }
 
     /// <summary>
