@@ -41,7 +41,7 @@ public class EnemyPuppeteer : MonoBehaviour
 			enemyBehavior.moveTarget = (Vector2)character.transform.position + testFormation.FormationPositionOf(enemyBehavior);
 			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
 			if (!enemyMoveBehavior.IsMoving())
-				enemyMoveBehavior.MoveToTarget(6);
+				enemyMoveBehavior.MoveToTarget(2);
 			//dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
 		}
 		foreach (GameObject deadP in deadPuppets)

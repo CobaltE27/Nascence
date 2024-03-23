@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FlyingTestEnemy : Enemy, IFlier
 {
-	public float MAX_MOVEMENT_SPEED = 5.0f; //m per second
+	public float BASE_MOVEMENT_SPEED = 5.0f; //m per second
 	private bool amMoving = false;
 
 	protected override void Start()
@@ -51,7 +51,7 @@ public class FlyingTestEnemy : Enemy, IFlier
 
 		targetDir.Normalize();
 
-		mover.persistentVel = targetDir * (MAX_MOVEMENT_SPEED * approachSlowFactor * speedMultiplier);
+		mover.persistentVel = targetDir * (BASE_MOVEMENT_SPEED * approachSlowFactor * speedMultiplier);
 	}
 
 	private IEnumerator ApplyKnockback(Vector2 kbVel)
