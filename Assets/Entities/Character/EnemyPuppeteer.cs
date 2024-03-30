@@ -8,7 +8,7 @@ public class EnemyPuppeteer : MonoBehaviour
 	private DebugLogger dLog;
 	public GameObject character;
 
-	private HaloLineFormation testFormation = new HaloLineFormation(new Vector2(0, 4), 7, new HashSet<System.Type>() {typeof(IFlier)});
+	private HaloLineFormation testFormation;
 
 	void Start()
     {
@@ -16,11 +16,12 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region DebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", true },
+			{ "CheckForNewPuppets", false },
 			{ "targeting", false }
 		};
 		#endregion
 
+		testFormation = new HaloLineFormation(new Vector2(0, 4), character.transform, 7, new HashSet<System.Type>() { typeof(IFlier) });
 		StartCoroutine(updatePuppets());
     }
 

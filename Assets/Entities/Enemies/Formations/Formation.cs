@@ -21,11 +21,14 @@ public abstract class Formation : MonoBehaviour
 	/// Attribute interfaces that are required for enemies in this formation
 	/// </summary>
 	public HashSet<Type> Attributes { get; private set; }
+    protected Vector2 CenterOfFormations { get { return centerObject.transform.position; } }
+    protected Transform centerObject;
 
-    public Formation(Vector2 displacementFromCenter, HashSet<Type> attributes = null)
+    public Formation(Vector2 displacementFromCenter, Transform centerOfFormations, HashSet<Type> attributes = null)
     {
         attributes = attributes ?? new HashSet<Type>(); //lets attributes be an optional argument
 
+        centerObject = centerOfFormations;
         this.DisplacementFromCenter = displacementFromCenter;
         positions = new List<Vector2>();
         puppets = new List<Enemy>();
