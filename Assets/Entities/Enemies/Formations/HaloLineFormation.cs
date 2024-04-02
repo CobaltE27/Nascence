@@ -31,7 +31,8 @@ public class HaloLineFormation : Formation
 	protected override void ReevaluatePositions()
 	{
 		float positionProximity = width / (positions.Count + 1);
-		positions[0] = new Vector2();
+		if (puppets.Count > 0)
+			positions[0] = new Vector2();
 		for (int i = 1; i < puppets.Count; i++)
 		{
 			Vector2 newPosition = new Vector2(((i + 1) / 2) * positionProximity, 0);

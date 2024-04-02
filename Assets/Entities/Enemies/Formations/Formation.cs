@@ -64,7 +64,7 @@ public abstract class Formation : MonoBehaviour
     /// <param name="puppet"></param>
     public Vector2 FormationPositionOf(Enemy puppet)
     {
-        return DisplacementFromCenter + positions[puppets.IndexOf(puppet)];
+        return CenterOfFormations + DisplacementFromCenter + positions[puppets.IndexOf(puppet)];
     }
 
     /// <summary>
