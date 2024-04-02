@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPuppeteer : MonoBehaviour
+public class EnemyRecruiteer : MonoBehaviour
 {
-	private HashSet<GameObject> puppets = new HashSet<GameObject>();
+	private HashSet<GameObject> recruits = new HashSet<GameObject>();
 	private DebugLogger dLog;
 	public GameObject character;
 
@@ -16,66 +16,64 @@ public class EnemyPuppeteer : MonoBehaviour
 		#region DebugLogger Keys
 		dLog.loggableSystems = new Dictionary<string, bool>
 		{
-			{ "CheckForNewPuppets", false },
+			{ "CheckForNewRecruits", false },
 			{ "targeting", false }
 		};
 		#endregion
 
 		testFormation = new HaloLineFormation(new Vector2(0, 4), character.transform, 7, new HashSet<System.Type>() { typeof(IFlier) });
-		StartCoroutine(updatePuppets());
+		StartCoroutine(updateRecruits());
     }
 
     void FixedUpdate()
     {
-		List<GameObject> deadPuppets = new List<GameObject>();
-		foreach (GameObject puppet in puppets)
+		List<GameObject> deadRecruits = new List<GameObject>();
+		foreach (GameObject recruit in recruits)
         {
-			if (puppet == null)
+			if (recruit == null)
 			{
-				deadPuppets.Add(puppet);
+				deadRecruits.Add(recruit);
 				continue;
 			}
 
 			//placeholder for ai component
-			Enemy enemyBehavior = puppet.GetComponent<Enemy>();
-			//enemyBehavior.moveTarget = character.transform.position;
+			Enemy enemyBehavior = recruit.GetComponent<Enemy>();
 			enemyBehavior.moveTarget = testFormation.FormationPositionOf(enemyBehavior);
 			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
 			if (!enemyMoveBehavior.IsMoving())
 				enemyMoveBehavior.MoveToTarget(3);
-			//dLog.Log("Set an enemy to target: " + character.transform.position, "targeting");
 		}
-		foreach (GameObject deadP in deadPuppets)
+		foreach (GameObject deadR in deadRecruits)
 		{
-			puppets.Remove(deadP);
+			recruits.Remove(deadR);
 			testFormation.PuppetDied();
 		}
     }
 
-	private IEnumerator updatePuppets()
+	private IEnumerator updateRecruits()
 	{
 		while (true)
 		{
-			dLog.Log("checking for puppets", "CheckForNewPuppets");
+			dLog.Log("checking for recruits", "CheckForNewRecruits");
 			List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-			List<GameObject> newPuppets = new List<GameObject>();
+			List<GameObject> newRecruits = new List<GameObject>();
 			Vector2 charPos = character.transform.position;
 			foreach (GameObject candidate in candidates)
 			{
 				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
 				if (enemyBehavior.DoesNotice(charPos))
 				{
-					newPuppets.Add(candidate);
+					newRecruits.Add(candidate);
 					enemyBehavior.EndCurrentBehavior();
-					dLog.Log("found new puppet!", "CheckForNewPuppets");
+					dLog.Log("found new recruit!", "CheckForNewRecruits");
 
 					//temporary for testing
-					if (!puppets.Contains(candidate))
+					if (!recruits.Contains(candidate))
 						testFormation.AddPuppet(enemyBehavior);
 				}
 			}
 
-			puppets.UnionWith(newPuppets); //automatically avoids duplicates
+			recruits.UnionWith(newRecruits);
 					
 			yield return new WaitForSeconds(0.5f); 
 		}
