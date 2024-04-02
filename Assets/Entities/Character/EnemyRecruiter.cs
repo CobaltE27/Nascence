@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyRecruiteer : MonoBehaviour
+public class EnemyPuppeteer : MonoBehaviour
 {
 	private HashSet<GameObject> recruits = new HashSet<GameObject>();
 	private DebugLogger dLog;
