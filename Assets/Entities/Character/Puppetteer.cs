@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Puppetteer : MonoBehaviour
 {
     protected List<Formation> formations = new List<Formation>();
-    public EnemyRecruiter recruiter;
     //protected Queue???<> groupAttacks;
 
     void Start()
@@ -14,9 +13,9 @@ public abstract class Puppetteer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
-        
+        CleanFormations();
     }
 
     /// <summary>
@@ -35,5 +34,13 @@ public abstract class Puppetteer : MonoBehaviour
                 }
 
         potentialRecruits.ExceptWith(keeps);
+    }
+
+    protected void CleanFormations()
+    {
+        foreach (Formation form in formations)
+            foreach (Enemy puppet in form.Puppets)
+                if (puppet == null)
+                    form.PuppetDied();
     }
 }

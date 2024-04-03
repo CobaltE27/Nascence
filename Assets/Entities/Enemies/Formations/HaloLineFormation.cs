@@ -16,24 +16,24 @@ public class HaloLineFormation : Formation
 
 	public override void AddPuppet(Enemy puppet)
 	{
-		puppets.Add(puppet);
+		Puppets.Add(puppet);
 		positions.Add(new Vector2());
 		ReevaluatePositions();
 	}
 
 	public override void RemovePuppet(Enemy puppet)
 	{
-		positions.RemoveAt(puppets.IndexOf(puppet));
-		puppets.Remove(puppet);
+		positions.RemoveAt(Puppets.IndexOf(puppet));
+		Puppets.Remove(puppet);
 		ReevaluatePositions();
 	}
 
 	protected override void ReevaluatePositions()
 	{
 		float positionProximity = width / (positions.Count + 1);
-		if (puppets.Count > 0)
+		if (Puppets.Count > 0)
 			positions[0] = new Vector2();
-		for (int i = 1; i < puppets.Count; i++)
+		for (int i = 1; i < Puppets.Count; i++)
 		{
 			Vector2 newPosition = new Vector2(((i + 1) / 2) * positionProximity, 0);
 			if (i % 2 == 1)
@@ -56,9 +56,9 @@ public class HaloLineFormation : Formation
 		Vector2[] posCopy = new Vector2[positions.Count()];
 		positions.CopyTo(posCopy);
 		List<Vector2> positionsCopy = new List<Vector2>(posCopy);
-		List<Enemy> enemiesByDistance = puppets.OrderByDescending(o => Vector2.Distance(formationCenterWorldCoords, o.transform.position)).ToList();
+		List<Enemy> enemiesByDistance = Puppets.OrderByDescending(o => Vector2.Distance(formationCenterWorldCoords, o.transform.position)).ToList();
 
-		Enemy[] newPuppetsList = new Enemy[puppets.Count];
+		Enemy[] newPuppetsList = new Enemy[Puppets.Count];
 		for (int i = 0; i < enemiesByDistance.Count(); i++) //Give the farthest enemy its closest position
 		{
 			positionsCopy = positionsCopy.OrderBy(o => Vector2.Distance(o + formationCenterWorldCoords, enemiesByDistance[i].transform.position)).ToList();
@@ -67,6 +67,6 @@ public class HaloLineFormation : Formation
 			newPuppetsList[positions.IndexOf(nearestPos)] = enemiesByDistance[i];
 		}
 
-		puppets = new List<Enemy>(newPuppetsList);
+		Puppets = new List<Enemy>(newPuppetsList);
 	}
 }

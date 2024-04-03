@@ -16,7 +16,7 @@ public abstract class Formation : MonoBehaviour
     protected List<Vector2> positions;
 	/// The index of an enemy matches the index of its corresponding position.
 	/// </summary>
-	protected List<Enemy> puppets;
+	public List<Enemy> Puppets { get; protected set; }
 	/// <summary>
 	/// Attribute interfaces that are required for enemies in this formation
 	/// </summary>
@@ -31,7 +31,7 @@ public abstract class Formation : MonoBehaviour
         centerObject = centerOfFormations;
         this.DisplacementFromCenter = displacementFromCenter;
         positions = new List<Vector2>();
-        puppets = new List<Enemy>();
+        Puppets = new List<Enemy>();
 	}
 
     public abstract void AddPuppet(Enemy puppet);
@@ -43,14 +43,14 @@ public abstract class Formation : MonoBehaviour
 	public virtual void PuppetDied()
     {
         List<int> deadIndexes = new List<int>();
-        for (int i = 0; i < puppets.Count; i++)
-            if (puppets[i] == null)
+        for (int i = 0; i < Puppets.Count; i++)
+            if (Puppets[i] == null)
                 deadIndexes.Add(i);
 
         int indexesRemoved = 0;
         foreach (int index in deadIndexes)
         {
-            puppets.RemoveAt(index - indexesRemoved);
+            Puppets.RemoveAt(index - indexesRemoved);
 			positions.RemoveAt(index - indexesRemoved);
             indexesRemoved++;
 		}
@@ -64,7 +64,7 @@ public abstract class Formation : MonoBehaviour
     /// <param name="puppet"></param>
     public Vector2 FormationPositionOf(Enemy puppet)
     {
-        return CenterOfFormations + DisplacementFromCenter + positions[puppets.IndexOf(puppet)];
+        return CenterOfFormations + DisplacementFromCenter + positions[Puppets.IndexOf(puppet)];
     }
 
     /// <summary>
