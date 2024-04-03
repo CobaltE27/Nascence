@@ -356,6 +356,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 8406664226718760675, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: m_Name
+      value: EnemyRecruiter
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d99d8fd7346643540b059d3954eaaf6f, type: 3}
 --- !u!1001 &1908182845

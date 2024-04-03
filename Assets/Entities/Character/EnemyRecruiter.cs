@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class EnemyPuppeteer : MonoBehaviour
+public class EnemyRecruiter : MonoBehaviour
 {
-	private HashSet<GameObject> recruits = new HashSet<GameObject>();
+	private HashSet<Enemy> recruits = new HashSet<Enemy>();
 	private DebugLogger dLog;
+	public Puppetteer puppetteer;
 	public GameObject character;
 
 	private HaloLineFormation testFormation;
@@ -27,8 +29,8 @@ public class EnemyPuppeteer : MonoBehaviour
 
     void FixedUpdate()
     {
-		List<GameObject> deadRecruits = new List<GameObject>();
-		foreach (GameObject recruit in recruits)
+		List<Enemy> deadRecruits = new List<Enemy>();
+		foreach (Enemy recruit in recruits)
         {
 			if (recruit == null)
 			{
@@ -43,11 +45,13 @@ public class EnemyPuppeteer : MonoBehaviour
 			if (!enemyMoveBehavior.IsMoving())
 				enemyMoveBehavior.MoveToTarget(3);
 		}
-		foreach (GameObject deadR in deadRecruits)
+		foreach (Enemy deadR in deadRecruits)
 		{
 			recruits.Remove(deadR);
 			testFormation.PuppetDied();
 		}
+
+		puppetteer.AssignRecruits(ref recruits);
     }
 
 	private IEnumerator updateRecruits()
@@ -55,10 +59,11 @@ public class EnemyPuppeteer : MonoBehaviour
 		while (true)
 		{
 			dLog.Log("checking for recruits", "CheckForNewRecruits");
-			List<GameObject> candidates = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-			List<GameObject> newRecruits = new List<GameObject>();
+			List<GameObject> taggedEnemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+			List<Enemy> candidates = taggedEnemies.Cast<Enemy>().ToList();
+			List<Enemy> newRecruits = new List<Enemy>();
 			Vector2 charPos = character.transform.position;
-			foreach (GameObject candidate in candidates)
+			foreach (Enemy candidate in candidates)
 			{
 				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
 				if (enemyBehavior.DoesNotice(charPos))
@@ -78,5 +83,4 @@ public class EnemyPuppeteer : MonoBehaviour
 			yield return new WaitForSeconds(0.5f); 
 		}
 	}
-
 }
