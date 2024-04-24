@@ -16,15 +16,15 @@ public abstract class Puppetteer : MonoBehaviour
     protected virtual void Start()
     {
         //initialize formations, group attack, groupAttacks list, run DecideNextState etc.
-        StartCoroutine(DecideNextState());
+        DecideNextState();
     }
 
     /// <summary>
-    /// Calls CleanFormations()
+    /// Does nothing right now
     /// </summary>
     protected virtual void FixedUpdate()
     {
-        CleanFormations();
+
     }
 
     /// <summary>
@@ -41,23 +41,29 @@ public abstract class Puppetteer : MonoBehaviour
                 {
                     keeps.Add(recruit);
                     form.AddPuppet(recruit);
+                    recruit.inFormation = true;
                 }
-                else
-                    Debug.Log("Not a match");
 
         potentialRecruits.ExceptWith(keeps);
     }
 
     protected void CleanFormations()
     {
+        HashSet<Formation> hadDeaths = new HashSet<Formation>();
         foreach (Formation form in formations)
             foreach (Enemy puppet in form.Puppets)
                 if (puppet == null)
-                    form.PuppetDied();
+                {
+                    hadDeaths.Add(form);
+                    break;
+                }
+
+        foreach (Formation form in hadDeaths)
+            form.PuppetDied();
     }
 
     /// <summary>
     /// Coroutine that decides what to do between states. In many cases, will not need to execute over multiple updates, but can as a coroutine.
     /// </summary>
-    protected abstract IEnumerator DecideNextState();
+    protected abstract void DecideNextState();
 }

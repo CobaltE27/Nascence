@@ -17,15 +17,14 @@ public class TestPuppetteer : Puppetteer
 		base.Start();
 	}
 
-	protected override IEnumerator DecideNextState()
+	protected override void DecideNextState()
 	{
+		Debug.Log("Deciding");
 		CleanFormations();
 		if (fliers.Puppets.Count == 0)
 		{
-			Debug.Log("No puppets yet");
-			yield return new WaitForSeconds(0.5f);
-			StartCoroutine(DecideNextState());
-			yield break;
+			StartCoroutine(WaitAndThen(DecideNextState));
+			return;
 		}
 		else
 		{
@@ -38,19 +37,25 @@ public class TestPuppetteer : Puppetteer
 			}
 
 			GroupAttack nextMove = groupAttacks[rng.Next(groupAttacks.Count)];
-			yield return new WaitForSeconds(1);
-			nextMove(() => StartCoroutine(DecideNextState()));
-			yield break;
+			StartCoroutine(nextMove(DecideNextState));
 		}
 	}
 
 	private IEnumerator AllAttack(Action callBack)
 	{
+		Debug.Log("All attacking");
 		foreach (IDasher enemy in fliers.Puppets)
 		{
 			enemy.DashToward(player.transform.position);
 		}
 
+		StartCoroutine(WaitAndThen(callBack));
+		yield break;
+	}
+
+	private IEnumerator WaitAndThen(Action callBack)
+	{
+		yield return new WaitForSeconds(1);
 		callBack();
 		yield break;
 	}

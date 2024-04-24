@@ -63,7 +63,7 @@ public class EnemyRecruiter : MonoBehaviour
 			foreach (Enemy candidate in candidates)
 			{
 				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
-				if (enemyBehavior.DoesNotice(charPos))
+				if (enemyBehavior.DoesNotice(charPos) && !enemyBehavior.inFormation)
 				{
 					newRecruits.Add(candidate);
 					enemyBehavior.EndCurrentBehavior();
