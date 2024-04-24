@@ -5,14 +5,18 @@ using UnityEngine;
 
 public abstract class Puppetteer : MonoBehaviour
 {
-    protected List<Formation> formations = new();
-    protected List<GroupAttack> groupAttacks = new();
+    protected List<Formation> formations = new List<Formation>();
+    protected List<GroupAttack> groupAttacks = new List<GroupAttack>();
 
     protected delegate IEnumerator GroupAttack(Action callBack);
 
+    /// <summary>
+    /// Runs DecideNextState
+    /// </summary>
     protected virtual void Start()
     {
-        //initialize formations, group attack, groupAttacks list, etc.
+        //initialize formations, group attack, groupAttacks list, run DecideNextState etc.
+        StartCoroutine(DecideNextState());
     }
 
     /// <summary>
@@ -29,6 +33,7 @@ public abstract class Puppetteer : MonoBehaviour
     /// <param name="potentialRecruits"></param>
     public void AssignRecruits(ref HashSet<Enemy> potentialRecruits)
     {
+        Debug.Log("Assigning recruits");
         List<Enemy> keeps = new List<Enemy>();
         foreach (Enemy recruit in potentialRecruits)
             foreach (Formation form in formations)
@@ -37,6 +42,8 @@ public abstract class Puppetteer : MonoBehaviour
                     keeps.Add(recruit);
                     form.AddPuppet(recruit);
                 }
+                else
+                    Debug.Log("Not a match");
 
         potentialRecruits.ExceptWith(keeps);
     }

@@ -26,7 +26,7 @@ public abstract class Formation : MonoBehaviour
 
     public Formation(Vector2 displacementFromCenter, Transform centerOfFormations, HashSet<Type> attributes = null)
     {
-        attributes = attributes ?? new HashSet<Type>(); //lets attributes be an optional argument
+        Attributes = attributes ?? new HashSet<Type>(); //lets attributes be an optional argument
 
         centerObject = centerOfFormations;
         this.DisplacementFromCenter = displacementFromCenter;
@@ -72,8 +72,11 @@ public abstract class Formation : MonoBehaviour
     /// </summary>
     public bool HasCorrectAttributes(Enemy suspect)
     {
+        Type[] a = suspect.GetType().FindInterfaces((t, o) => { return true;}, new object()); //Gets all interfaces using dummy filter
+        List<Type> suspectAttributes = new List<Type>(a);
+
         foreach (Type attribute in Attributes)
-            if (!attribute.Equals(suspect)) //checks that suspect's type is equal to attribute's type.
+            if (!suspectAttributes.Contains(attribute)) //makes sure suspect has all interfaces in Attribute, though it can have extras
                 return false;
         return true;
     }

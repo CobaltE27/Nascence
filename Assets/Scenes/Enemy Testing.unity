@@ -276,6 +276,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2763121484594836325, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: puppetteer
+      value: 
+      objectReference: {fileID: 1135068523}
     - target: {fileID: 8293681666352901809, guid: d99d8fd7346643540b059d3954eaaf6f,
         type: 3}
       propertyPath: m_Enabled
@@ -363,6 +368,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d99d8fd7346643540b059d3954eaaf6f, type: 3}
+--- !u!1 &1135068521 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8293681667074079871, guid: d99d8fd7346643540b059d3954eaaf6f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1135068520}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1135068522 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8406664226718760675, guid: d99d8fd7346643540b059d3954eaaf6f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1135068520}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1135068523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135068522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b06867b00f160b44a9fefb61e68cf8e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1135068521}
 --- !u!1001 &1908182845
 PrefabInstance:
   m_ObjectHideFlags: 0

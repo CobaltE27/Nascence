@@ -10,7 +10,6 @@ public class EnemyRecruiter : MonoBehaviour
 	public Puppetteer puppetteer;
 	public GameObject character;
 
-	private HaloLineFormation testFormation;
 
 	void Start()
     {
@@ -23,7 +22,6 @@ public class EnemyRecruiter : MonoBehaviour
 		};
 		#endregion
 
-		testFormation = new HaloLineFormation(new Vector2(0, 4), character.transform, 7, new HashSet<System.Type>() { typeof(IFlier) });
 		StartCoroutine(updateRecruits());
     }
 
@@ -37,22 +35,15 @@ public class EnemyRecruiter : MonoBehaviour
 				deadRecruits.Add(recruit);
 				continue;
 			}
-
-			//placeholder for ai component
-			Enemy enemyBehavior = recruit.GetComponent<Enemy>();
-			enemyBehavior.moveTarget = testFormation.FormationPositionOf(enemyBehavior);
-			IMoving enemyMoveBehavior = (IMoving)enemyBehavior;
-			if (!enemyMoveBehavior.IsMoving())
-				enemyMoveBehavior.MoveToTarget(3);
 		}
 		foreach (Enemy deadR in deadRecruits)
 		{
 			recruits.Remove(deadR);
-			testFormation.PuppetDied();
 		}
 
-		puppetteer.AssignRecruits(ref recruits);
-    }
+		if (recruits.Count != 0)
+			puppetteer.AssignRecruits(ref recruits);
+	}
 
 	private IEnumerator updateRecruits()
 	{
@@ -60,7 +51,13 @@ public class EnemyRecruiter : MonoBehaviour
 		{
 			dLog.Log("checking for recruits", "CheckForNewRecruits");
 			List<GameObject> taggedEnemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-			List<Enemy> candidates = taggedEnemies.Cast<Enemy>().ToList();
+			List<Enemy> candidates = new List<Enemy>();
+			foreach (GameObject tagged in taggedEnemies)
+			{
+				Enemy e = tagged.GetComponent<Enemy>();
+				if (e != null)
+					candidates.Add(e);
+			}
 			List<Enemy> newRecruits = new List<Enemy>();
 			Vector2 charPos = character.transform.position;
 			foreach (Enemy candidate in candidates)
@@ -71,10 +68,6 @@ public class EnemyRecruiter : MonoBehaviour
 					newRecruits.Add(candidate);
 					enemyBehavior.EndCurrentBehavior();
 					dLog.Log("found new recruit!", "CheckForNewRecruits");
-
-					//temporary for testing
-					if (!recruits.Contains(candidate))
-						testFormation.AddPuppet(enemyBehavior);
 				}
 			}
 
