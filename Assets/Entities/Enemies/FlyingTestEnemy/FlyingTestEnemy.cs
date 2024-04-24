@@ -5,7 +5,6 @@ using UnityEngine;
 public class FlyingTestEnemy : Enemy, IFlier
 {
 	public float BASE_MOVEMENT_SPEED = 5.0f; //m per second
-	private bool amMoving = false;
 
 	protected override void Start()
 	{

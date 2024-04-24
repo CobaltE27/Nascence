@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Puppetteer : MonoBehaviour
 {
     protected List<Formation> formations = new List<Formation>();
-    //protected Queue???<> groupAttacks;
+    //protected Queue???<functors/coroutines> groupAttacks;
 
     void Start()
     {

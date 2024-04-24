@@ -18,6 +18,12 @@ public abstract class Enemy : MonoBehaviour
     public int KB_DURATION_FRAMES = 20;
     protected Vector2 kbDirectionalBias = new Vector2(1, 0);
 
+    protected bool amMoving = false;
+    protected bool amAttacking = false;
+
+    /// <summary>
+    /// Gets mover component attached to this object, adds "kbVelocity" as a constant velocity, sets move target to current position.
+    /// </summary>
     protected virtual void Start()
     {
         mover = GetComponent<EntityMover>();
