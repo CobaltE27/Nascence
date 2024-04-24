@@ -5,6 +5,7 @@ using UnityEngine;
 public class FlyingTestEnemy : Enemy, IFlier, IDasher
 {
 	public float BASE_MOVEMENT_SPEED = 5.0f; //m per second
+	public SpriteRenderer spr;
 
 	protected override void Start()
 	{
@@ -128,13 +129,12 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	public IEnumerator DashToward(Vector2 target)
 	{
 		amAttacking = true;
-		SpriteRenderer spr = GetComponent<SpriteRenderer>();
 		spr.color = Color.red;
 
 		for (int timer = 0; timer < 10; timer++)
 			yield return new WaitForFixedUpdate();
 
-		spr.color = new Color(255, 159, 52);
+		spr.color = new Color(255/255.0f, 159/255.0f, 52/255.0f);
 		amAttacking = false;
 		yield break;
 	}

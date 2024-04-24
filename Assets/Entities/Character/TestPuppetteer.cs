@@ -46,7 +46,7 @@ public class TestPuppetteer : Puppetteer
 		Debug.Log("All attacking");
 		foreach (IDasher enemy in fliers.Puppets)
 		{
-			enemy.DashToward(player.transform.position);
+			StartCoroutine(enemy.DashToward(player.transform.position));
 		}
 
 		StartCoroutine(WaitAndThen(callBack));
