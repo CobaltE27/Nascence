@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class FlyingTestEnemy : Enemy, IFlier, IDasher
 {
@@ -38,13 +39,29 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	}
 
 	/// <summary>
-	/// Sets velocity to point toward a target position in world-space.
+	/// Sets velocity to point toward the target position in world-space.
 	/// Consider adding momentum system in the future so that enemies respond to moving targets in a smoother way
 	/// </summary>
 	/// <param name="target"></param>
 	public void MoveTowardTarget(float speedMultiplier)
 	{
 		Vector2 targetDir = moveTarget - (Vector2)rb.transform.position;
+		float approachSlowFactor = 1.0f;
+		if (targetDir.sqrMagnitude < 0.5)
+			approachSlowFactor = targetDir.magnitude; //using the squared version so that movement slows less further from the target.
+
+		targetDir.Normalize();
+
+		mover.persistentVel = targetDir * (BASE_MOVEMENT_SPEED * approachSlowFactor * speedMultiplier);
+	}
+
+	/// <summary>
+	/// Sets velocity to point toward a target position.
+	/// </summary>
+	/// <param name="target"></param>
+	public void MoveTowardArbitrary(Vector2 target, float speedMultiplier)
+	{
+		Vector2 targetDir = target - (Vector2)rb.transform.position;
 		float approachSlowFactor = 1.0f;
 		if (targetDir.sqrMagnitude < 0.5)
 			approachSlowFactor = targetDir.magnitude; //using the squared version so that movement slows less further from the target.
@@ -130,9 +147,26 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	{
 		amAttacking = true;
 		spr.color = Color.red;
+		Vector2 dashDirection = target - (Vector2)rb.transform.position;
+		dashDirection.Normalize();
+		Vector2 dashEnd = target + dashDirection * 5.0f; //overshoot player
+		bool reachedEnd = false;
+		bool pastTarget = false;
+		int pastCounter = 0;
 
-		for (int timer = 0; timer < 10; timer++)
+		while (true)
+		{
+			MoveTowardArbitrary(dashEnd, 5.0f);
+			reachedEnd = Vector2.Distance(dashEnd, (Vector2)rb.transform.position) < 0.1f;
+			pastTarget = Vector2.Angle((Vector2)rb.transform.position - target, dashDirection) < 90; //should be 180 when dash starts
+			if (pastTarget)
+				pastCounter++;
+			
+			if (reachedEnd || pastCounter > 100)
+				break;
+
 			yield return new WaitForFixedUpdate();
+		}
 
 		spr.color = new Color(255/255.0f, 159/255.0f, 52/255.0f);
 		amAttacking = false;

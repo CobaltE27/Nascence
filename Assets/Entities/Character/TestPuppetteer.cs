@@ -30,14 +30,25 @@ public class TestPuppetteer : Puppetteer
 		{
 			foreach (Enemy flier in fliers.Puppets)
 			{
-				flier.moveTarget = fliers.FormationPositionOf(flier);
-				IMoving flierMoveBehavior = (IMoving)flier;
-				if (!flierMoveBehavior.IsMoving())
-					flierMoveBehavior.MoveToTarget(3);
+				IAttacker flierAttackBehavior = (IAttacker)flier;
+				if (!flierAttackBehavior.IsAttacking())
+				{
+					flier.moveTarget = fliers.FormationPositionOf(flier);
+					IMoving flierMoveBehavior = (IMoving)flier;
+					if (!flierMoveBehavior.IsMoving())
+						flierMoveBehavior.MoveToTarget(3); 
+				}
 			}
 
-			GroupAttack nextMove = groupAttacks[rng.Next(groupAttacks.Count)];
-			StartCoroutine(nextMove(DecideNextState));
+			if (fliers.InFormation())
+			{
+				GroupAttack nextMove = groupAttacks[rng.Next(groupAttacks.Count)];
+				StartCoroutine(nextMove(DecideNextState));
+			}
+			else
+			{
+				StartCoroutine(WaitAndThen(DecideNextState));
+			}
 		}
 	}
 

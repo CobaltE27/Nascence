@@ -80,4 +80,17 @@ public abstract class Formation : MonoBehaviour
                 return false;
         return true;
     }
+
+    /// <summary>
+    /// Indicates if a certain amount of puppets are within margin of the formation position.
+    /// </summary>
+    public bool InFormation(float margin = 0.1f, int exceptionsAllowed = 0)
+    {
+        int inFormationCount = 0;
+        for (int i = 0; i < Puppets.Count; i++)
+            if (Vector2.Distance((Vector2)Puppets[i].transform.position, positions[i]) < margin)
+                inFormationCount++;
+
+        return inFormationCount >= Puppets.Count - exceptionsAllowed;
+    }
 }

@@ -41,7 +41,9 @@ public abstract class Puppetteer : MonoBehaviour
                 {
                     keeps.Add(recruit);
                     form.AddPuppet(recruit);
+
                     recruit.inFormation = true;
+                    recruit.EndCurrentBehavior();
                 }
 
         potentialRecruits.ExceptWith(keeps);
