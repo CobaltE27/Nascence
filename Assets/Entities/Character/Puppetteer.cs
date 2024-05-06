@@ -44,6 +44,7 @@ public abstract class Puppetteer : MonoBehaviour
 
                     recruit.inFormation = true;
                     recruit.EndCurrentBehavior();
+                    Debug.Log("Ended current behavior.");
                 }
 
         potentialRecruits.ExceptWith(keeps);

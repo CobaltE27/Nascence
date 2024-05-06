@@ -7,6 +7,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 {
 	public float BASE_MOVEMENT_SPEED = 5.0f; //m per second
 	public SpriteRenderer spr;
+	private Coroutine idleRoutine;
 
 	protected override void Start()
 	{
@@ -14,7 +15,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 		kbStrength = 1.0f;
 		KB_DURATION_FRAMES = 25;
 
-		StartCoroutine(Idle());
+		idleRoutine = StartCoroutine(Idle());
 	}
 
 	protected override void FixedUpdate()
@@ -123,6 +124,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 				MoveTowardTarget(speedMultiplier);
 			yield return new WaitForFixedUpdate();
 		}
+		mover.persistentVel = Vector2.zero; //Arrest movement once witihn margin
 
 		amMoving = false;
 		yield break;
@@ -135,12 +137,12 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 
 	public override void EndCurrentBehavior()
 	{
-		StopCoroutine(Idle());
+		StopCoroutine(idleRoutine);
 	}
 
 	public override void ResumeBehavior()
 	{
-		StartCoroutine(Idle());
+		idleRoutine = StartCoroutine(Idle());
 	}
 
 	public IEnumerator DashToward(Vector2 target)
@@ -156,7 +158,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 
 		while (true)
 		{
-			MoveTowardArbitrary(dashEnd, 5.0f);
+			MoveTowardArbitrary(dashEnd, 2.0f);
 			reachedEnd = Vector2.Distance(dashEnd, (Vector2)rb.transform.position) < 0.1f;
 			pastTarget = Vector2.Angle((Vector2)rb.transform.position - target, dashDirection) < 90; //should be 180 when dash starts
 			if (pastTarget)

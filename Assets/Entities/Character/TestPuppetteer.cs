@@ -36,12 +36,13 @@ public class TestPuppetteer : Puppetteer
 					flier.moveTarget = fliers.FormationPositionOf(flier);
 					IMoving flierMoveBehavior = (IMoving)flier;
 					if (!flierMoveBehavior.IsMoving())
-						flierMoveBehavior.MoveToTarget(3); 
+						StartCoroutine(flierMoveBehavior.MoveToTarget()); 
 				}
 			}
 
-			if (fliers.InFormation())
+			if (fliers.Aligned())
 			{
+				Debug.Log("Formation aligned");
 				GroupAttack nextMove = groupAttacks[rng.Next(groupAttacks.Count)];
 				StartCoroutine(nextMove(DecideNextState));
 			}

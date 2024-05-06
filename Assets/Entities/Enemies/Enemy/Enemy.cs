@@ -22,6 +22,8 @@ public abstract class Enemy : MonoBehaviour
     protected bool amAttacking = false;
     public bool inFormation = false;
 
+    //protected 
+
     /// <summary>
     /// Gets mover component attached to this object, adds "kbVelocity" as a constant velocity, sets move target to current position.
     /// </summary>

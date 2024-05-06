@@ -84,13 +84,25 @@ public abstract class Formation : MonoBehaviour
     /// <summary>
     /// Indicates if a certain amount of puppets are within margin of the formation position.
     /// </summary>
-    public bool InFormation(float margin = 0.1f, int exceptionsAllowed = 0)
+    public bool Aligned(float margin = 0.2f, int exceptionsAllowed = 0)
     {
-        int inFormationCount = 0;
+        int alignedCount = 0;
         for (int i = 0; i < Puppets.Count; i++)
-            if (Vector2.Distance((Vector2)Puppets[i].transform.position, positions[i]) < margin)
-                inFormationCount++;
+        {
+            Debug.Log(Vector2.Distance((Vector2)Puppets[i].transform.position, WorldPositionOf(i)));
+            if (Vector2.Distance((Vector2)Puppets[i].transform.position, WorldPositionOf(i)) < margin)
+                alignedCount++;
+        }
 
-        return inFormationCount >= Puppets.Count - exceptionsAllowed;
+        return alignedCount >= Puppets.Count - exceptionsAllowed;
     }
+
+    /// <summary>
+    /// Returns the world position of puppet[i]
+    /// </summary>
+    private Vector2 WorldPositionOf(int index)
+    {
+        return CenterOfFormations + DisplacementFromCenter + positions[index];
+
+	}
 }
