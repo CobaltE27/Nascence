@@ -34,7 +34,11 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 		health -= damage;
 
 		if (health <= 0.0f)
+		{
+			StopAllCoroutines(); //doesn't seem to actually stop the routine, following line actually does the work by just destroying this script component
+			Destroy(this);
 			Destroy(this.gameObject);
+		}
 
 		StartCoroutine(ApplyKnockback(direction.normalized * kbStrength * kbDirectionalBias));
 	}
