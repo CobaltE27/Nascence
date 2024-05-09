@@ -48,7 +48,7 @@ public class TestPuppetteer : Puppetteer
 			}
 			else
 			{
-				StartCoroutine(WaitAndThen(DecideNextState));
+				StartCoroutine(NextFrameAndThen(DecideNextState));
 			}
 		}
 	}
@@ -68,6 +68,13 @@ public class TestPuppetteer : Puppetteer
 	private IEnumerator WaitAndThen(Action callBack)
 	{
 		yield return new WaitForSeconds(1);
+		callBack();
+		yield break;
+	}
+
+	private IEnumerator NextFrameAndThen(Action callBack)
+	{
+		yield return new WaitForFixedUpdate();
 		callBack();
 		yield break;
 	}

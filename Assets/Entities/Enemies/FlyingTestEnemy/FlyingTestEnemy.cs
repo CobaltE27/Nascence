@@ -168,7 +168,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 			if (pastTarget)
 				pastCounter++;
 			
-			if (reachedEnd || pastCounter > 100)
+			if (reachedEnd || pastCounter > 50)
 				break;
 
 			yield return new WaitForFixedUpdate();
