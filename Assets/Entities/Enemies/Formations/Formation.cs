@@ -84,7 +84,7 @@ public abstract class Formation : MonoBehaviour
     /// <summary>
     /// Indicates if a certain amount of puppets are within margin of the formation position.
     /// </summary>
-    public bool Aligned(float margin = 0.2f, int exceptionsAllowed = 0)
+    public bool Aligned(float margin = 0.1f, int exceptionsAllowed = 0)
     {
         int alignedCount = 0;
         for (int i = 0; i < Puppets.Count; i++)

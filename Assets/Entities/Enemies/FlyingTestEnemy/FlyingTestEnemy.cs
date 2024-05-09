@@ -35,8 +35,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 
 		if (health <= 0.0f)
 		{
-			StopAllCoroutines(); //doesn't seem to actually stop the routine, following line actually does the work by just destroying this script component
-			Destroy(this);
+			StopAllCoroutines(); //doesn't seem to actually stop coroutines with loops?
 			Destroy(this.gameObject);
 		}
 
@@ -126,9 +125,12 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 		{
 			if (kbDurationLeft == 0)
 				MoveTowardTarget(speedMultiplier);
+
 			yield return new WaitForFixedUpdate();
+			if (this == null) //temporary testing fix
+				yield break;
 		}
-		mover.persistentVel = Vector2.zero; //Arrest movement once witihn margin
+		mover.persistentVel = Vector2.zero; //Arrest movement once within margin
 
 		amMoving = false;
 		yield break;
@@ -172,6 +174,8 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 				break;
 
 			yield return new WaitForFixedUpdate();
+			if (this == null) //temporary testing fix
+				yield break;
 		}
 
 		spr.color = new Color(255/255.0f, 159/255.0f, 52/255.0f);

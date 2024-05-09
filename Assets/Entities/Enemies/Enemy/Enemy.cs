@@ -54,7 +54,11 @@ public abstract class Enemy : MonoBehaviour
         health -= damage;
 
         if (health <= 0.0f)
-            Destroy(this.gameObject);
+        {
+            StopAllCoroutines();
+			Destroy(this);
+			Destroy(this.gameObject);
+        }
 
 		mover.constantVels["kbVelocity"] = direction.normalized * kbStrength * kbDirectionalBias;
         kbDurationLeft = KB_DURATION_FRAMES; 
