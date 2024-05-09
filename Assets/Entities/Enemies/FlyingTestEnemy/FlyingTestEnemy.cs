@@ -12,8 +12,8 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	protected override void Start()
 	{
 		base.Start();
-		kbStrength = 1.0f;
-		KB_DURATION_FRAMES = 25;
+		kbStrength = 2.5f;
+		KB_DURATION_FRAMES = 10;
 
 		idleRoutine = StartCoroutine(Idle());
 	}

@@ -175,7 +175,7 @@ MonoBehaviour:
   steamOnHit: 50
   moveTarget: {x: 0, y: 0}
   NOTICE_RANGE: 10
-  KB_DURATION_FRAMES: 20
+  KB_DURATION_FRAMES: 10
   inFormation: 0
   BASE_MOVEMENT_SPEED: 5
   spr: {fileID: 8679087147612377044}

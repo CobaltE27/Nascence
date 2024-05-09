@@ -13,16 +13,14 @@ public abstract class Enemy : MonoBehaviour
 
     protected EntityMover mover;
 
-    protected float kbStrength = 0.8f;
+    protected float kbStrength = 1.6f;
     protected int kbDurationLeft = 0;
-    public int KB_DURATION_FRAMES = 20;
+    public int KB_DURATION_FRAMES = 10;
     protected Vector2 kbDirectionalBias = new Vector2(1, 0);
 
     protected bool amMoving = false;
     protected bool amAttacking = false;
     public bool inFormation = false;
-
-    //protected 
 
     /// <summary>
     /// Gets mover component attached to this object, adds "kbVelocity" as a constant velocity, sets move target to current position.
@@ -56,7 +54,6 @@ public abstract class Enemy : MonoBehaviour
         if (health <= 0.0f)
         {
             StopAllCoroutines();
-			Destroy(this);
 			Destroy(this.gameObject);
         }
 
