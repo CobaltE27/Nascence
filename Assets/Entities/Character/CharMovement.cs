@@ -22,8 +22,6 @@ public class CharMovement : MonoBehaviour
     private float MINIMUM_SPEED = 0.01f;
     public int SWING_COOLDOWN_FRAMES = 10;
 
-    BoxCollider2D charCollider;
-    Rigidbody2D rb;
     EntityMover mover;
     Camera currentCam;
     public Transform swingIndicatorPivot;
@@ -77,8 +75,6 @@ public class CharMovement : MonoBehaviour
     private void Start()
     {
         //references to attached components are made
-        charCollider = GetComponent<BoxCollider2D>();
-        rb = GetComponent<Rigidbody2D>();
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("recoilVelocity", new Vector2());
 
@@ -418,9 +414,7 @@ public class CharMovement : MonoBehaviour
         }
         #endregion 
 
-        //movement happens
         if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
-		//rb.MovePosition(rb.position + charCollCalc.MoveAndSlideRedirectVelocity(ref velocity, Time.deltaTime) + charCollCalc.MoveAndSlide(recoilVelocity, Time.deltaTime));
 	}
 
     /// <summary>
