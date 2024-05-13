@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class EntityMovement : MonoBehaviour
 {
-    protected EntityMover mover;
+    public EntityMover mover;
 	protected int KB_DURATION_FRAMES;
 	protected float KB_DISTANCE;
 	protected Vector2 kbDirectionalBias = Vector2.one;

@@ -263,6 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85cebb43cfed2d41944fb424c69a52b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mover: {fileID: 5344792228582610441}
   GRAVITY: -0.4
   MAX_FALL: -20
   MAX_SPEED: 6.5
