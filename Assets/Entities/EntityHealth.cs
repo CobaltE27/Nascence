@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EntityHealth : Component
+public abstract class EntityHealth : MonoBehaviour
 {
-    public float health;
-    public float maxHealth;
+    public float health = 10;
+    public float maxHealth = 10;
     public EntityMovement movement;
 
     protected virtual void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)

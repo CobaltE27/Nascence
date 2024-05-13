@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static EnumConstants;
 
-public class CharMovement : MonoBehaviour
+public class CharMovement : EntityMovement
 {
 
     private DebugLogger dLog;
@@ -22,7 +22,6 @@ public class CharMovement : MonoBehaviour
     private float MINIMUM_SPEED = 0.01f;
     public int SWING_COOLDOWN_FRAMES = 10;
 
-    EntityMover mover;
     Camera currentCam;
     public Transform swingIndicatorPivot;
     public SpriteRenderer charSprite;
@@ -72,8 +71,10 @@ public class CharMovement : MonoBehaviour
     public Vector2 recoilVelocity = new Vector2();
     public int recoilDurationLeft = 0;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         //references to attached components are made
         mover = GetComponent<EntityMover>();
         mover.constantVels.Add("recoilVelocity", new Vector2());
@@ -264,7 +265,7 @@ public class CharMovement : MonoBehaviour
                 RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * 2.0f + new Vector2(0, 0.2f), swingArea,
                    new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
 
-                float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, new Vector2(0, 1));
+                float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
                 Vector2 swingNewVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
 
                 float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));

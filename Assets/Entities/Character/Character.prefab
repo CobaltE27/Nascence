@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 8498905781548684038}
   - component: {fileID: 6201283822960240873}
   - component: {fileID: 5344792228582610441}
+  - component: {fileID: 6530407327694665147}
   m_Layer: 8
   m_Name: Character
   m_TagString: Character
@@ -380,6 +381,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistentVel: {x: 0, y: 0}
+--- !u!114 &6530407327694665147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293681667074079871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b4abb4c054cf048b351c3dd57d1072, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 10
+  maxHealth: 10
+  movement: {fileID: 8293681667074079867}
 --- !u!1 &8293681667459855842
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,4 +522,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdf2f5694efc2b14bb31f9a8c3911b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  puppetteer: {fileID: 0}
   character: {fileID: 8293681667074079871}

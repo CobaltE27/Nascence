@@ -4,18 +4,25 @@ using UnityEngine;
 
 public abstract class EntityMovement : MonoBehaviour
 {
-    EntityMover mover;
-	int KB_DURATION_FRAMES;
-	float KB_DISTANCE;
-	Vector2 kbDirectionalBias = Vector2.one;
+    protected EntityMover mover;
+	protected int KB_DURATION_FRAMES;
+	protected float KB_DISTANCE;
+	protected Vector2 kbDirectionalBias = Vector2.one;
+	protected Coroutine activeKb;
 
 	protected virtual void Start()
     {
 		mover.constantVels.Add("kbVelocity", new Vector2());
 	}
+
+	/// <summary>
+	/// Method that should be called by another component when this entity has been hit or otherwise received kb.
+	/// </summary>
     public virtual void ReceiveKnockback(Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
     {
-		StartCoroutine(ApplyKnockback(direction, kbStrengthMult));
+		if (activeKb != null)
+			StopCoroutine(activeKb);
+		activeKb = StartCoroutine(ApplyKnockback(direction, kbStrengthMult));
     }
 
     protected IEnumerator ApplyKnockback(Vector2 direction, float kbStrengthMult = 1.0f)
