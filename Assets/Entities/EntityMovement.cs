@@ -5,8 +5,10 @@ using UnityEngine;
 public abstract class EntityMovement : MonoBehaviour
 {
     public EntityMover mover;
-	protected int KB_DURATION_FRAMES;
-	protected float KB_DISTANCE;
+	protected int KB_DURATION_FRAMES = 10;
+	protected int kbDurationLeft = 0;
+	protected float kbWeaknessMult = 1.0f;
+	protected float KB_DISTANCE = 1.0f;
 	protected Vector2 kbDirectionalBias = Vector2.one;
 	protected Coroutine activeKb;
 
@@ -29,7 +31,7 @@ public abstract class EntityMovement : MonoBehaviour
     {
 		direction.Normalize();
 		int kbDurationLeft = KB_DURATION_FRAMES;
-		Vector2 kbVel = direction * KB_DISTANCE * kbStrengthMult / (Time.deltaTime * KB_DURATION_FRAMES);
+		Vector2 kbVel = direction * KB_DISTANCE * kbStrengthMult * kbWeaknessMult / (Time.deltaTime * KB_DURATION_FRAMES);
 		kbVel *= kbDirectionalBias;
 
 		mover.constantVels["kbVelocity"] = kbVel;

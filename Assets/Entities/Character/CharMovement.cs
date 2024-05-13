@@ -242,9 +242,6 @@ public class CharMovement : EntityMovement
             mouse0FramesHeld += 1;
         }
 
-        swingIndicatorDir.x = Mathf.Cos(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
-        swingIndicatorDir.y = Mathf.Sin(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
-        swingIndicatorDir.Normalize();
         if(mouse0FramesHeld >= SWING_CHARGE_FRAMES)
         {
             charSprite.color = Color.red;
@@ -253,159 +250,20 @@ public class CharMovement : EntityMovement
         {
             charSprite.color = Color.white;
         }
-        dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
+
+		swingIndicatorDir.x = Mathf.Cos(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
+		swingIndicatorDir.y = Mathf.Sin(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
+		swingIndicatorDir.Normalize();
+		dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
         //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
         if (charInputBuffer.GetInputUp(true, "mouse0"))
         {
             if (swingCooldown == 0)
-            {
-                swingCooldown = SWING_COOLDOWN_FRAMES;
+			{
+				swingCooldown = SWING_COOLDOWN_FRAMES;
 
-                //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
-                RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * 2.0f + new Vector2(0, 0.2f), swingArea,
-                   new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
-
-                float indicatorAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
-                Vector2 swingNewVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
-
-                float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
-                bool hitAnything = swingCastResults[0].collider != null;
-                bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
-                bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
-                bool wouldHitFloor = angleToHitNormal < 60;
-
-                GameObject hitObject = null;
-                Enemy hitEnemy = null;
-				if (hitAnything)
-                    hitObject = swingCastResults[0].collider.gameObject;
-                if (hitObject != null)
-                    hitEnemy = hitObject.GetComponent<Enemy>();
-                bool hitWasEnemy = hitEnemy != null;
-                dLog.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy, "swing");
-
-                if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
-                {
-                    dLog.Log("SWING!", "swing - type");
-                    steam -= SWING_STEAM_COST;
-
-                    if (hitWasEnemy)
-                    {
-                        hitEnemy.DealDamage(SWING_DAMAGE, swingIndicatorDir);
-                        steam += SWING_STEAM_COST;
-                    }
-
-                    if (wouldHitWall && hitAnything)
-                    {
-
-                        if (wouldHitLeftWall)
-                        {
-                            indicatorAngle *= -1;
-                            postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-                        }
-                        else //hit right wall
-                        {
-                            postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-                        }
-
-                        if (Mathf.Abs(indicatorAngle) >= 180) // pointing straight down
-                        {
-                            if (!usedWallVault)
-                            {
-                                swingNewVel.y = 11.0f;
-                                usedWallVault = true;
-                            }
-                            else
-                            {
-                                steam += SWING_STEAM_COST;
-                                swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                            }
-                        }
-                        else if (indicatorAngle >= 135)
-                        {
-                            swingNewVel.x *= 0.8f;
-                        }
-                        else if (indicatorAngle >= 90)
-                        {
-                            swingNewVel.y += 1.0f;
-                        }
-                        else if (indicatorAngle >= 45)
-                        {
-                            swingNewVel.x *= 1.5f;
-                        }
-                        else
-                        {
-                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                        }
-                    }
-                    else if (wouldHitFloor && hitAnything)
-                    {
-                        if (charGrounded)
-                        {
-                            steam += SWING_STEAM_COST;
-                        }
-
-                        indicatorAngle = Mathf.Abs(indicatorAngle);
-
-                        if (indicatorAngle >= 180)
-                        {
-                            swingNewVel.y *= 0.6f;
-                        }
-                        else if (indicatorAngle >= 135)
-                        {
-                            swingNewVel.y *= 0.7f;
-                            swingNewVel.x *= 1.35f;
-                        }
-                        else if (indicatorAngle >= 90)
-                        {
-                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                        }
-                        else if (indicatorAngle >= 45)
-                        {
-                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                        }
-                        else
-                        {
-                            swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                        }
-
-                        usedWallVault = false;
-                    }
-                    else if (mover.persistentVel.y <= 2.0f)
-                    {
-                        swingNewVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
-                    }
-                    else
-                    {
-                        swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                    }
-                }
-				else
-				{
-                    dLog.Log("MINI-HIT!", "swing - type" );
-                    if (hitWasEnemy)
-					{
-                        dLog.Log("swingNewVel: " + swingNewVel + ", recoilVelocity: " + ((swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH), "recoil");
-						mover.constantVels["recoilVelocity"] = (swingNewVel / SWING_STRENGTH) * RECOIL_STRENGTH;
-						swingNewVel = VectorUtility.DeflectWithNormal(mover.persistentVel, swingNewVel * -1);
-                        recoilDurationLeft = RECOIL_DURATION_FRAMES;
-                        if (mover.constantVels["recoilVelocity"].y != 0)
-                            swingNewVel.y = 0;
-
-						hitEnemy.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
-
-                        steam += (int)(SWING_STEAM_COST * (SWING_DAMAGE / MINI_HIT_DAMAGE));
-                    }
-                    else
-					{
-                        swingNewVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-                    }
-				}
-
-                lastMoveAction = "swing";
-                steam = Mathf.Min(steam, baseSteam + steamCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
-                dLog.Log("Final swingNewVel: " + swingNewVel, "swing");
-                mover.persistentVel.Set(swingNewVel.x, swingNewVel.y);
-            }
+				SetVelocityFromSwing();
+			}
 			else
 			{
                 dLog.Log("on cooldown!", "swing - type");
@@ -418,10 +276,165 @@ public class CharMovement : EntityMovement
         if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
 	}
 
-    /// <summary>
-    /// This updates the angle of the swing indicator to match where the mouse is
-    /// </summary>
-    private void UpdateSwingIndicator()
+	private void SetVelocityFromSwing()
+	{
+		//Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
+		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * 2.0f + new Vector2(0, 0.2f), swingArea,
+		   new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
+
+		float swingAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
+		Vector2 postSwingVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
+
+		float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
+		bool hitAnything = swingCastResults[0].collider != null;
+		bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
+		bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
+		bool wouldHitFloor = angleToHitNormal < 60;
+
+		GameObject hitObject = null;
+		EntityHealth hitEnemyHealth = null;
+		if (hitAnything)
+			hitObject = swingCastResults[0].collider.gameObject;
+		if (hitObject != null)
+			hitEnemyHealth = hitObject.GetComponent<EntityHealth>();
+		bool hitWasEnemy = hitEnemyHealth != null;
+		dLog.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy, "swing");
+
+		if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+		{
+			dLog.Log("SWING!", "swing - type");
+			steam -= SWING_STEAM_COST;
+
+			if (hitWasEnemy)
+			{
+				hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir);
+				steam += SWING_STEAM_COST;
+			}
+
+			if (wouldHitWall && hitAnything)
+			{
+
+				if (wouldHitLeftWall)
+				{
+					swingAngle *= -1;
+					postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+				}
+				else //hit right wall
+				{
+					postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+				}
+
+				if (Mathf.Abs(swingAngle) >= 180) // pointing straight down
+				{
+					if (!usedWallVault)
+					{
+						postSwingVel.y = 11.0f;
+						usedWallVault = true;
+					}
+					else
+					{
+						steam += SWING_STEAM_COST;
+						postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+					}
+				}
+				else if (swingAngle >= 135)
+				{
+					postSwingVel.x *= 0.8f;
+				}
+				else if (swingAngle >= 90)
+				{
+					postSwingVel.y += 1.0f;
+				}
+				else if (swingAngle >= 45)
+				{
+					postSwingVel.x *= 1.5f;
+				}
+				else
+				{
+					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+				}
+			}
+			else if (wouldHitFloor && hitAnything)
+			{
+				if (charGrounded)
+				{
+					steam += SWING_STEAM_COST;
+				}
+
+				swingAngle = Mathf.Abs(swingAngle);
+
+				if (swingAngle >= 180)
+				{
+                    if (hitWasEnemy)
+                        postSwingVel.y *= 0.7f;
+                    else
+                    {
+                        postSwingVel.y *= 0.3f;
+                        postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
+                        postSwingVel.x *= 0;
+                    }
+				}
+				else if (swingAngle >= 135)
+				{
+					postSwingVel.y *= 0.7f;
+					postSwingVel.x *= 1.35f;
+				}
+				else if (swingAngle >= 90)
+				{
+					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+				}
+				else if (swingAngle >= 45)
+				{
+					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+				}
+				else
+				{
+					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+				}
+
+				usedWallVault = false;
+			}
+			else if (mover.persistentVel.y <= 2.0f)
+			{
+				postSwingVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
+			}
+			else
+			{
+				postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+			}
+		}
+		else
+		{
+			dLog.Log("MINI-HIT!", "swing - type");
+			if (hitWasEnemy)
+			{
+				dLog.Log("swingNewVel: " + postSwingVel + ", recoilVelocity: " + ((postSwingVel / SWING_STRENGTH) * RECOIL_STRENGTH), "recoil");
+				mover.constantVels["recoilVelocity"] = (postSwingVel / SWING_STRENGTH) * RECOIL_STRENGTH;
+				postSwingVel = VectorUtility.DeflectWithNormal(mover.persistentVel, postSwingVel * -1);
+				recoilDurationLeft = RECOIL_DURATION_FRAMES;
+				if (mover.constantVels["recoilVelocity"].y != 0)
+					postSwingVel.y = 0;
+
+				hitEnemyHealth.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
+
+				steam += (int)(SWING_STEAM_COST * (SWING_DAMAGE / MINI_HIT_DAMAGE));
+			}
+			else
+			{
+				postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+			}
+		}
+
+		lastMoveAction = "swing";
+		steam = Mathf.Min(steam, baseSteam + steamCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
+		dLog.Log("Final swingNewVel: " + postSwingVel, "swing");
+		mover.persistentVel.Set(postSwingVel.x, postSwingVel.y);
+	}
+
+	/// <summary>
+	/// This updates the angle of the swing indicator to match where the mouse is
+	/// </summary>
+	private void UpdateSwingIndicator()
     {
         Vector2 charPosInCam = currentCam.WorldToScreenPoint(this.transform.position);
         Vector2 relativeMousePosToChar = (Vector2)Input.mousePosition - charPosInCam;

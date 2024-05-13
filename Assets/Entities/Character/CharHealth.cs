@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharHealth : EntityHealth
 {
-	protected override void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
+	public override void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
 	{
 		health -= damage;
 		if (health <= 0)

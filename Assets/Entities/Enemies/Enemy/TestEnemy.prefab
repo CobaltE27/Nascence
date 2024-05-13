@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5714957895738574549}
   - component: {fileID: 3639262499301385957}
   - component: {fileID: 5366550559549104346}
+  - component: {fileID: 7497847961046806791}
   m_Layer: 11
   m_Name: TestEnemy
   m_TagString: Enemy
@@ -170,12 +171,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d96a42f7d6b2eff4a8209477a96c52c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mover: {fileID: 3639262499301385957}
   rb: {fileID: 8679087147612377042}
-  health: 10
-  steamOnHit: 50
   moveTarget: {x: 0, y: 0}
   NOTICE_RANGE: 10
-  KB_DURATION_FRAMES: 10
   inFormation: 0
   BASE_MOVEMENT_SPEED: 5
   spr: {fileID: 8679087147612377044}
+--- !u!114 &7497847961046806791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8679087147612377046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f239ef258c62c5b439a591c7cfc83d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 10
+  maxHealth: 10
+  movement: {fileID: 5366550559549104346}
+  steamOnHit: 50

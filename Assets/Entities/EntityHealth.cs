@@ -8,7 +8,7 @@ public abstract class EntityHealth : MonoBehaviour
     public float maxHealth = 10;
     public EntityMovement movement;
 
-    protected virtual void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
+    public virtual void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
     {
         health -= damage;
         if (health <= 0)

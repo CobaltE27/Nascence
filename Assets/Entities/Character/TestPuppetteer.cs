@@ -19,7 +19,6 @@ public class TestPuppetteer : Puppetteer
 
 	protected override void DecideNextState()
 	{
-		Debug.Log("Deciding");
 		CleanFormations();
 		if (fliers.Puppets.Count == 0)
 		{
@@ -42,7 +41,7 @@ public class TestPuppetteer : Puppetteer
 
 			if (fliers.Aligned())
 			{
-				Debug.Log("Formation aligned");
+				//Debug.Log("Formation aligned");
 				GroupAttack nextMove = groupAttacks[rng.Next(groupAttacks.Count)];
 				StartCoroutine(nextMove(DecideNextState));
 			}
@@ -55,7 +54,7 @@ public class TestPuppetteer : Puppetteer
 
 	private IEnumerator AllAttack(Action callBack)
 	{
-		Debug.Log("All attacking");
+		//Debug.Log("All attacking");
 		foreach (IDasher enemy in fliers.Puppets)
 		{
 			StartCoroutine(enemy.DashToward(player.transform.position));

@@ -89,7 +89,7 @@ public abstract class Formation : MonoBehaviour
         int alignedCount = 0;
         for (int i = 0; i < Puppets.Count; i++)
         {
-            Debug.Log(Vector2.Distance((Vector2)Puppets[i].transform.position, WorldPositionOf(i)));
+            //Debug.Log(Vector2.Distance((Vector2)Puppets[i].transform.position, WorldPositionOf(i)));
             if (Vector2.Distance((Vector2)Puppets[i].transform.position, WorldPositionOf(i)) < margin)
                 alignedCount++;
         }

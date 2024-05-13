@@ -12,8 +12,8 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	protected override void Start()
 	{
 		base.Start();
-		kbStrength = 2.5f;
 		KB_DURATION_FRAMES = 10;
+		kbWeaknessMult = 2.5f;
 
 		idleRoutine = StartCoroutine(Idle());
 	}
@@ -21,25 +21,6 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	protected override void FixedUpdate()
 	{
 
-	}
-
-	/// <summary>
-	/// Damages this enemy for the specified amount, if knockback is applied, it moves this
-	/// enemy in the specified direction.
-	/// </summary>
-	/// <param name="damage"></param>
-	/// <param name="direction"></param>
-	public override void DealDamage(float damage, Vector2 direction = new Vector2())
-	{
-		health -= damage;
-
-		if (health <= 0.0f)
-		{
-			StopAllCoroutines(); //doesn't seem to actually stop coroutines with loops?
-			Destroy(this.gameObject);
-		}
-
-		StartCoroutine(ApplyKnockback(direction.normalized * kbStrength * kbDirectionalBias));
 	}
 
 	/// <summary>
@@ -73,20 +54,6 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 		targetDir.Normalize();
 
 		mover.persistentVel = targetDir * (BASE_MOVEMENT_SPEED * approachSlowFactor * speedMultiplier);
-	}
-
-	private IEnumerator ApplyKnockback(Vector2 kbVel)
-	{
-		kbDurationLeft = KB_DURATION_FRAMES;
-		mover.constantVels["kbVelocity"] = kbVel;
-		while (kbDurationLeft > 0)
-		{
-			kbDurationLeft--;
-			yield return new WaitForFixedUpdate();
-		}
-
-		mover.constantVels["kbVelocity"] *= 0;
-		yield break;
 	}
 
 	public IEnumerator Idle()

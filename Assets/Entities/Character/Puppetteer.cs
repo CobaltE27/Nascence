@@ -33,7 +33,6 @@ public abstract class Puppetteer : MonoBehaviour
     /// <param name="potentialRecruits"></param>
     public void AssignRecruits(ref HashSet<Enemy> potentialRecruits)
     {
-        Debug.Log("Assigning recruits");
         List<Enemy> keeps = new List<Enemy>();
         foreach (Enemy recruit in potentialRecruits)
             foreach (Formation form in formations)
@@ -44,7 +43,6 @@ public abstract class Puppetteer : MonoBehaviour
 
                     recruit.inFormation = true;
                     recruit.EndCurrentBehavior();
-                    Debug.Log("Ended current behavior.");
                 }
 
         potentialRecruits.ExceptWith(keeps);
