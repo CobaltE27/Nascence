@@ -7,15 +7,45 @@ public abstract class EntityHealth : MonoBehaviour
     public float health = 10;
     public float maxHealth = 10;
     public EntityMovement movement;
+    public int immunityFrames = 50;
+    Coroutine iFrameCounter;
+    bool immune = false;
+
+    protected virtual void Start()
+    {
+        //nothing for now
+    }
 
     public virtual void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
     {
-        health -= damage;
-        if (health <= 0)
+        if (!immune)
         {
-            Destroy(this.gameObject);
+            health -= damage;
+            if (health <= 0)
+            {
+                Destroy(this.gameObject);
+            }
+
+            movement.ReceiveKnockback(direction, kbStrengthMult);
+            if (iFrameCounter != null)
+                StopCoroutine(iFrameCounter);
+            iFrameCounter = StartCoroutine(ImmunityCounter());
+        }
+    }
+
+    protected IEnumerator ImmunityCounter()
+    {
+        immune = true;
+        int framesLeft = immunityFrames;
+        while (framesLeft > 0)
+        {
+            framesLeft--;
+            yield return new WaitForFixedUpdate();
+            if (this == null)
+                yield break;
         }
 
-        movement.ReceiveKnockback(direction, kbStrengthMult);
+        immune = false;
+        yield break;
     }
 }

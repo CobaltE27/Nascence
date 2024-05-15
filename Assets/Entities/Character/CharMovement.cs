@@ -78,8 +78,6 @@ public class CharMovement : EntityMovement
     {
         base.Start();
 
-        //references to attached components are made
-        mover = GetComponent<EntityMover>();
         mover.constantVels.Add("recoilVelocity", new Vector2());
 
         currentCam = GetComponentInChildren<Camera>();
