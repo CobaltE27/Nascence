@@ -71,6 +71,9 @@ public class CharMovement : EntityMovement
     public Vector2 recoilVelocity = new Vector2();
     public int recoilDurationLeft = 0;
 
+    bool usedFloorVault = false;
+    float POST_VAULT_MODIFIER = 0.2f;
+
     protected override void Start()
     {
         base.Start();
@@ -132,6 +135,7 @@ public class CharMovement : EntityMovement
         if (charGrounded)
         {
             usedWallVault = false;
+            usedFloorVault = false;
             steam = baseSteam;
         }
 
@@ -165,30 +169,27 @@ public class CharMovement : EntityMovement
 
 		if (Input.GetKey("a") || Input.GetKey("d"))
         {
+            float xVelChange = 0.0f;
             if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
             {
                 if (mover.persistentVel.x > -MAX_SPEED)
-                {
-                    mover.persistentVel.x -= RUN_SPEED * aerialModifier;
-                }
-
+                    xVelChange -= RUN_SPEED;
                 if (mover.persistentVel.x > 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
-                {
                     mover.persistentVel.x -= RUN_SPEED / 2;
-                }
             }
             if (Input.GetKey("d") && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
             {
                 if (mover.persistentVel.x < MAX_SPEED)
-                {
-                    mover.persistentVel.x += RUN_SPEED * aerialModifier;
-                }
-
+					xVelChange += RUN_SPEED;
                 if (mover.persistentVel.x < 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
-                {
                     mover.persistentVel.x += RUN_SPEED / 2;
-                }
             }
+			if (!charGrounded)
+				xVelChange *= AERIAL_CONTROL;
+			if (usedFloorVault)
+				xVelChange *= POST_VAULT_MODIFIER;
+
+			mover.persistentVel.x += xVelChange;
         }
         else if(charGrounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED)
         { 
@@ -290,6 +291,7 @@ public class CharMovement : EntityMovement
 		bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
 		bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
 		bool wouldHitFloor = angleToHitNormal < 60;
+        bool floorVaulted = false;
 
 		GameObject hitObject = null;
 		EntityHealth hitEnemyHealth = null;
@@ -372,6 +374,8 @@ public class CharMovement : EntityMovement
                         postSwingVel.y *= 0.3f;
                         postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
                         postSwingVel.x *= 0;
+                        floorVaulted = true;
+                        usedFloorVault = true;
                     }
 				}
 				else if (swingAngle >= 135)
@@ -402,6 +406,9 @@ public class CharMovement : EntityMovement
 			{
 				postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
 			}
+
+			if (!floorVaulted)
+				usedFloorVault = false;
 		}
 		else
 		{
