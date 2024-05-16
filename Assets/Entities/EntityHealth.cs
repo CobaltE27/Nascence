@@ -4,19 +4,19 @@ using UnityEngine;
 
 public abstract class EntityHealth : MonoBehaviour
 {
-    public float health = 10;
-    public float maxHealth = 10;
+    public int health = 5;
+    public int maxHealth = 5;
     public EntityMovement movement;
     public int immunityFrames = 50;
-    Coroutine iFrameCounter;
-    bool immune = false;
+    protected Coroutine iFrameCounter;
+    protected bool immune = false;
 
     protected virtual void Start()
     {
         //nothing for now
     }
 
-    public virtual void DealDamage(float damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
+    public virtual void DealDamage(int damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
     {
         if (!immune)
         {

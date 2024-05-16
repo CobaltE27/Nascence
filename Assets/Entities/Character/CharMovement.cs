@@ -63,8 +63,8 @@ public class CharMovement : EntityMovement
     public int baseSteam = 100;
     public int steamCapacity;
 
-    public float SWING_DAMAGE = 5.0f;
-    public float MINI_HIT_DAMAGE = 2.5f;
+    public int SWING_DAMAGE = 2;
+    public int MINI_HIT_DAMAGE = 1;
     public int RECOIL_DURATION_FRAMES = 40;
     public float RECOIL_DECAY = 0.09f;
     public float RECOIL_STRENGTH = 10.0f;

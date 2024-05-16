@@ -6,7 +6,7 @@ public class EnemyContactHitbox : MonoBehaviour
 { 
     public Collider2D hitBox;
     PhysicsCastUtility caster;
-    public float DAMAGE = 5.0f;
+    public int DAMAGE = 1;
     void Start()
     {
         caster = new PhysicsCastUtility();
