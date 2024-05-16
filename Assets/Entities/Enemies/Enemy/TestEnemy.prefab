@@ -191,8 +191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f239ef258c62c5b439a591c7cfc83d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
-  maxHealth: 10
+  health: 4
+  maxHealth: 4
   movement: {fileID: 5366550559549104346}
   immunityFrames: 10
   steamOnHit: 50
@@ -209,4 +209,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitBox: {fileID: 8679087147612377045}
-  DAMAGE: 5
+  DAMAGE: 1

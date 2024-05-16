@@ -11,7 +11,7 @@ public abstract class EntityHealth : MonoBehaviour
     protected Coroutine iFrameCounter;
     protected bool immune = false;
 
-    protected virtual void Start()
+    public virtual void Start()
     {
         //nothing for now
     }
