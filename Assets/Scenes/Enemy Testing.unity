@@ -276,6 +276,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 33606229005997101, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 248.00003
+      objectReference: {fileID: 0}
+    - target: {fileID: 33606229005997101, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.50001526
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373087924406290449, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2763121484594836325, guid: d99d8fd7346643540b059d3954eaaf6f,
         type: 3}
       propertyPath: puppetteer
@@ -289,6 +304,11 @@ PrefabInstance:
     - target: {fileID: 7426385127442330562, guid: d99d8fd7346643540b059d3954eaaf6f,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8038376407937917586, guid: d99d8fd7346643540b059d3954eaaf6f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8293681666352901809, guid: d99d8fd7346643540b059d3954eaaf6f,

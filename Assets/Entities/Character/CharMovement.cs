@@ -5,6 +5,7 @@ using static EnumConstants;
 
 public class CharMovement : EntityMovement
 {
+    public HudUi hud;
 
     private DebugLogger dLog;
 
@@ -61,7 +62,7 @@ public class CharMovement : EntityMovement
 
     public int steam;
     public int baseSteam = 100;
-    public int steamCapacity;
+    public int steamExtraCapacity;
 
     public int SWING_DAMAGE = 2;
     public int MINI_HIT_DAMAGE = 1;
@@ -77,8 +78,10 @@ public class CharMovement : EntityMovement
     protected override void Start()
     {
         base.Start();
+        hud.SetSteamParameters(baseSteam, steamExtraCapacity);
+		hud.UpdateSteamLevel(steam);
 
-        mover.constantVels.Add("recoilVelocity", new Vector2());
+		mover.constantVels.Add("recoilVelocity", new Vector2());
 
         currentCam = GetComponentInChildren<Camera>();
 
@@ -272,6 +275,7 @@ public class CharMovement : EntityMovement
         }
         #endregion 
 
+        hud.UpdateSteamLevel(steam);
         if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
 	}
 
@@ -431,7 +435,7 @@ public class CharMovement : EntityMovement
 		}
 
 		lastMoveAction = "swing";
-		steam = Mathf.Min(steam, baseSteam + steamCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
+		steam = Mathf.Min(steam, baseSteam + steamExtraCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
 		dLog.Log("Final swingNewVel: " + postSwingVel, "swing");
 		mover.persistentVel.Set(postSwingVel.x, postSwingVel.y);
 	}
