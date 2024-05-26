@@ -17,11 +17,13 @@ public class CharMovement : EntityMovement
     public float LIMITER_DRAG = 0.995f;
     public float JUMP_HEIGHT = 6f;
     public float AERIAL_CONTROL = 0.4f;
+
     public int SWING_CHARGE_FRAMES = 30;
     public float SWING_STRENGTH = 25.0f;
     public int SWING_STEAM_COST = 50;
     private float MINIMUM_SPEED = 0.01f;
     public int SWING_COOLDOWN_FRAMES = 10;
+    public float SWING_LENGTH = 2.0f;
 
     Camera currentCam;
     public Transform swingIndicatorPivot;
@@ -282,7 +284,7 @@ public class CharMovement : EntityMovement
 	private void SetVelocityFromSwing()
 	{
 		//Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
-		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * 2.0f + new Vector2(0, 0.2f), swingArea,
+		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * SWING_LENGTH + new Vector2(0, 0.2f), swingArea,
 		   new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
 
 		float swingAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
