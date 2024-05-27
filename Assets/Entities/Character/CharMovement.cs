@@ -9,6 +9,9 @@ public class CharMovement : EntityMovement
 
     private DebugLogger dLog;
 
+    public ParticleSystem swingParticle;
+    public GameObject swingParticlePivot;
+
     public float GRAVITY = -0.4f;
     public float MAX_FALL = -20.0f;
     public float MAX_SPEED = 0.4f;
@@ -38,7 +41,7 @@ public class CharMovement : EntityMovement
     public Vector2 velocity = new Vector2(0, 0);
     public Vector2 instantDisplacement = new Vector2(0, 0);
 
-    public bool charGrounded = false;
+    public bool grounded = false;
     public bool belowFlatCeiling = false;
     public bool canWalkUnobstructedR = false;
     public bool canWalkUnobstructedL = false;
@@ -130,12 +133,12 @@ public class CharMovement : EntityMovement
     void FixedUpdate()
     {
 		//Check whether the character is still on the ground
-		charGrounded = charCollCalc.IsOnWalkableGround();
+		grounded = charCollCalc.IsOnWalkableGround();
         belowFlatCeiling = charCollCalc.BelowFlatCeiling();
         canWalkUnobstructedR = !charCollCalc.NextToRightWall() && !charCollCalc.OnRightSlope();
         canWalkUnobstructedL = !charCollCalc.NextToLeftWall() && !charCollCalc.OnLeftSlope();
 
-        if (charGrounded)
+        if (grounded)
         {
             usedWallVault = false;
             usedFloorVault = false;
@@ -145,7 +148,7 @@ public class CharMovement : EntityMovement
         //directional movement input and gravity; everything that will affect velocity based on current state
         //this may eventually be outsourced to a input handler separate from the player object once menus and stuff are made
         #region VELOCITY ADJUSTMENTS
-        if (!charGrounded)
+        if (!grounded)
         {
             aerialModifier = AERIAL_CONTROL;
         }
@@ -187,14 +190,14 @@ public class CharMovement : EntityMovement
                 if (mover.persistentVel.x < 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
                     mover.persistentVel.x += RUN_SPEED / 2;
             }
-			if (!charGrounded)
+			if (!grounded)
 				xVelChange *= AERIAL_CONTROL;
 			if (usedFloorVault)
 				xVelChange *= POST_VAULT_MODIFIER;
 
 			mover.persistentVel.x += xVelChange;
         }
-        else if(charGrounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED)
+        else if(grounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED)
         { 
                 mover.persistentVel.x *= GROUND_DRAG;
         }
@@ -207,7 +210,7 @@ public class CharMovement : EntityMovement
         {
             mover.persistentVel.x *= LIMITER_DRAG;
 
-            if (charGrounded)
+            if (grounded)
                 mover.persistentVel.x *= GROUND_DRAG;
         }
 
@@ -219,10 +222,10 @@ public class CharMovement : EntityMovement
 
         //detects the spacebar being pressed and adds velocity
 
-        if (charInputBuffer.GetInputDown(charGrounded, "space"))
+        if (charInputBuffer.GetInputDown(grounded, "space"))
         {
             lastMoveAction = "jump";
-            charGrounded = false;
+            grounded = false;
             mover.persistentVel.y += jumpVelocity;
         }
 
@@ -236,7 +239,7 @@ public class CharMovement : EntityMovement
         }
         
         //gravity applied
-        if (mover.persistentVel.y > MAX_FALL && !charGrounded && mover.constantVels["recoilVelocity"].y <= 0)
+        if (mover.persistentVel.y > MAX_FALL && !grounded && mover.constantVels["recoilVelocity"].y <= 0)
         {
             mover.persistentVel.y += GRAVITY;
         }
@@ -267,6 +270,11 @@ public class CharMovement : EntityMovement
 				swingCooldown = SWING_COOLDOWN_FRAMES;
 
 				SetVelocityFromSwing();
+                ParticleSystem.MainModule particleMain = swingParticle.main;
+                particleMain.startRotation = -indicatorAngle * (Mathf.PI / 180.0f);
+                swingParticlePivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
+
+				swingParticle.Play();
 			}
 			else
 			{
@@ -362,7 +370,7 @@ public class CharMovement : EntityMovement
 			}
 			else if (wouldHitFloor && hitAnything)
 			{
-				if (charGrounded)
+				if (grounded)
 				{
 					steam += SWING_STEAM_COST;
 				}
@@ -402,7 +410,7 @@ public class CharMovement : EntityMovement
 
 				usedWallVault = false;
 			}
-			else if (mover.persistentVel.y <= 2.0f)
+			else if (mover.persistentVel.y <= 2.0f && !grounded)
 			{
 				postSwingVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
 			}
