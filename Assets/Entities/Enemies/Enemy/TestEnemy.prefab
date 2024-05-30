@@ -159,6 +159,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6f72500f72f4748b7ac300853b5f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collCalc: {fileID: 5714957895738574549}
+  rb: {fileID: 8679087147612377042}
   persistentVel: {x: 0, y: 0}
 --- !u!114 &5366550559549104346
 MonoBehaviour:

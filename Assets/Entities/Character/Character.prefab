@@ -5748,6 +5748,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6f72500f72f4748b7ac300853b5f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collCalc: {fileID: 6201283822960240873}
+  rb: {fileID: 8293681667074079864}
   persistentVel: {x: 0, y: 0}
 --- !u!114 &6530407327694665147
 MonoBehaviour:

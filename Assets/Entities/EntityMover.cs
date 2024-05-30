@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EntityMover : MonoBehaviour
 {
-    private CollisionCalculator collCalc;
-    private Rigidbody2D rb;
+    public CollisionCalculator collCalc;
+    public Rigidbody2D rb;
     public Vector2 persistentVel = new Vector2();
 	public Dictionary<string, Vector2> constantVels = new Dictionary<string, Vector2>();
 
