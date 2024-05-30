@@ -5664,6 +5664,8 @@ MonoBehaviour:
   RECOIL_STRENGTH: 20
   recoilVelocity: {x: 0, y: 0}
   recoilDurationLeft: 0
+  coinPrefab: {fileID: 1773902383275522105, guid: 3c76c7e9d162cef4f9a7ff375cc4cf8e,
+    type: 3}
 --- !u!50 &8293681667074079864
 Rigidbody2D:
   serializedVersion: 4

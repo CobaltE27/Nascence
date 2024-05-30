@@ -50,8 +50,9 @@ public class CharMovement : EntityMovement
 
     private bool mouse0Pressed;
     private int mouse0FramesHeld;
+	private bool mouse1Pressed;
 
-    private InputBuffer charInputBuffer;
+	private InputBuffer charInputBuffer;
 
     private float aerialModifier;
 
@@ -79,6 +80,9 @@ public class CharMovement : EntityMovement
 
     bool usedFloorVault = false;
     float POST_VAULT_MODIFIER = 0.2f;
+
+    public GameObject coinPrefab;
+    private bool canCoin = false;
 
     protected override void Start()
     {
@@ -128,7 +132,12 @@ public class CharMovement : EntityMovement
         {
             mouse0Pressed = false;
         }
-    }
+
+		if (Input.GetMouseButtonDown(1))
+		{
+			mouse1Pressed = true;
+		}
+	}
 
     void FixedUpdate()
     {
@@ -143,6 +152,7 @@ public class CharMovement : EntityMovement
             usedWallVault = false;
             usedFloorVault = false;
             steam = baseSteam;
+            canCoin = true;
         }
 
         //directional movement input and gravity; everything that will affect velocity based on current state
@@ -261,6 +271,17 @@ public class CharMovement : EntityMovement
 		swingIndicatorDir.x = Mathf.Cos(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
 		swingIndicatorDir.y = Mathf.Sin(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
 		swingIndicatorDir.Normalize();
+
+        if (mouse1Pressed)
+        {
+            if (canCoin)
+            {
+                CoinToss();
+                canCoin = false;
+            }
+            mouse1Pressed = false;
+        }
+
 		dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
         //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
         if (charInputBuffer.GetInputUp(true, "mouse0"))
@@ -300,9 +321,9 @@ public class CharMovement : EntityMovement
 
 		float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
 		bool hitAnything = swingCastResults[0].collider != null;
-		bool wouldHitWall = angleToHitNormal >= 60 && angleToHitNormal <= 140;
+		bool wouldHitWall = angleToHitNormal >= 30 && angleToHitNormal <= 140;
 		bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
-		bool wouldHitFloor = angleToHitNormal < 60;
+		bool wouldHitFloor = angleToHitNormal < 30;
         bool floorVaulted = false;
 
 		GameObject hitObject = null;
@@ -448,6 +469,14 @@ public class CharMovement : EntityMovement
 		steam = Mathf.Min(steam, baseSteam + steamExtraCapacity); //I believe this is here to prevent steam from exceeding its max? Maybe this could just be an inline if?
 		dLog.Log("Final swingNewVel: " + postSwingVel, "swing");
 		mover.persistentVel.Set(postSwingVel.x, postSwingVel.y);
+	}
+
+    private void CoinToss()
+    {
+        GameObject newCoin = Instantiate(coinPrefab);
+        newCoin.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f);
+        CoinBehavior newCoinBehavior = newCoin.GetComponent<CoinBehavior>();
+        newCoinBehavior.InitVelocity(swingIndicatorDir * 9.0f); //mover.persistentVel + swingIndicatorDir * 8.0f
 	}
 
 	/// <summary>
