@@ -474,9 +474,9 @@ public class CharMovement : EntityMovement
     private void CoinToss()
     {
         GameObject newCoin = Instantiate(coinPrefab);
-        newCoin.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f);
+        newCoin.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f) + Vector2.up * 0.2f;
         CoinBehavior newCoinBehavior = newCoin.GetComponent<CoinBehavior>();
-        newCoinBehavior.InitVelocity(swingIndicatorDir * 9.0f); //mover.persistentVel + swingIndicatorDir * 8.0f
+        newCoinBehavior.InitVelocity(swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f); //mover.persistentVel + swingIndicatorDir * 8.0f
 	}
 
 	/// <summary>
