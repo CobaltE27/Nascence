@@ -335,71 +335,71 @@ public class CharMovement : EntityMovement
 		bool hitWasEnemy = hitEnemyHealth != null;
 		dLog.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy, "swing");
 
-		if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
-		{
-			dLog.Log("SWING!", "swing - type");
-			steam -= SWING_STEAM_COST;
+        if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+        {
+            dLog.Log("SWING!", "swing - type");
+            steam -= SWING_STEAM_COST;
 
-			if (hitWasEnemy)
-			{
-				hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir);
-				steam += SWING_STEAM_COST;
-			}
+            if (hitWasEnemy)
+            {
+                hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir);
+                steam += SWING_STEAM_COST;
+            }
 
-			if (wouldHitWall && hitAnything)
-			{
+            if (wouldHitWall && hitAnything)
+            {
 
-				if (wouldHitLeftWall)
-				{
-					swingAngle *= -1;
-					postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-				}
-				else //hit right wall
-				{
-					postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
-				}
+                if (wouldHitLeftWall)
+                {
+                    swingAngle *= -1;
+                    postLeftWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+                }
+                else //hit right wall
+                {
+                    postRightWallSwingCooldown = POST_WALL_SWING_COOLDOWN;
+                }
 
-				if (Mathf.Abs(swingAngle) >= 180) // pointing straight down
-				{
-					if (!usedWallVault)
-					{
-						postSwingVel.y = 11.0f;
-						usedWallVault = true;
-					}
-					else
-					{
-						steam += SWING_STEAM_COST;
-						postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-					}
-				}
-				else if (swingAngle >= 135)
-				{
-					postSwingVel.x *= 0.8f;
-				}
-				else if (swingAngle >= 90)
-				{
-					postSwingVel.y += 1.0f;
-				}
-				else if (swingAngle >= 45)
-				{
-					postSwingVel.x *= 1.5f;
-				}
-				else
-				{
-					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-				}
-			}
-			else if (wouldHitFloor && hitAnything)
-			{
-				if (grounded)
-				{
-					steam += SWING_STEAM_COST;
-				}
+                if (Mathf.Abs(swingAngle) >= 180) // pointing straight down
+                {
+                    if (!usedWallVault)
+                    {
+                        postSwingVel.y = 11.0f;
+                        usedWallVault = true;
+                    }
+                    else
+                    {
+                        steam += SWING_STEAM_COST;
+                        postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+                    }
+                }
+                else if (swingAngle >= 135)
+                {
+                    postSwingVel.x *= 0.8f;
+                }
+                else if (swingAngle >= 90)
+                {
+                    postSwingVel.y += 1.0f;
+                }
+                else if (swingAngle >= 45)
+                {
+                    postSwingVel.x *= 1.5f;
+                }
+                else
+                {
+                    postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+                }
+            }
+            else if (wouldHitFloor && hitAnything)
+            {
+                if (grounded)
+                {
+                    steam += SWING_STEAM_COST;
+                }
 
-				swingAngle = Mathf.Abs(swingAngle);
+                swingAngle = Mathf.Abs(swingAngle);
 
-				if (swingAngle >= 180)
-				{
+                if (swingAngle >= 180)
+                {
                     float minY = postSwingVel.y * 0.55f;
                     postSwingVel.y *= 0.3f;
                     postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
@@ -408,38 +408,44 @@ public class CharMovement : EntityMovement
                     postSwingVel.x *= 0;
                     floorVaulted = true;
                     usedFloorVault = true;
-				}
-				else if (swingAngle >= 135)
-				{
-					postSwingVel.y *= 0.7f;
-					postSwingVel.x *= 1.35f;
-				}
-				else if (swingAngle >= 90)
-				{
-					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-				}
-				else if (swingAngle >= 45)
-				{
-					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-				}
-				else
-				{
-					postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-				}
+                }
+                else if (swingAngle >= 135)
+                {
+                    postSwingVel.y *= 0.7f;
+                    postSwingVel.x *= 1.35f;
+                }
+                else if (swingAngle >= 90)
+                {
+                    postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+                }
+                else if (swingAngle >= 45)
+                {
+                    postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+                }
+                else
+                {
+                    postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+                }
 
-				usedWallVault = false;
-			}
-			else if (mover.persistentVel.y <= 2.0f && !grounded)
-			{
-				postSwingVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
-			}
-			else
-			{
-				postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
-			}
+                usedWallVault = false;
+            }
+            else if (mover.persistentVel.y <= 2.0f && !grounded)
+            {
+                postSwingVel.Set(mover.persistentVel.x * 0.6f, 6.0f);
+            }
+            else
+            {
+                postSwingVel.Set(mover.persistentVel.x, mover.persistentVel.y);
+            }
 
-			if (!floorVaulted)
-				usedFloorVault = false;
+            if (!floorVaulted)
+                usedFloorVault = false;
+
+            if (hitAnything)
+            {
+                Time.timeScale = 0;
+                StartCoroutine(HitStop(0.1f));
+            }
 		}
 		else
 		{
@@ -480,7 +486,6 @@ public class CharMovement : EntityMovement
 		//if (Mathf.Abs(coinVel.y) > 0.1f)
 		//	coinVel.y /= Mathf.Abs(coinVel.y);
         coinVel *= 9.0f;
-        coinVel.x *= 0.8f;
         newCoinBehavior.InitVelocity(coinVel + mover.persistentVel * 0.3f); //swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f
 	}
 
@@ -514,4 +519,9 @@ public class CharMovement : EntityMovement
         return 0.0f;
     }
 
+    private IEnumerator HitStop(float duration)
+    {
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 1.0f;
+    }
 }
