@@ -15,7 +15,6 @@ public class CoinBehavior : EntityMovement
 		if (mover.persistentVel.y < MAX_FALL)
 			mover.persistentVel.y = MAX_FALL;
 
-
 		lifeFramesLeft--;
 		if (lifeFramesLeft <= 0)
 			Destroy(this.gameObject);
@@ -28,6 +27,7 @@ public class CoinBehavior : EntityMovement
 
 	public override void ReceiveKnockback(Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
 	{
-		mover.persistentVel = direction * kbStrengthMult * 24.0f;
+		mover.persistentVel = direction * kbStrengthMult * 15.0f;
+		lifeFramesLeft += 50;
 	}
 }

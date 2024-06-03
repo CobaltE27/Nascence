@@ -83,6 +83,7 @@ public class CharMovement : EntityMovement
 
     public GameObject coinPrefab;
     private bool canCoin = false;
+    private GameObject oldCoin;
 
     protected override void Start()
     {
@@ -477,6 +478,9 @@ public class CharMovement : EntityMovement
 
     private void CoinToss()
     {
+        if (oldCoin != null)
+            Destroy(oldCoin);
+
         GameObject newCoin = Instantiate(coinPrefab);
         newCoin.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f) + Vector2.up * 0.2f;
         CoinBehavior newCoinBehavior = newCoin.GetComponent<CoinBehavior>();
@@ -487,6 +491,7 @@ public class CharMovement : EntityMovement
 		//	coinVel.y /= Mathf.Abs(coinVel.y);
         coinVel *= 9.0f;
         newCoinBehavior.InitVelocity(coinVel + mover.persistentVel * 0.3f); //swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f
+        oldCoin = newCoin;
 	}
 
 	/// <summary>
