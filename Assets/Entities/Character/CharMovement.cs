@@ -445,7 +445,7 @@ public class CharMovement : EntityMovement
             if (hitAnything)
             {
                 Time.timeScale = 0;
-                StartCoroutine(HitStop(0.1f));
+                StartCoroutine(HitStop(0.2f));
             }
 		}
 		else
