@@ -400,8 +400,11 @@ public class CharMovement : EntityMovement
 
 				if (swingAngle >= 180)
 				{
+                    float minY = postSwingVel.y * 0.55f;
                     postSwingVel.y *= 0.3f;
                     postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
+                    if (postSwingVel.y < minY)
+                        postSwingVel.y = minY;
                     postSwingVel.x *= 0;
                     floorVaulted = true;
                     usedFloorVault = true;
@@ -471,7 +474,14 @@ public class CharMovement : EntityMovement
         GameObject newCoin = Instantiate(coinPrefab);
         newCoin.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f) + Vector2.up * 0.2f;
         CoinBehavior newCoinBehavior = newCoin.GetComponent<CoinBehavior>();
-        newCoinBehavior.InitVelocity(swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f); //mover.persistentVel + swingIndicatorDir * 8.0f
+        Vector2 coinVel = swingIndicatorDir;
+        //if (Mathf.Abs(coinVel.x) > 0.1f) //Should make it so that diagonal toss goes just as high
+		//	coinVel.x /= Mathf.Abs(coinVel.x); 
+		//if (Mathf.Abs(coinVel.y) > 0.1f)
+		//	coinVel.y /= Mathf.Abs(coinVel.y);
+        coinVel *= 9.0f;
+        coinVel.x *= 0.8f;
+        newCoinBehavior.InitVelocity(coinVel + mover.persistentVel * 0.3f); //swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f
 	}
 
 	/// <summary>
