@@ -274,7 +274,7 @@ public class CharMovement : EntityMovement
 
         if (mouse1Pressed)
         {
-            if (canCoin)
+            if (canCoin && grounded)
             {
                 CoinToss();
                 canCoin = false;
@@ -400,16 +400,11 @@ public class CharMovement : EntityMovement
 
 				if (swingAngle >= 180)
 				{
-                    if (hitWasEnemy)
-                        postSwingVel.y *= 0.7f;
-                    else
-                    {
-                        postSwingVel.y *= 0.3f;
-                        postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
-                        postSwingVel.x *= 0;
-                        floorVaulted = true;
-                        usedFloorVault = true;
-                    }
+                    postSwingVel.y *= 0.3f;
+                    postSwingVel.y += Mathf.Abs(mover.persistentVel.x);
+                    postSwingVel.x *= 0;
+                    floorVaulted = true;
+                    usedFloorVault = true;
 				}
 				else if (swingAngle >= 135)
 				{
