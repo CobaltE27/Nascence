@@ -27,7 +27,7 @@ public class CoinBehavior : EntityMovement
 
 	public override void ReceiveKnockback(Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
 	{
-		mover.persistentVel = direction * kbStrengthMult * 15.0f;
+		mover.persistentVel = direction * kbStrengthMult * 10.0f;
 		lifeFramesLeft += 50;
 	}
 }

@@ -142,9 +142,9 @@ public class CharMovement : EntityMovement
 
     void FixedUpdate()
     {
-		//Check whether the character is still on the ground
+        //Check whether the character is still on the ground
 		grounded = charCollCalc.IsOnWalkableGround();
-        belowFlatCeiling = charCollCalc.BelowFlatCeiling();
+		belowFlatCeiling = charCollCalc.BelowFlatCeiling();
         canWalkUnobstructedR = !charCollCalc.NextToRightWall() && !charCollCalc.OnRightSlope();
         canWalkUnobstructedL = !charCollCalc.NextToLeftWall() && !charCollCalc.OnLeftSlope();
 
@@ -231,13 +231,11 @@ public class CharMovement : EntityMovement
         }
 
 
-        //detects the spacebar being pressed and adds velocity
-
-        if (charInputBuffer.GetInputDown(grounded, "space"))
+        if (charInputBuffer.GetInputDown(grounded && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing
         {
             lastMoveAction = "jump";
             grounded = false;
-            mover.persistentVel.y += jumpVelocity;
+            mover.persistentVel.y = jumpVelocity;
         }
 
         if (jumpKeyReleased)
@@ -343,7 +341,7 @@ public class CharMovement : EntityMovement
 
             if (hitWasEnemy)
             {
-                hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir);
+                hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir, 1.5f);
                 steam += SWING_STEAM_COST;
             }
 
@@ -429,6 +427,8 @@ public class CharMovement : EntityMovement
                 }
 
                 usedWallVault = false;
+                grounded = false;
+                Debug.Log("hit/////////////////////////////////////////////////////////////");
             }
             else if (mover.persistentVel.y <= 2.0f && !grounded)
             {
