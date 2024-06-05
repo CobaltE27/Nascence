@@ -428,7 +428,6 @@ public class CharMovement : EntityMovement
 
                 usedWallVault = false;
                 grounded = false;
-                Debug.Log("hit/////////////////////////////////////////////////////////////");
             }
             else if (mover.persistentVel.y <= 2.0f && !grounded)
             {
