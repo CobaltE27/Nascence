@@ -10,7 +10,7 @@ public class InputBuffer : MonoBehaviour
 
     private Dictionary<string, int> downBuffer = new Dictionary<string, int>();
     private Dictionary<string, int> upBuffer = new Dictionary<string, int>();
-    public int BUFFER_FRAMES = 5;
+    public int BUFFER_FRAMES = 10;
     private string[] validKeyDownInputs;
     private string[] validKeyUpInputs;
     private string[] validMouseDownInputs;

@@ -5641,7 +5641,7 @@ MonoBehaviour:
   SWING_CHARGE_FRAMES: 30
   SWING_STRENGTH: 18
   SWING_STEAM_COST: 50
-  SWING_COOLDOWN_FRAMES: 10
+  SWING_COOLDOWN_FRAMES: 15
   SWING_LENGTH: 2
   swingIndicatorPivot: {fileID: 8293681666466941674}
   charSprite: {fileID: 8293681667074079869}
@@ -5665,6 +5665,8 @@ MonoBehaviour:
   recoilVelocity: {x: 0, y: 0}
   recoilDurationLeft: 0
   coinPrefab: {fileID: 1773902383275522105, guid: 3c76c7e9d162cef4f9a7ff375cc4cf8e,
+    type: 3}
+  bubblePrefab: {fileID: 8230261947171876314, guid: acb3ce14bc40f1b4fb81111001be9c6e,
     type: 3}
 --- !u!50 &8293681667074079864
 Rigidbody2D:

@@ -82,10 +82,12 @@ public class CharMovement : EntityMovement
     float POST_VAULT_MODIFIER = 0.2f;
 
     public GameObject coinPrefab;
-    private bool canCoin = false;
     private GameObject oldCoin;
+	public GameObject bubblePrefab;
+	private GameObject oldBubble;
 
-    protected override void Start()
+
+	protected override void Start()
     {
         base.Start();
         hud.SetSteamParameters(baseSteam, steamExtraCapacity);
@@ -153,7 +155,6 @@ public class CharMovement : EntityMovement
             usedWallVault = false;
             usedFloorVault = false;
             steam = baseSteam;
-            canCoin = true;
         }
 
         //directional movement input and gravity; everything that will affect velocity based on current state
@@ -273,10 +274,14 @@ public class CharMovement : EntityMovement
 
         if (mouse1Pressed)
         {
-            if (canCoin && grounded)
+            if (grounded)
             {
                 CoinToss();
-                canCoin = false;
+            }
+            else if (steam >= SWING_STEAM_COST)
+            {
+                steam -= SWING_STEAM_COST;
+                CreateBubble();
             }
             mouse1Pressed = false;
         }
@@ -461,7 +466,7 @@ public class CharMovement : EntityMovement
 
 				hitEnemyHealth.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
 
-				steam += (int)(SWING_STEAM_COST * (SWING_DAMAGE / MINI_HIT_DAMAGE));
+				steam += (int)(SWING_STEAM_COST * (MINI_HIT_DAMAGE / (float)SWING_DAMAGE));
 			}
 			else
 			{
@@ -491,6 +496,19 @@ public class CharMovement : EntityMovement
         coinVel *= 9.0f;
         newCoinBehavior.InitVelocity(coinVel + mover.persistentVel * 0.3f); //swingIndicatorDir * 9.0f + mover.persistentVel * 0.3f
         oldCoin = newCoin;
+	}
+
+	private void CreateBubble()
+	{
+		if (oldBubble != null)
+			Destroy(oldBubble);
+
+		GameObject newBubble = Instantiate(bubblePrefab);
+		newBubble.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f) + Vector2.up * 0.2f;
+		BubbleBehavior newBubbleBehavior = newBubble.GetComponent<BubbleBehavior>();
+		newBubbleBehavior.InitDirection(swingIndicatorDir);
+
+		oldBubble = newBubble;
 	}
 
 	/// <summary>
