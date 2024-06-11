@@ -10,8 +10,9 @@ public abstract class EntityHealth : MonoBehaviour
     public int immunityFrames = 50;
     protected Coroutine iFrameCounter;
     protected bool immune = false;
+	public int steamOnHit = 50;
 
-    public virtual void Start()
+	public virtual void Start()
     {
         //nothing for now
     }

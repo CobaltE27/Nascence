@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BubbleHealth : EnemyHealth
+public class BubbleHealth : EntityHealth
 {
 	public override void DealDamage(int damage, Vector2 direction = default, float kbStrengthMult = 1)
 	{

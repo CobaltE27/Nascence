@@ -5,5 +5,4 @@ using UnityEngine.XR.WSA.Input;
 
 public class EnemyHealth : EntityHealth
 {
-	public int steamOnHit = 50;
 }

@@ -316,43 +316,50 @@ public class CharMovement : EntityMovement
 
 	private void SetVelocityFromSwing()
 	{
-		//Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
-		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + new Vector2(0, 0.2f), swingIndicatorDir * SWING_LENGTH + new Vector2(0, 0.2f), swingArea,
-		   new string[] { "Environment", "Solid Entity", "Incorporeal Entity", "Swing" });
+        //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
+        Vector2 offset = Vector2.up * 0.02f;
+		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + offset, swingIndicatorDir * SWING_LENGTH + offset, swingArea,
+		   new string[] { "Environment", "Hurtbox", "Swing" });
 
 		float swingAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
 		Vector2 postSwingVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
 
 		float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
-		bool hitAnything = swingCastResults[0].collider != null;
 		bool wouldHitWall = angleToHitNormal >= 30 && angleToHitNormal <= 140;
 		bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
 		bool wouldHitFloor = angleToHitNormal < 30;
-        bool floorVaulted = false;
 
-		GameObject hitObject = null;
-		EntityHealth hitEnemyHealth = null;
-		if (hitAnything)
-			hitObject = swingCastResults[0].collider.gameObject;
-		if (hitObject != null)
-			hitEnemyHealth = hitObject.GetComponent<EntityHealth>();
-		bool hitWasEnemy = hitEnemyHealth != null;
-		dLog.Log("hitAnything?: " + hitAnything + ", hitObject?: " + hitObject + ", hitWasEnemy?: " + hitWasEnemy, "swing");
+		bool hitAnything = swingCastResults[0].collider != null;
+		bool hitAnyEnemy = false;
+        List<EntityHealth> hitEntitiesHealths = new List<EntityHealth>();
+        foreach (RaycastHit2D result in swingCastResults)
+        {
+            if (result.collider == null)
+                break; //should indicate that the list of real results has ended
 
-        if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+            string hitTag = result.collider.gameObject.tag;
+			if (hitTag == "Enemy" || hitTag == "Non-Enemy Entity")
+            {
+                hitEntitiesHealths.Add(result.collider.gameObject.transform.parent.gameObject.GetComponent<EntityHealth>());
+                hitAnyEnemy = true;
+            }
+        }
+		dLog.Log("hitAnything?: " + hitAnything + ", num hitEntities?: " + hitEntitiesHealths.Count + ", hitAnyEnemy?: " + hitAnyEnemy, "swing");
+
+		bool floorVaulted = false;
+		if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
         {
             dLog.Log("SWING!", "swing - type");
             steam -= SWING_STEAM_COST;
 
-            if (hitWasEnemy)
-            {
-                hitEnemyHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir, 1.5f);
-                steam += SWING_STEAM_COST;
-            }
+            if (hitEntitiesHealths.Count > 0)
+				steam += SWING_STEAM_COST; //for now, only get steam from one enemy at a time.
+
+            foreach (EntityHealth hitEntHealth in hitEntitiesHealths)
+                hitEntHealth.DealDamage(SWING_DAMAGE, swingIndicatorDir, 1.5f);
 
             if (wouldHitWall && hitAnything)
             {
-
                 if (wouldHitLeftWall)
                 {
                     swingAngle *= -1;
@@ -455,7 +462,7 @@ public class CharMovement : EntityMovement
 		else
 		{
 			dLog.Log("MINI-HIT!", "swing - type");
-			if (hitWasEnemy)
+			if (hitAnyEnemy)
 			{
 				dLog.Log("swingNewVel: " + postSwingVel + ", recoilVelocity: " + ((postSwingVel / SWING_STRENGTH) * RECOIL_STRENGTH), "recoil");
 				mover.constantVels["recoilVelocity"] = (postSwingVel / SWING_STRENGTH) * RECOIL_STRENGTH;
@@ -464,9 +471,12 @@ public class CharMovement : EntityMovement
 				if (mover.constantVels["recoilVelocity"].y != 0)
 					postSwingVel.y = 0;
 
-				hitEnemyHealth.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
+                foreach (EntityHealth hitEntHealth in hitEntitiesHealths)
+                {
+					hitEntHealth.DealDamage(MINI_HIT_DAMAGE, swingIndicatorDir);
 
-				steam += (int)(SWING_STEAM_COST * (MINI_HIT_DAMAGE / (float)SWING_DAMAGE));
+                    steam += (int)(hitEntHealth.steamOnHit * (MINI_HIT_DAMAGE / (float)SWING_DAMAGE));
+                }
 			}
 			else
 			{

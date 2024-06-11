@@ -5740,6 +5740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0891daee670fe914081a231f2f442be6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentCollider: {fileID: 8293681667074079868}
 --- !u!114 &5344792228582610441
 MonoBehaviour:
   m_ObjectHideFlags: 0
