@@ -215,7 +215,7 @@ MonoBehaviour:
   mover: {fileID: 8230261947171876305}
   lifeFramesLeft: 400
   startupFramesLeft: 50
-  initVelMagnitude: 10
+  initVelMult: 1
   hurtBox: {fileID: 1172802403399704719}
   sprite: {fileID: 8230261947171876317}
 --- !u!114 &8230261947171876308
@@ -234,4 +234,4 @@ MonoBehaviour:
   maxHealth: 0
   movement: {fileID: 8230261947171876315}
   immunityFrames: 0
-  steamOnHit: 50
+  steamOnHit: 0

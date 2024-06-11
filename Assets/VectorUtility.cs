@@ -27,4 +27,19 @@ public static class VectorUtility : object
 		return new Vector2(initMagnitude * Mathf.Cos(angleToInitial - angleToDeflected) * Mathf.Cos(angleToDeflected),
 			initMagnitude * Mathf.Cos(angleToInitial - angleToDeflected) * Mathf.Sin(angleToDeflected));
 	}
+
+	/// <summary>
+	/// Reflects the initial vector off of the surface to which the normal vector belongs.
+	/// </summary>
+	/// <param name="normal">Doesn't need to be normalized</param>
+	/// <param name="restitution">Number from 0 to 1 that multiplies the reflected component of the outgoing vector</param>
+	public static Vector2 ReflectOffNormal(Vector2 initial, Vector2 normal, float restitution = 1.0f)
+	{
+		normal.Normalize();
+		float dotProd = Vector2.Dot(initial, normal);
+		if (dotProd > 0) //initial vector is coming from behind normal's surface or doesn't contact it
+			return initial;
+
+		return initial + ((1 + restitution) * -dotProd * normal);
+	}
 }

@@ -516,7 +516,10 @@ public class CharMovement : EntityMovement
 		GameObject newBubble = Instantiate(bubblePrefab);
 		newBubble.transform.position = (Vector2)transform.position + (swingIndicatorDir * 1.0f) + Vector2.up * 0.2f;
 		BubbleBehavior newBubbleBehavior = newBubble.GetComponent<BubbleBehavior>();
-		newBubbleBehavior.InitDirection(swingIndicatorDir);
+		newBubbleBehavior.InitVelocity(mover.persistentVel);
+
+		Vector2 newVel = VectorUtility.ReflectOffNormal(mover.persistentVel, -swingIndicatorDir, 0.7f);
+        mover.persistentVel = newVel + (-swingIndicatorDir * 4.0f);
 
 		oldBubble = newBubble;
 	}

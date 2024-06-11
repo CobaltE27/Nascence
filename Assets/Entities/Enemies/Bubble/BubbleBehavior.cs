@@ -6,7 +6,7 @@ public class BubbleBehavior : EntityMovement
 {
 	public int lifeFramesLeft = 400;
 	public int startupFramesLeft = 50;
-	public float initVelMagnitude = 10.0f;
+	public float initVelMult = 1.0f;
 	public Collider2D hurtBox;
 	public SpriteRenderer sprite;
 
@@ -38,10 +38,9 @@ public class BubbleBehavior : EntityMovement
 			Destroy(this.gameObject);
 	}
 
-	public void InitDirection(Vector2 direction)
+	public void InitVelocity(Vector2 velocity)
 	{
-		direction.Normalize();
-		mover.persistentVel = direction * initVelMagnitude;
+		mover.persistentVel = velocity * initVelMult;
 	}
 
 	public override void ReceiveKnockback(Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
