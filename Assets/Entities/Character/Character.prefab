@@ -5532,12 +5532,12 @@ GameObject:
   - component: {fileID: 8293681667074079866}
   - component: {fileID: 8293681667074079869}
   - component: {fileID: 8293681667074079867}
-  - component: {fileID: 8293681667074079864}
   - component: {fileID: 8293681667074079868}
   - component: {fileID: 8498905781548684038}
   - component: {fileID: 6201283822960240873}
   - component: {fileID: 5344792228582610441}
   - component: {fileID: 6530407327694665147}
+  - component: {fileID: 1125023009393490593}
   m_Layer: 8
   m_Name: Character
   m_TagString: Character
@@ -5668,27 +5668,6 @@ MonoBehaviour:
     type: 3}
   bubblePrefab: {fileID: 8230261947171876314, guid: acb3ce14bc40f1b4fb81111001be9c6e,
     type: 3}
---- !u!50 &8293681667074079864
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8293681667074079871}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 1
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!61 &8293681667074079868
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5754,7 +5733,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collCalc: {fileID: 6201283822960240873}
-  rb: {fileID: 8293681667074079864}
   persistentVel: {x: 0, y: 0}
 --- !u!114 &6530407327694665147
 MonoBehaviour:
@@ -5772,7 +5750,29 @@ MonoBehaviour:
   maxHealth: 5
   movement: {fileID: 8293681667074079867}
   immunityFrames: 50
+  steamOnHit: 50
   hud: {fileID: 2565880697417318271}
+--- !u!50 &1125023009393490593
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293681667074079871}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &8293681667459855842
 GameObject:
   m_ObjectHideFlags: 0

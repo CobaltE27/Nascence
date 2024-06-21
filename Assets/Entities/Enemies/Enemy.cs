@@ -4,8 +4,6 @@ using UnityEngine;
 
 public abstract class Enemy : EntityMovement
 {
-    public Rigidbody2D rb;
-
 	public Vector2 moveTarget;
 	public float NOTICE_RANGE = 10.0f;
 

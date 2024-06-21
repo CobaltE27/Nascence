@@ -58,11 +58,11 @@ GameObject:
   - component: {fileID: 8230261947171876316}
   - component: {fileID: 8230261947171876317}
   - component: {fileID: 8230261947171876305}
-  - component: {fileID: 8230261947171876306}
   - component: {fileID: 8230261947171876307}
   - component: {fileID: 8230261947171876319}
   - component: {fileID: 8230261947171876315}
   - component: {fileID: 8230261947171876308}
+  - component: {fileID: 3754039114530746391}
   m_Layer: 11
   m_Name: Bubble
   m_TagString: Non-Enemy Entity
@@ -148,29 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collCalc: {fileID: 8230261947171876307}
-  rb: {fileID: 8230261947171876306}
   persistentVel: {x: 0, y: 0}
---- !u!50 &8230261947171876306
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8230261947171876314}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 1
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!114 &8230261947171876307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,3 +213,24 @@ MonoBehaviour:
   movement: {fileID: 8230261947171876315}
   immunityFrames: 0
   steamOnHit: 0
+--- !u!50 &3754039114530746391
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8230261947171876314}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

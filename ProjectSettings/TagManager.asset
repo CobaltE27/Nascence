@@ -8,6 +8,7 @@ TagManager:
   - Hazard
   - Character
   - Enemy
+  - Non-Enemy Entity
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Solid Entity
   - Incorporeal Entity
   - Swing
-  - 
+  - Hurtbox
   - 
   - 
   - 

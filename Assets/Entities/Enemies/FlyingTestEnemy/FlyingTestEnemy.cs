@@ -30,7 +30,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	/// <param name="target"></param>
 	public void MoveTowardTarget(float speedMultiplier)
 	{
-		Vector2 targetDir = moveTarget - (Vector2)rb.transform.position;
+		Vector2 targetDir = moveTarget - (Vector2)transform.position;
 		float approachSlowFactor = 1.0f;
 		if (targetDir.sqrMagnitude < 0.5)
 			approachSlowFactor = targetDir.magnitude; //using the squared version so that movement slows less further from the target.
@@ -46,7 +46,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	/// <param name="target"></param>
 	public void MoveTowardArbitrary(Vector2 target, float speedMultiplier)
 	{
-		Vector2 targetDir = target - (Vector2)rb.transform.position;
+		Vector2 targetDir = target - (Vector2)transform.position;
 		float approachSlowFactor = 1.0f;
 		if (targetDir.sqrMagnitude < 0.5)
 			approachSlowFactor = targetDir.magnitude; //using the squared version so that movement slows less further from the target.
@@ -122,7 +122,7 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 	{
 		amAttacking = true;
 		spr.color = Color.red;
-		Vector2 dashDirection = target - (Vector2)rb.transform.position;
+		Vector2 dashDirection = target - (Vector2)transform.position;
 		dashDirection.Normalize();
 		Vector2 dashEnd = target + dashDirection * 5.0f; //overshoot player
 		bool reachedEnd = false;
@@ -132,8 +132,8 @@ public class FlyingTestEnemy : Enemy, IFlier, IDasher
 		while (true)
 		{
 			MoveTowardArbitrary(dashEnd, 2.0f);
-			reachedEnd = Vector2.Distance(dashEnd, (Vector2)rb.transform.position) < 0.1f;
-			pastTarget = Vector2.Angle((Vector2)rb.transform.position - target, dashDirection) < 90; //should be 180 when dash starts
+			reachedEnd = Vector2.Distance(dashEnd, (Vector2)transform.position) < 0.1f;
+			pastTarget = Vector2.Angle((Vector2)transform.position - target, dashDirection) < 90; //should be 180 when dash starts
 			if (pastTarget)
 				pastCounter++;
 			

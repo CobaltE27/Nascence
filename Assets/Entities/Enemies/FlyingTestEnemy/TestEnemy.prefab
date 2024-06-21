@@ -68,12 +68,12 @@ GameObject:
   - component: {fileID: 8679087147612377043}
   - component: {fileID: 8679087147612377044}
   - component: {fileID: 8679087147612377045}
-  - component: {fileID: 8679087147612377042}
   - component: {fileID: 5714957895738574549}
   - component: {fileID: 3639262499301385957}
   - component: {fileID: 5366550559549104346}
   - component: {fileID: 7497847961046806791}
   - component: {fileID: 2195643797492997144}
+  - component: {fileID: 3062734731315996010}
   m_Layer: 11
   m_Name: TestEnemy
   m_TagString: Enemy
@@ -172,27 +172,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!50 &8679087147612377042
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8679087147612377046}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!114 &5714957895738574549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,7 +198,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collCalc: {fileID: 5714957895738574549}
-  rb: {fileID: 8679087147612377042}
   persistentVel: {x: 0, y: 0}
 --- !u!114 &5366550559549104346
 MonoBehaviour:
@@ -234,7 +212,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mover: {fileID: 3639262499301385957}
-  rb: {fileID: 8679087147612377042}
   moveTarget: {x: 0, y: 0}
   NOTICE_RANGE: 10
   inFormation: 0
@@ -271,3 +248,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitBox: {fileID: 141598782293667731}
   DAMAGE: 1
+--- !u!50 &3062734731315996010
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8679087147612377046}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

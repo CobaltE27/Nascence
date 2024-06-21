@@ -5,14 +5,12 @@ using UnityEngine;
 public class EntityMover : MonoBehaviour
 {
     public CollisionCalculator collCalc;
-    public Rigidbody2D rb;
     public Vector2 persistentVel = new Vector2();
 	public Dictionary<string, Vector2> constantVels = new Dictionary<string, Vector2>();
 
     void Start()
     {
-		collCalc = GetComponent<CollisionCalculator>(); 
-        rb = GetComponent<Rigidbody2D>();
+		collCalc = GetComponent<CollisionCalculator>();
     }
 
     void FixedUpdate()
@@ -21,6 +19,6 @@ public class EntityMover : MonoBehaviour
         foreach (Vector2 vel in constantVels.Values)
             displacement += collCalc.MoveAndSlide(vel, Time.deltaTime);
 
-        rb.MovePosition(rb.position + displacement);
+        transform.position += (Vector3) displacement;
     }
 }
