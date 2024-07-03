@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyRecruiter : MonoBehaviour
 {
-	private HashSet<Enemy> recruits = new HashSet<Enemy>();
+	private HashSet<EnemyMovement> recruits = new HashSet<EnemyMovement>();
 	private DebugLogger dLog;
 	public Puppetteer puppetteer;
 	public GameObject character;
@@ -27,8 +27,8 @@ public class EnemyRecruiter : MonoBehaviour
 
     void FixedUpdate()
     {
-		List<Enemy> deadRecruits = new List<Enemy>();
-		foreach (Enemy recruit in recruits)
+		List<EnemyMovement> deadRecruits = new List<EnemyMovement>();
+		foreach (EnemyMovement recruit in recruits)
         {
 			if (recruit == null)
 			{
@@ -36,7 +36,7 @@ public class EnemyRecruiter : MonoBehaviour
 				continue;
 			}
 		}
-		foreach (Enemy deadR in deadRecruits)
+		foreach (EnemyMovement deadR in deadRecruits)
 		{
 			recruits.Remove(deadR);
 		}
@@ -51,18 +51,18 @@ public class EnemyRecruiter : MonoBehaviour
 		{
 			dLog.Log("checking for recruits", "CheckForNewRecruits");
 			List<GameObject> taggedEnemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-			List<Enemy> candidates = new List<Enemy>();
+			List<EnemyMovement> candidates = new List<EnemyMovement>();
 			foreach (GameObject tagged in taggedEnemies)
 			{
-				Enemy e = tagged.GetComponent<Enemy>();
+				EnemyMovement e = tagged.GetComponent<EnemyMovement>();
 				if (e != null)
 					candidates.Add(e);
 			}
-			List<Enemy> newRecruits = new List<Enemy>();
+			List<EnemyMovement> newRecruits = new List<EnemyMovement>();
 			Vector2 charPos = character.transform.position;
-			foreach (Enemy candidate in candidates)
+			foreach (EnemyMovement candidate in candidates)
 			{
-				Enemy enemyBehavior = candidate.GetComponent<Enemy>();
+				EnemyMovement enemyBehavior = candidate.GetComponent<EnemyMovement>();
 				if (enemyBehavior.DoesNotice(charPos) && !enemyBehavior.inFormation)
 				{
 					newRecruits.Add(candidate);

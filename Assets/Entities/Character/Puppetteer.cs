@@ -31,10 +31,10 @@ public abstract class Puppetteer : MonoBehaviour
     /// Assigns as many recruits in potentialRecruits as possible to formations of this puppetteer, modifying the input set to remove the accepted recruits
     /// </summary>
     /// <param name="potentialRecruits"></param>
-    public void AssignRecruits(ref HashSet<Enemy> potentialRecruits)
+    public void AssignRecruits(ref HashSet<EnemyMovement> potentialRecruits)
     {
-        List<Enemy> keeps = new List<Enemy>();
-        foreach (Enemy recruit in potentialRecruits)
+        List<EnemyMovement> keeps = new List<EnemyMovement>();
+        foreach (EnemyMovement recruit in potentialRecruits)
             foreach (Formation form in formations)
                 if (form.HasCorrectAttributes(recruit))
                 {
@@ -52,7 +52,7 @@ public abstract class Puppetteer : MonoBehaviour
     {
         HashSet<Formation> hadDeaths = new HashSet<Formation>();
         foreach (Formation form in formations)
-            foreach (Enemy puppet in form.Puppets)
+            foreach (EnemyMovement puppet in form.Puppets)
                 if (puppet == null)
                 {
                     hadDeaths.Add(form);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class FlyingTestEnemy : Enemy, IFlier, IDasher
+public class FlyingTestEnemy : EnemyMovement, IFlier, IDasher
 {
 	public float BASE_MOVEMENT_SPEED = 5.0f; //m per second
 	public SpriteRenderer spr;

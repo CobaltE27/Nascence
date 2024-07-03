@@ -27,7 +27,7 @@ public class TestPuppetteer : Puppetteer
 		}
 		else
 		{
-			foreach (Enemy flier in fliers.Puppets)
+			foreach (EnemyMovement flier in fliers.Puppets)
 			{
 				IAttacker flierAttackBehavior = (IAttacker)flier;
 				if (!flierAttackBehavior.IsAttacking())

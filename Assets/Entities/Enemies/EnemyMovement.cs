@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Enemy : EntityMovement
+public abstract class EnemyMovement : EntityMovement
 {
 	public Vector2 moveTarget;
 	public float NOTICE_RANGE = 10.0f;

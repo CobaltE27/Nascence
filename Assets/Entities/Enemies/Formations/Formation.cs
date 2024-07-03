@@ -16,7 +16,7 @@ public abstract class Formation : MonoBehaviour
     protected List<Vector2> positions;
 	/// The index of an enemy matches the index of its corresponding position.
 	/// </summary>
-	public List<Enemy> Puppets { get; protected set; }
+	public List<EnemyMovement> Puppets { get; protected set; }
 	/// <summary>
 	/// Attribute interfaces that are required for enemies in this formation
 	/// </summary>
@@ -31,12 +31,12 @@ public abstract class Formation : MonoBehaviour
         centerObject = centerOfFormations;
         this.DisplacementFromCenter = displacementFromCenter;
         positions = new List<Vector2>();
-        Puppets = new List<Enemy>();
+        Puppets = new List<EnemyMovement>();
 	}
 
-    public abstract void AddPuppet(Enemy puppet);
+    public abstract void AddPuppet(EnemyMovement puppet);
 
-    public abstract void RemovePuppet(Enemy puppet);
+    public abstract void RemovePuppet(EnemyMovement puppet);
 
     protected abstract void ReevaluatePositions();
 
@@ -62,7 +62,7 @@ public abstract class Formation : MonoBehaviour
     /// Gets the formation position of the specified enemy relative to puppeteer center.
     /// </summary>
     /// <param name="puppet"></param>
-    public Vector2 FormationPositionOf(Enemy puppet)
+    public Vector2 FormationPositionOf(EnemyMovement puppet)
     {
         return CenterOfFormations + DisplacementFromCenter + positions[Puppets.IndexOf(puppet)];
     }
@@ -70,7 +70,7 @@ public abstract class Formation : MonoBehaviour
     /// <summary>
     /// Checks if the suspect enemy has the right attributes for this formation
     /// </summary>
-    public bool HasCorrectAttributes(Enemy suspect)
+    public bool HasCorrectAttributes(EnemyMovement suspect)
     {
         Type[] a = suspect.GetType().FindInterfaces((t, o) => { return true;}, new object()); //Gets all interfaces using dummy filter
         List<Type> suspectAttributes = new List<Type>(a);
