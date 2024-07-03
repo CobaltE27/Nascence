@@ -79,11 +79,14 @@ public class GroundedTestEnemyMovement : EnemyMovement, IWalker
 
 		while (true)
 		{
-			if (collCalc.NextToLeftWall() || OnLeftEdge())
-				mover.persistentVel.x = BASE_WALK_SPEED;
+			if (collCalc.IsOnWalkableGround())
+			{
+				if (collCalc.NextToLeftWall() || OnLeftEdge())
+					mover.persistentVel.x = BASE_WALK_SPEED;
 
-			if (collCalc.NextToRightWall() || OnRightEdge())
-				mover.persistentVel.x = -BASE_WALK_SPEED;
+				if (collCalc.NextToRightWall() || OnRightEdge())
+					mover.persistentVel.x = -BASE_WALK_SPEED;
+			}
 
 			yield return new WaitForFixedUpdate();
 			if (this == null) //entity death safeguard
@@ -101,7 +104,7 @@ public class GroundedTestEnemyMovement : EnemyMovement, IWalker
 		Vector2 collBoxCornerOffset = collBox.size / 2;
 		collBoxCornerOffset.y *= -1;
 		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] {"Environment"}));
-		return hit;
+		return !hit;
 	}
 
 	private bool OnLeftEdge()
@@ -110,6 +113,6 @@ public class GroundedTestEnemyMovement : EnemyMovement, IWalker
 		collBoxCornerOffset.y *= -1;
 		collBoxCornerOffset.x *= -1;
 		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
-		return hit;
+		return !hit;
 	}
 }

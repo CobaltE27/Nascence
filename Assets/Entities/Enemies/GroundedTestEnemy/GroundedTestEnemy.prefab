@@ -162,8 +162,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f239ef258c62c5b439a591c7cfc83d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
-  maxHealth: 5
+  health: 3
+  maxHealth: 3
   movement: {fileID: 2796400448646376253}
   immunityFrames: 50
   steamOnHit: 50
