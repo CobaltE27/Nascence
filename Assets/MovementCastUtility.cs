@@ -6,7 +6,7 @@ using System;
 /// <summary>
 /// This class has many methods which deal with the boxcasting involved in an object's movement and collision.
 /// </summary>
-public class MovementCastUtility : MonoBehaviour
+public class MovementCastUtility
 {
     private Collider2D parentCollider;
 

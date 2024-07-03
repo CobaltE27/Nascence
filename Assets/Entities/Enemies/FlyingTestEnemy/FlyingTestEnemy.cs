@@ -58,6 +58,7 @@ public class FlyingTestEnemy : EnemyMovement, IFlier, IDasher
 
 	public IEnumerator Idle()
 	{
+		yield return new WaitForFixedUpdate(); //waits until eerything finishes starting
 		Vector2 IdlingDirection = new Vector2(1, 0);
 		float IdlingDistance = 1;
 		System.Random rng = new System.Random(GetInstanceID()); //seed is ensured to be unique between enemies
@@ -82,6 +83,8 @@ public class FlyingTestEnemy : EnemyMovement, IFlier, IDasher
 			}
 
 			yield return new WaitForFixedUpdate();
+			if (this == null) //entity death safeguard
+				yield break;
 		}
 	}
 

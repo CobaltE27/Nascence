@@ -146,7 +146,7 @@ public class CollisionCalculator : MonoBehaviour
 
     public bool NextToLeftWall()
     {
-        return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-0.02f, 0))) == Vector2.right;
+		return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-0.02f, 0))) == Vector2.right;
     }
 
     public bool OnRightSlope()

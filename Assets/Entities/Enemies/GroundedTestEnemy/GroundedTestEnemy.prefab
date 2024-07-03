@@ -196,8 +196,10 @@ MonoBehaviour:
   moveTarget: {x: 0, y: 0}
   NOTICE_RANGE: 10
   inFormation: 0
-  BASE_WALK_SPEED: 1
+  BASE_WALK_SPEED: 1.5
+  GRAVITY: -20
   collCalc: {fileID: 2796400448646376244}
+  collBox: {fileID: 2796400448646376241}
 --- !u!114 &6261076192326913969
 MonoBehaviour:
   m_ObjectHideFlags: 0

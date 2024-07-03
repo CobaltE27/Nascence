@@ -8,6 +8,7 @@ public class GroundedTestEnemyMovement : EnemyMovement, IWalker
 	public float BASE_WALK_SPEED = 1.0f;
 	public float GRAVITY = -20.0f;
 	public CollisionCalculator collCalc;
+	public BoxCollider2D collBox;
 	public override bool DoesNotice(Vector2 entityPos)
 	{
 		return false;
@@ -73,16 +74,42 @@ public class GroundedTestEnemyMovement : EnemyMovement, IWalker
 
 	public IEnumerator Idle()
 	{
+		yield return new WaitForFixedUpdate(); //waits until eerything finishes starting
+		mover.persistentVel.x = BASE_WALK_SPEED;
+
 		while (true)
 		{
-			mover.persistentVel.x = BASE_WALK_SPEED * Time.deltaTime;
+			if (collCalc.NextToLeftWall() || OnLeftEdge())
+				mover.persistentVel.x = BASE_WALK_SPEED;
+
+			if (collCalc.NextToRightWall() || OnRightEdge())
+				mover.persistentVel.x = -BASE_WALK_SPEED;
 
 			yield return new WaitForFixedUpdate();
+			if (this == null) //entity death safeguard
+				yield break;
 		}
 	}
 
 	public bool IsMoving()
 	{
 		return amMoving; 
+	}
+
+	private bool OnRightEdge()
+	{
+		Vector2 collBoxCornerOffset = collBox.size / 2;
+		collBoxCornerOffset.y *= -1;
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] {"Environment"}));
+		return hit;
+	}
+
+	private bool OnLeftEdge()
+	{
+		Vector2 collBoxCornerOffset = collBox.size / 2;
+		collBoxCornerOffset.y *= -1;
+		collBoxCornerOffset.x *= -1;
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
+		return hit;
 	}
 }
