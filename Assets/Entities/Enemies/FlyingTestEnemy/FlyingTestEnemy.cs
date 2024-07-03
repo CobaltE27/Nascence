@@ -94,7 +94,7 @@ public class FlyingTestEnemy : EnemyMovement, IFlier, IDasher
 				MoveTowardTarget(speedMultiplier);
 
 			yield return new WaitForFixedUpdate();
-			if (this == null) //temporary testing fix
+			if (this == null) //entity death safeguard
 				yield break;
 		}
 		mover.persistentVel = Vector2.zero; //Arrest movement once within margin
@@ -141,7 +141,7 @@ public class FlyingTestEnemy : EnemyMovement, IFlier, IDasher
 				break;
 
 			yield return new WaitForFixedUpdate();
-			if (this == null) //temporary testing fix
+			if (this == null) //entity death safeguard
 				yield break;
 		}
 

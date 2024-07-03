@@ -100,7 +100,7 @@ public class CharMovement : EntityMovement
         charCollCalc = GetComponent<CollisionCalculator>();
         swingCastUtils = new PhysicsCastUtility();
 
-        jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * (50) * JUMP_HEIGHT);// v^2 = 2a * (height) -> v = sqrt(2 * a * height)
+        jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * JUMP_HEIGHT);// v^2 = 2a * (height) -> v = sqrt(2 * a * height)
 
         charInputBuffer = GetComponent<InputBuffer>();
 
@@ -251,7 +251,7 @@ public class CharMovement : EntityMovement
         //gravity applied
         if (mover.persistentVel.y > MAX_FALL && !grounded && mover.constantVels["recoilVelocity"].y <= 0)
         {
-            mover.persistentVel.y += GRAVITY;
+            mover.persistentVel.y += GRAVITY * Time.deltaTime;
         }
 
         if (Input.GetMouseButton(0))
