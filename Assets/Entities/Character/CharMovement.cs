@@ -86,6 +86,7 @@ public class CharMovement : EntityMovement
 	public GameObject bubblePrefab;
 	private GameObject oldBubble;
 
+    private int framesSinceGrounded = 50;
 
 	protected override void Start()
     {
@@ -155,6 +156,11 @@ public class CharMovement : EntityMovement
             usedWallVault = false;
             usedFloorVault = false;
             steam = baseSteam;
+            framesSinceGrounded = 0;
+        }
+        else
+        {
+            framesSinceGrounded++;
         }
 
         //directional movement input and gravity; everything that will affect velocity based on current state
@@ -232,7 +238,7 @@ public class CharMovement : EntityMovement
         }
 
 
-        if (charInputBuffer.GetInputDown(grounded && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing
+        if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= 5) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
         {
             lastMoveAction = "jump";
             grounded = false;
