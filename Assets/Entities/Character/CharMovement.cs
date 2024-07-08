@@ -87,6 +87,9 @@ public class CharMovement : EntityMovement
 	private GameObject oldBubble;
 
     private int framesSinceGrounded = 50;
+    private int COYOTE_TIME = 5;
+
+	bool downKeyPressed = false;
 
 	protected override void Start()
     {
@@ -123,24 +126,17 @@ public class CharMovement : EntityMovement
     {
         UpdateSwingIndicator();
 
-        if (Input.GetKeyUp("space"))
-        {
+        if (Input.GetKeyUp("space")) //use if statements instead of var = method assignment so that they only get set to false during physics frame
             jumpKeyReleased = true;
-        }
 
         if (Input.GetMouseButtonDown(0))
-        {
             mouse0Pressed = true;
-        }
-        else
-        {
-            mouse0Pressed = false;
-        }
 
 		if (Input.GetMouseButtonDown(1))
-		{
 			mouse1Pressed = true;
-		}
+
+        if (Input.GetKeyDown("s"))
+            downKeyPressed = true;
 	}
 
     void FixedUpdate()
@@ -237,8 +233,19 @@ public class CharMovement : EntityMovement
             mover.persistentVel.x = 0;
         }
 
+        if (downKeyPressed) //fastfall and cornering
+        {
+            if (grounded)
+            {
+                mover.persistentVel.x /= Mathf.Abs(mover.persistentVel.x);
+                mover.persistentVel.x *= -MAX_SPEED * 0.5f;
+            }
+            else
+                mover.persistentVel.y = MAX_FALL;
+            downKeyPressed = false;
+        }
 
-        if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= 5) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
+        if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
         {
             lastMoveAction = "jump";
             grounded = false;
