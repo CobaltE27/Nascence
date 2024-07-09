@@ -237,8 +237,8 @@ public class CharMovement : EntityMovement
         {
             if (grounded)
             {
-                mover.persistentVel.x /= Mathf.Abs(mover.persistentVel.x);
-                mover.persistentVel.x *= -MAX_SPEED * 0.5f;
+                if (mover.persistentVel.x != 0)
+                    mover.persistentVel.x = -Mathf.Sign(mover.persistentVel.x) * MAX_SPEED * 0.5f;
             }
             else
                 mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
