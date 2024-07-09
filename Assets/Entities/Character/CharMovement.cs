@@ -241,7 +241,7 @@ public class CharMovement : EntityMovement
                 mover.persistentVel.x *= -MAX_SPEED * 0.5f;
             }
             else
-                mover.persistentVel.y = MAX_FALL;
+                mover.persistentVel.y = MAX_FALL / 2;
             downKeyPressed = false;
         }
 
