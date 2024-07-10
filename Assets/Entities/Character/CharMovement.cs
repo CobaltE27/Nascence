@@ -91,6 +91,9 @@ public class CharMovement : EntityMovement
 
 	bool downKeyPressed = false;
 
+    private Vector2 lastSafeLocation = new Vector2();
+    private bool hasControl = true;
+
 	protected override void Start()
     {
         base.Start();
@@ -153,72 +156,50 @@ public class CharMovement : EntityMovement
             usedFloorVault = false;
             steam = baseSteam;
             framesSinceGrounded = 0;
+            lastSafeLocation = transform.position;
         }
         else
         {
             framesSinceGrounded++;
         }
 
+		if (postLeftWallSwingCooldown > 0)
+			postLeftWallSwingCooldown--;
+		if (postRightWallSwingCooldown > 0)
+			postRightWallSwingCooldown--;
+		if (swingCooldown > 0)
+			swingCooldown--;
+
+		if (!grounded)
+		{
+			aerialModifier = AERIAL_CONTROL;
+		}
+		else
+		{
+			aerialModifier = 1.0f;
+		}
+
+		if (recoilDurationLeft < 1)
+			mover.constantVels["recoilVelocity"] *= 0;
+		else
+		{
+			recoilDurationLeft--;
+			mover.constantVels["recoilVelocity"] *= RECOIL_DECAY;
+		}
+
         //directional movement input and gravity; everything that will affect velocity based on current state
         //this may eventually be outsourced to a input handler separate from the player object once menus and stuff are made
         #region VELOCITY ADJUSTMENTS
-        if (!grounded)
-        {
-            aerialModifier = AERIAL_CONTROL;
-        }
-        else
-        {
-            aerialModifier = 1.0f;
-        }
 
-
-        if (postLeftWallSwingCooldown > 0)
-            postLeftWallSwingCooldown--;
-        if (postRightWallSwingCooldown > 0)
-            postRightWallSwingCooldown--;
-        if (swingCooldown > 0)
-            swingCooldown--;
-
-        if (recoilDurationLeft < 1)
-            mover.constantVels["recoilVelocity"] *= 0;
-        else
-        {
-            recoilDurationLeft--;
-            mover.constantVels["recoilVelocity"] *= RECOIL_DECAY;
-        }
-
-		if (Input.GetKey("a") || Input.GetKey("d"))
-        {
-            float xVelChange = 0.0f;
-            if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
-            {
-                if (mover.persistentVel.x > -MAX_SPEED)
-                    xVelChange -= RUN_SPEED;
-                if (mover.persistentVel.x > 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
-                    mover.persistentVel.x -= RUN_SPEED / 2;
-            }
-            if (Input.GetKey("d") && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
-            {
-                if (mover.persistentVel.x < MAX_SPEED)
-					xVelChange += RUN_SPEED;
-                if (mover.persistentVel.x < 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
-                    mover.persistentVel.x += RUN_SPEED / 2;
-            }
-			if (!grounded)
-				xVelChange *= AERIAL_CONTROL;
-			if (usedFloorVault)
-				xVelChange *= POST_VAULT_MODIFIER;
-
-			mover.persistentVel.x += xVelChange;
-        }
-        else if(grounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED)
+        bool tryingToStrafe = Input.GetKey("a") || Input.GetKey("d");
+		if (!tryingToStrafe && (grounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED))
         { 
                 mover.persistentVel.x *= GROUND_DRAG;
         }
 
         // applying ground friction if the character is going down a slope, may not want/need this
-        if ((charCollCalc.OnRightSlope() || charCollCalc.OnLeftSlope()) && mover.persistentVel.y < 0)
-            mover.persistentVel.x *= GROUND_DRAG;
+        //if ((charCollCalc.OnRightSlope() || charCollCalc.OnLeftSlope()) && mover.persistentVel.y < 0)
+        //    mover.persistentVel.x *= GROUND_DRAG;
 
         if (Mathf.Abs(mover.persistentVel.x) >= MAX_SPEED)
         {
@@ -233,100 +214,143 @@ public class CharMovement : EntityMovement
             mover.persistentVel.x = 0;
         }
 
-        if (downKeyPressed) //fastfall and cornering
-        {
-            if (grounded)
-            {
-                if (mover.persistentVel.x != 0)
-                    mover.persistentVel.x = -Mathf.Sign(mover.persistentVel.x) * MAX_SPEED * 0.5f;
-            }
-            else
-                mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
-            downKeyPressed = false;
-        }
-
-        if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
-        {
-            lastMoveAction = "jump";
-            grounded = false;
-            mover.persistentVel.y = jumpVelocity;
-        }
-
-        if (jumpKeyReleased)
-        {
-            if (mover.persistentVel.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
-            {
-                mover.persistentVel.y = 6.0f;
-            }
-            jumpKeyReleased = false;
-        }
-        
-        //gravity applied
-        if (mover.persistentVel.y > MAX_FALL && !grounded && mover.constantVels["recoilVelocity"].y <= 0)
-        {
-            mover.persistentVel.y += GRAVITY * Time.deltaTime;
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            mouse0FramesHeld += 1;
-        }
-
-        if(mouse0FramesHeld >= SWING_CHARGE_FRAMES)
-        {
-            charSprite.color = Color.red;
-        }
-        else 
-        {
-            charSprite.color = Color.white;
-        }
-
 		swingIndicatorDir.x = Mathf.Cos(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
 		swingIndicatorDir.y = Mathf.Sin(indicatorAngle * (Mathf.PI / 180.0f) + (Mathf.PI / 2));
 		swingIndicatorDir.Normalize();
 
-        if (mouse1Pressed)
+		//gravity applied
+		if (mover.persistentVel.y > MAX_FALL && !grounded && mover.constantVels["recoilVelocity"].y <= 0)
+		{
+			mover.persistentVel.y += GRAVITY * Time.deltaTime;
+		}
+
+        //CONTROLS
+        if (hasControl)
         {
-            if (grounded)
+            if (Input.GetKey("a") || Input.GetKey("d"))
             {
-                CoinToss();
+                float xVelChange = 0.0f;
+                if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
+                {
+                    if (mover.persistentVel.x > -MAX_SPEED)
+                        xVelChange -= RUN_SPEED;
+                    if (mover.persistentVel.x > 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
+                        mover.persistentVel.x -= RUN_SPEED / 2;
+                }
+                if (Input.GetKey("d") && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
+                {
+                    if (mover.persistentVel.x < MAX_SPEED)
+                        xVelChange += RUN_SPEED;
+                    if (mover.persistentVel.x < 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
+                        mover.persistentVel.x += RUN_SPEED / 2;
+                }
+                if (!grounded)
+                    xVelChange *= AERIAL_CONTROL;
+                if (usedFloorVault)
+                    xVelChange *= POST_VAULT_MODIFIER;
+
+                mover.persistentVel.x += xVelChange;
             }
-            else if (steam >= SWING_STEAM_COST)
+
+            if (downKeyPressed) //fastfall and cornering
             {
-                steam -= SWING_STEAM_COST;
-                CreateBubble();
+                if (grounded)
+                {
+                    if (mover.persistentVel.x != 0)
+                        mover.persistentVel.x = -Mathf.Sign(mover.persistentVel.x) * MAX_SPEED * 0.5f;
+                }
+                else
+                    mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
+                downKeyPressed = false;
             }
-            mouse1Pressed = false;
+
+            if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
+            {
+                lastMoveAction = "jump";
+                grounded = false;
+                mover.persistentVel.y = jumpVelocity;
+            }
+
+            if (jumpKeyReleased)
+            {
+                if (mover.persistentVel.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
+                {
+                    mover.persistentVel.y = 6.0f;
+                }
+                jumpKeyReleased = false;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                mouse0FramesHeld += 1;
+            }
+
+            if (mouse1Pressed)
+            {
+                if (grounded)
+                {
+                    CoinToss();
+                }
+                else if (steam >= SWING_STEAM_COST)
+                {
+                    steam -= SWING_STEAM_COST;
+                    CreateBubble();
+                }
+                mouse1Pressed = false;
+            }
+
+            dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
+            //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
+            if (charInputBuffer.GetInputUp(true, "mouse0"))
+            {
+                if (swingCooldown == 0)
+                {
+                    swingCooldown = SWING_COOLDOWN_FRAMES;
+
+                    SetVelocityFromSwing();
+                    ParticleSystem.MainModule particleMain = swingParticle.main;
+                    particleMain.startRotation = -indicatorAngle * (Mathf.PI / 180.0f);
+                    swingParticlePivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
+
+                    swingParticle.Play();
+                }
+                else
+                {
+                    dLog.Log("on cooldown!", "swing - type");
+                }
+
+                mouse0FramesHeld = 0;
+            } 
         }
+		#endregion
+		if (mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+		{
+			charSprite.color = Color.red;
+		}
+		else
+		{
+			charSprite.color = Color.white;
+		}
 
-		dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
-        //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
-        if (charInputBuffer.GetInputUp(true, "mouse0"))
-        {
-            if (swingCooldown == 0)
-			{
-				swingCooldown = SWING_COOLDOWN_FRAMES;
-
-				SetVelocityFromSwing();
-                ParticleSystem.MainModule particleMain = swingParticle.main;
-                particleMain.startRotation = -indicatorAngle * (Mathf.PI / 180.0f);
-                swingParticlePivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
-
-				swingParticle.Play();
-			}
-			else
-			{
-                dLog.Log("on cooldown!", "swing - type");
-			}
-
-            mouse0FramesHeld = 0;
-        }
-        #endregion 
-
-        hud.UpdateSteamLevel(steam);
+		hud.UpdateSteamLevel(steam);
         if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
 	}
 
+    private void GoToLastSafe()
+    {
+        transform.position = (Vector3)lastSafeLocation;
+        mover.persistentVel *= 0;
+        grounded = true;
+        StartCoroutine(BreathingRoom());
+    }
+
+    private IEnumerator BreathingRoom()
+    {
+        hasControl = false;
+        //immunity
+        yield return new WaitForSeconds(1);
+        hasControl = true;
+    }
 	private void SetVelocityFromSwing()
 	{
         //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
