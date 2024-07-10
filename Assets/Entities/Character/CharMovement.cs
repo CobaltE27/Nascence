@@ -54,8 +54,6 @@ public class CharMovement : EntityMovement
 
 	private InputBuffer charInputBuffer;
 
-    private float aerialModifier;
-
     private Vector2 swingIndicatorDir;
     private float indicatorAngle;
 
@@ -170,15 +168,6 @@ public class CharMovement : EntityMovement
 		if (swingCooldown > 0)
 			swingCooldown--;
 
-		if (!grounded)
-		{
-			aerialModifier = AERIAL_CONTROL;
-		}
-		else
-		{
-			aerialModifier = 1.0f;
-		}
-
 		if (recoilDurationLeft < 1)
 			mover.constantVels["recoilVelocity"] *= 0;
 		else
@@ -196,10 +185,6 @@ public class CharMovement : EntityMovement
         { 
                 mover.persistentVel.x *= GROUND_DRAG;
         }
-
-        // applying ground friction if the character is going down a slope, may not want/need this
-        //if ((charCollCalc.OnRightSlope() || charCollCalc.OnLeftSlope()) && mover.persistentVel.y < 0)
-        //    mover.persistentVel.x *= GROUND_DRAG;
 
         if (Mathf.Abs(mover.persistentVel.x) >= MAX_SPEED)
         {
