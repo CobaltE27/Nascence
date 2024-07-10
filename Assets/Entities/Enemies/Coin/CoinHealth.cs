@@ -9,4 +9,9 @@ public class CoinHealth : EntityHealth
 		movement.ReceiveKnockback(direction, kbStrengthMult);
 		immune = true;
 	}
+
+	public override void EnvironmentalDamage(int damage, Vector2 direction)
+	{
+		
+	}
 }

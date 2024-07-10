@@ -321,7 +321,7 @@ public class CharMovement : EntityMovement
         if (recoilDurationLeft > 0) dLog.Log("recoilVelocity: " + mover.constantVels["recoilVelocity"] + ", velocity: " + mover.persistentVel, "recoil");
 	}
 
-    private void GoToLastSafe()
+    public void GoToLastSafe()
     {
         transform.position = (Vector3)lastSafeLocation;
         mover.persistentVel *= 0;

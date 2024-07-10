@@ -34,7 +34,9 @@ public abstract class EntityHealth : MonoBehaviour
         }
     }
 
-    protected IEnumerator ImmunityCounter()
+    public abstract void EnvironmentalDamage(int damage, Vector2 direction);
+
+	protected IEnumerator ImmunityCounter()
     {
         immune = true;
         int framesLeft = immunityFrames;
