@@ -475,7 +475,6 @@ public class CharMovement : EntityMovement
 
             if (hitAnything)
             {
-                Time.timeScale = 0;
                 StartCoroutine(HitStop(0.2f));
             }
 		}
@@ -576,7 +575,8 @@ public class CharMovement : EntityMovement
 
     private IEnumerator HitStop(float duration)
     {
-        yield return new WaitForSecondsRealtime(duration);
+		Time.timeScale = 0;
+		yield return new WaitForSecondsRealtime(duration);
         Time.timeScale = 1.0f;
     }
 }
