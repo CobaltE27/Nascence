@@ -26,5 +26,7 @@ public class EntityMover : MonoBehaviour
             displacement += collCalc.MoveAndSlide(vel, Time.deltaTime);
 
         transform.position += (Vector3) displacement;
+
+
     }
 }

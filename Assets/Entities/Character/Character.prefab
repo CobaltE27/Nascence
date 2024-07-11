@@ -5734,6 +5734,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collCalc: {fileID: 6201283822960240873}
   persistentVel: {x: 0, y: 0}
+  minimumSpeed: 0.01
 --- !u!114 &6530407327694665147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5751,6 +5752,7 @@ MonoBehaviour:
   movement: {fileID: 8293681667074079867}
   immunityFrames: 50
   steamOnHit: 50
+  hurtboxShape: {fileID: 8293681667074079868}
   hud: {fileID: 2565880697417318271}
 --- !u!50 &1125023009393490593
 Rigidbody2D:

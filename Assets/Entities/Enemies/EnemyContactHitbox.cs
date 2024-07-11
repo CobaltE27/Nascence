@@ -5,15 +5,11 @@ using UnityEngine;
 public class EnemyContactHitbox : MonoBehaviour
 { 
     public Collider2D hitBox;
-    PhysicsCastUtility caster;
     public int DAMAGE = 1;
-    void Start()
-    {
-        caster = new PhysicsCastUtility();
-    }
+    
     void FixedUpdate()
     {
-		RaycastHit2D[] hitDetectResults = caster.DisplacementShapeCast((Vector2)transform.position, Vector2.zero, hitBox,
+		RaycastHit2D[] hitDetectResults = PhysicsCastUtility.DisplacementShapeCast((Vector2)transform.position, Vector2.zero, hitBox,
 		   new string[] { "Player" });
 
         foreach (RaycastHit2D hit in hitDetectResults)

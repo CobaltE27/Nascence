@@ -9,11 +9,8 @@ using System;
 /// of casting a set collider.
 /// </summary>
 [System.Serializable]
-public class PhysicsCastUtility : object
+public static class PhysicsCastUtility : object
 {
-
-    public PhysicsCastUtility() { }
-
     /// <summary>
     /// returns the a vector of the distance to the nearest surface along a displacement path.
     /// This is the distance between the center of the given collision shape and
@@ -21,7 +18,7 @@ public class PhysicsCastUtility : object
     /// </summary>
     /// <param name="castResults"></param>
     /// <returns>Vector2D(distToWall, distToFloor), the new displacement vector</returns>
-    public Vector2 DistanceToCollider(RaycastHit2D[] castResults, Vector2 displacement)
+    public static Vector2 DistanceToCollider(RaycastHit2D[] castResults, Vector2 displacement)
     {
         Vector2 distanceToCollision = new Vector2(displacement.x, displacement.y);
 
@@ -39,7 +36,7 @@ public class PhysicsCastUtility : object
     /// </summary>
     /// <param name="castResults"></param>
     /// <returns></returns>
-    public bool DidCastDetectFloor(RaycastHit2D[] castResults)
+    public static bool DidCastDetectFloor(RaycastHit2D[] castResults)
     {
         foreach (RaycastHit2D castResult in castResults)
         {
@@ -57,7 +54,7 @@ public class PhysicsCastUtility : object
     /// </summary>
     /// <param name="castResults"></param>
     /// <returns></returns>
-    public bool DidCastDetectWall(RaycastHit2D[] castResults)
+    public static bool DidCastDetectWall(RaycastHit2D[] castResults)
     {
         foreach (RaycastHit2D castResult in castResults)
         {
@@ -74,7 +71,7 @@ public class PhysicsCastUtility : object
     /// </summary>
     /// <param name="castResults"></param>
     /// <returns></returns>
-    public Vector2 FirstCastNormal(RaycastHit2D[] castResults)
+    public static Vector2 FirstCastNormal(RaycastHit2D[] castResults)
     {
         Vector2 result = castResults[0].normal;
         result.Normalize();
@@ -87,7 +84,7 @@ public class PhysicsCastUtility : object
     /// <param name="results"></param>
     /// <returns>The RaycastHit2D which hit a wall, null if none of the casts in
 	/// the given array hit walls.</returns>
-    public RaycastHit2D WhichCastDetectedWall(RaycastHit2D[] results)
+    public static RaycastHit2D WhichCastDetectedWall(RaycastHit2D[] results)
     {
         foreach (RaycastHit2D result in results)
         {
@@ -106,7 +103,7 @@ public class PhysicsCastUtility : object
     /// <param name="results"></param>
     /// <returns>The RaycastHit2D which hit a floor, null if none of the casts in
 	/// the given array hit floors.</returns>
-    public RaycastHit2D WhichCastDetectedFloor(RaycastHit2D[] results)
+    public static RaycastHit2D WhichCastDetectedFloor(RaycastHit2D[] results)
     {
         foreach (RaycastHit2D result in results)
         {
@@ -128,7 +125,7 @@ public class PhysicsCastUtility : object
     /// <param name="displacement"> The displacement from the origin to the end of where the given shape should be cast</param>
 	/// <param name="castShape"></param>
     /// <returns>The array of RaycastHit2D that results from the cast.</returns>
-    public RaycastHit2D[] DisplacementShapeCast(Vector2 origin, Vector2 displacement, Collider2D castShape, String[] layers, float angle = 0.0f)
+    public static RaycastHit2D[] DisplacementShapeCast(Vector2 origin, Vector2 displacement, Collider2D castShape, String[] layers, float angle = 0.0f)
     {
         RaycastHit2D[] results;
         if (castShape is BoxCollider2D)

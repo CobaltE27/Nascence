@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collCalc: {fileID: 2796400448646376244}
   persistentVel: {x: 0, y: 0}
+  minimumSpeed: 0.01
 --- !u!114 &2796400448646376247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +168,7 @@ MonoBehaviour:
   movement: {fileID: 2796400448646376253}
   immunityFrames: 50
   steamOnHit: 50
+  hurtboxShape: {fileID: 1910986726913970412}
 --- !u!114 &2796400448646376244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,6 +288,12 @@ PrefabInstance:
 --- !u!4 &8825405491794636906 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5451963491490570590}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1910986726913970412 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 5849177169669927346, guid: 4c03b0520e5f8bb4299925a98f819a7f,
     type: 3}
   m_PrefabInstance: {fileID: 5451963491490570590}
   m_PrefabAsset: {fileID: 0}

@@ -34,7 +34,6 @@ public class CharMovement : EntityMovement
     public CircleCollider2D swingArea;
 
     private CollisionCalculator charCollCalc;
-    private PhysicsCastUtility swingCastUtils;
 
     private float jumpVelocity;
 
@@ -103,7 +102,6 @@ public class CharMovement : EntityMovement
         currentCam = GetComponentInChildren<Camera>();
 
         charCollCalc = GetComponent<CollisionCalculator>();
-        swingCastUtils = new PhysicsCastUtility();
 
         jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * JUMP_HEIGHT);// v^2 = 2a * (height) -> v = sqrt(2 * a * height)
 
@@ -340,15 +338,15 @@ public class CharMovement : EntityMovement
 	{
         //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
         Vector2 offset = Vector2.up * 0.02f;
-		RaycastHit2D[] swingCastResults = swingCastUtils.DisplacementShapeCast((Vector2)transform.position + offset, swingIndicatorDir * SWING_LENGTH + offset, swingArea,
+		RaycastHit2D[] swingCastResults = PhysicsCastUtility.DisplacementShapeCast((Vector2)transform.position + offset, swingIndicatorDir * SWING_LENGTH + offset, swingArea,
 		   new string[] { "Environment", "Hurtbox", "Swing" });
 
 		float swingAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
 		Vector2 postSwingVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
 
-		float angleToHitNormal = Vector2.Angle(Vector2.up, swingCastUtils.FirstCastNormal(swingCastResults));
+		float angleToHitNormal = Vector2.Angle(Vector2.up, PhysicsCastUtility.FirstCastNormal(swingCastResults));
 		bool wouldHitWall = angleToHitNormal >= 30 && angleToHitNormal <= 140;
-		bool wouldHitLeftWall = swingCastUtils.FirstCastNormal(swingCastResults).x > 0;
+		bool wouldHitLeftWall = PhysicsCastUtility.FirstCastNormal(swingCastResults).x > 0;
 		bool wouldHitFloor = angleToHitNormal < 30;
 
 		bool hitAnything = swingCastResults[0].collider != null;

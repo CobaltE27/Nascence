@@ -12,9 +12,16 @@ public abstract class EntityHealth : MonoBehaviour
     protected bool immune = false;
 	public int steamOnHit = 50;
 
+    public Collider2D hurtboxShape;
+
 	public virtual void Start()
     {
         //nothing for now
+    }
+
+    public virtual void FixedUpdate()
+    {
+        CheckIfInHazard();
     }
 
     public virtual void DealDamage(int damage, Vector2 direction = new Vector2(), float kbStrengthMult = 1.0f)
@@ -50,5 +57,14 @@ public abstract class EntityHealth : MonoBehaviour
 
         immune = false;
         yield break;
+    }
+
+    private void CheckIfInHazard()
+    {
+        RaycastHit2D[] hits = PhysicsCastUtility.DisplacementShapeCast(hurtboxShape.transform.position, Vector2.zero, hurtboxShape, new string[] {"Intangible Environment"});
+        if (hits[0])
+        {
+            EnvironmentalDamage(1, hits[0].normal);
+		}
     }
 }

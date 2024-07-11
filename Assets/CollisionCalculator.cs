@@ -14,9 +14,9 @@ public class CollisionCalculator : MonoBehaviour
     void Start()
     {
         if (!parentCollider)
-		    parentCollider = GetComponent<Collider2D>();
-		castUtils = new MovementCastUtility(parentCollider);
-        
+            parentCollider = GetComponent<Collider2D>();
+        castUtils = new MovementCastUtility(parentCollider);
+
         WALKABLE_ANGLE_THRESHOLD = 30.0f;
     }
 
@@ -35,6 +35,7 @@ public class CollisionCalculator : MonoBehaviour
 		parentVelocity = RedirectWithNormal(parentVelocity, collisionNormalAngle);
 
 		dispToCollision += collisionNormal * 0.01f;
+
 		return dispToCollision;
 	}
 
