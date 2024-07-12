@@ -28,7 +28,7 @@ public class CharMovement : EntityMovement
     public int SWING_COOLDOWN_FRAMES = 10;
     public float SWING_LENGTH = 2.0f;
 
-    Camera currentCam;
+    public Camera currentCam;
     public Transform swingIndicatorPivot;
     public SpriteRenderer charSprite;
     public CircleCollider2D swingArea;
