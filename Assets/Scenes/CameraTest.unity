@@ -128,11 +128,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7426385127442330562, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8293681667074079866, guid: d99d8fd7346643540b059d3954eaaf6f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -192,46 +187,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -10.001
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855646, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8293681667459855841, guid: d99d8fd7346643540b059d3954eaaf6f,
-        type: 3}
-      propertyPath: orthographic size
-      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d99d8fd7346643540b059d3954eaaf6f, type: 3}
@@ -305,7 +260,7 @@ PrefabInstance:
     - target: {fileID: 7008860350921130714, guid: 178216262ec2c014ea01562f1e14c1d3,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 178216262ec2c014ea01562f1e14c1d3, type: 3}
@@ -405,7 +360,7 @@ PrefabInstance:
     - target: {fileID: 1853229277172614879, guid: 68712370de0c4504683dd4c70c1bf937,
         type: 3}
       propertyPath: m_Name
-      value: ClearShot Camera
+      value: Scene Camera
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68712370de0c4504683dd4c70c1bf937, type: 3}
@@ -415,43 +370,3 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1354755301}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8293681666663307527 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8293681667459855842, guid: d99d8fd7346643540b059d3954eaaf6f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1354755301}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8293681666663307528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8293681666663307527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowDebugText: 0
-  m_ShowCameraFrustum: 1
-  m_IgnoreTimeScale: 0
-  m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 2
-  m_BlendUpdateMethod: 1
-  m_DefaultBlend:
-    m_Style: 1
-    m_Time: 2
-    m_CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  m_CustomBlends: {fileID: 0}
-  m_CameraCutEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_CameraActivatedEvent:
-    m_PersistentCalls:
-      m_Calls: []

@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 1853229277172614872}
   - component: {fileID: 1853229277172614874}
   m_Layer: 0
-  m_Name: ClearShot Camera
+  m_Name: Scene Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
