@@ -7,31 +7,34 @@ using UnityEngine;
 /// </summary>
 public class InputBuffer : MonoBehaviour
 {
-
     private Dictionary<string, int> downBuffer = new Dictionary<string, int>();
     private Dictionary<string, int> upBuffer = new Dictionary<string, int>();
-    public int BUFFER_FRAMES = 10;
-    private string[] validKeyDownInputs;
-    private string[] validKeyUpInputs;
+    private Dictionary<string, int> keyDownFor = new Dictionary<string, int>();
+	private Dictionary<string, int> keyUpFor = new Dictionary<string, int>();
+	public int BUFFER_FRAMES = 10;
+    private string[] validKeyInputs;
     private string[] validMouseDownInputs;
     private string[] validMouseUpInputs;
+    public Vector2 swingDir { get; private set; }
+    private enum SwingDirModes { MIRROR_MOVEMENT, SECOND_DIRECTION, MOUSE_POS}
+    private SwingDirModes swingDirMode;
+    public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, ALT, JUMP};
 
-    public InputBuffer(/*maybe later this can take arguments determining which strings the valid lists are initialized with*/)
+    public InputBuffer()
 	{
-        validKeyDownInputs = new string[] {"space"};
-        validKeyUpInputs = new string[] {"space"};
+        swingDirMode = SwingDirModes.MIRROR_MOVEMENT;
+
+        validKeyInputs = new string[] {"space"};
         validMouseDownInputs = new string[] { };
         validMouseUpInputs = new string[] {"mouse0"};
 
-        foreach (string key in validKeyDownInputs)
+        foreach (string key in validKeyInputs)
         {
             downBuffer.Add(key, 0);
-        }
-
-        foreach (string key in validKeyUpInputs)
-        {
             upBuffer.Add(key, 0);
-        }
+			keyDownFor.Add(key, 0);
+			keyUpFor.Add(key, 0);
+		}
 
         foreach (string button in validMouseDownInputs)
         {
@@ -46,15 +49,23 @@ public class InputBuffer : MonoBehaviour
 
     void Update()
     {
-         foreach (string key in validKeyDownInputs)
+        foreach (string key in validKeyInputs)
 		{
             if (Input.GetKeyDown(key))
                 downBuffer[key] = BUFFER_FRAMES;
-		}
 
-        foreach (string key in validKeyUpInputs)
-        {
-            if (Input.GetKeyUp(key))
+            if (Input.GetKey(key))
+            {
+                keyDownFor[key]++;
+                keyUpFor[key] = 0;
+            }
+            else
+            {
+                keyDownFor[key] = 0;
+                keyUpFor[key]++;
+            }
+
+			if (Input.GetKeyUp(key))
                 upBuffer[key] = BUFFER_FRAMES;
         }
 
@@ -74,13 +85,14 @@ public class InputBuffer : MonoBehaviour
     }
 
     void FixedUpdate()
-	{
-        foreach (string key in validKeyDownInputs)
+    {
+        foreach (string key in validKeyInputs)
+        { 
             if (downBuffer[key] > 0)
                 downBuffer[key] -= 1;
-        foreach (string key in validKeyUpInputs)
             if (upBuffer[key] > 0)
                 upBuffer[key] -= 1;
+        }
         foreach (string button in validMouseDownInputs)
             if (downBuffer[button] > 0)
                 downBuffer[button] -= 1;
@@ -110,4 +122,26 @@ public class InputBuffer : MonoBehaviour
 
         return false;
     }
+
+    private void UpdateSwingDir()
+    {
+        switch (swingDirMode)
+        {
+        case SwingDirModes.MIRROR_MOVEMENT:
+            {
+                
+                break;
+            }
+        case SwingDirModes.SECOND_DIRECTION:
+            {
+                
+                break;
+            }
+        case SwingDirModes.MOUSE_POS:
+            {
+
+                break;
+            }
+        }
+	}
 }
