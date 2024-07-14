@@ -133,13 +133,13 @@ public class InputBuffer : MonoBehaviour
 		{
 			case SwingDirModes.MIRROR_MOVEMENT:
 				{
-					if (keyUpFor["w"] <= 5)
+					if (keyUpFor["w"] <= 1)
 						newSwingDir += Vector2.up;
-					if (keyUpFor["a"] <= 5)
+					if (keyUpFor["a"] <= 1)
 						newSwingDir += Vector2.left;
-					if (keyUpFor["s"] <= 5)
+					if (keyUpFor["s"] <= 1)
 						newSwingDir += Vector2.down;
-					if (keyUpFor["d"] <= 5)
+					if (keyUpFor["d"] <= 1)
 						newSwingDir += Vector2.right;
                     newSwingDir.Normalize();
 
