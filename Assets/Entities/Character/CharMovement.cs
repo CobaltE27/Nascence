@@ -237,13 +237,13 @@ public class CharMovement : EntityMovement
 
             if (downKeyPressed) //fastfall and cornering
             {
-                if (grounded)
-                {
-                    if (mover.persistentVel.x != 0)
-                        mover.persistentVel.x = -Mathf.Sign(mover.persistentVel.x) * MAX_SPEED * 0.5f;
-                }
-                else
-                    mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
+                //if (grounded)
+                //{
+                //    if (mover.persistentVel.x != 0)
+                //        mover.persistentVel.x = -Mathf.Sign(mover.persistentVel.x) * MAX_SPEED * 0.5f;
+                //}
+                //else
+                //    mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
                 downKeyPressed = false;
             }
 
@@ -548,20 +548,24 @@ public class CharMovement : EntityMovement
 	/// </summary>
 	private void UpdateSwingIndicator()
     {
-        Vector2 charPosInCam = currentCam.WorldToScreenPoint(this.transform.position);
-        Vector2 relativeMousePosToChar = (Vector2)Input.mousePosition - charPosInCam;
-        relativeMousePosToChar.Normalize();
-        float angleToMouse = -Vector2.SignedAngle(relativeMousePosToChar, new Vector2(0, 1));
-        indicatorAngle = this.RoundAngleToEigths(angleToMouse);
-        swingIndicatorPivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
-    }
+        //Vector2 charPosInCam = currentCam.WorldToScreenPoint(this.transform.position);
+        //Vector2 relativeMousePosToChar = (Vector2)Input.mousePosition - charPosInCam;
+        //relativeMousePosToChar.Normalize();
+        //float angleToMouse = -Vector2.SignedAngle(relativeMousePosToChar, new Vector2(0, 1));
+        //indicatorAngle = this.RoundAngleToEigths(angleToMouse);
+        //swingIndicatorPivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
 
-    /// <summary>
-    /// Takes any angle and rounds it to the nearest 1/8 rotation
-    /// </summary>
-    /// <param name="unrounded"></param>
-    /// <returns>The nearest angle which is a multiple of 45</returns>
-    private float RoundAngleToEigths(float unrounded)
+        Vector2 swingDirInput = charInputBuffer.SwingDir;
+        indicatorAngle = Vector2.SignedAngle(Vector2.up, swingDirInput);
+		swingIndicatorPivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
+	}
+
+	/// <summary>
+	/// Takes any angle and rounds it to the nearest 1/8 rotation
+	/// </summary>
+	/// <param name="unrounded"></param>
+	/// <returns>The nearest angle which is a multiple of 45</returns>
+	private float RoundAngleToEigths(float unrounded)
     {
         for(int centerAng = 180; centerAng >= -180; centerAng -= 45)
         {

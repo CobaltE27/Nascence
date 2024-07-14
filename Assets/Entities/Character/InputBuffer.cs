@@ -15,7 +15,7 @@ public class InputBuffer : MonoBehaviour
     private string[] validKeyInputs;
     private string[] validMouseDownInputs;
     private string[] validMouseUpInputs;
-    public Vector2 swingDir { get; private set; }
+    public Vector2 SwingDir { get; private set; }
     private enum SwingDirModes { MIRROR_MOVEMENT, SECOND_DIRECTION, MOUSE_POS}
     private SwingDirModes swingDirMode;
     public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, ALT, JUMP};
@@ -25,7 +25,7 @@ public class InputBuffer : MonoBehaviour
 	{
         swingDirMode = SwingDirModes.MIRROR_MOVEMENT;
 
-        validKeyInputs = new string[] {"space"};
+        validKeyInputs = new string[] {"space", "w", "a", "s", "d"};
         validMouseDownInputs = new string[] { };
         validMouseUpInputs = new string[] {"mouse0"};
 
@@ -133,17 +133,18 @@ public class InputBuffer : MonoBehaviour
 		{
 			case SwingDirModes.MIRROR_MOVEMENT:
 				{
+					if (keyUpFor["w"] <= 5)
+						newSwingDir += Vector2.up;
 					if (keyUpFor["a"] <= 5)
 						newSwingDir += Vector2.left;
 					if (keyUpFor["s"] <= 5)
 						newSwingDir += Vector2.down;
 					if (keyUpFor["d"] <= 5)
 						newSwingDir += Vector2.right;
-					if (keyUpFor["w"] <= 5)
-						newSwingDir += Vector2.up;
+                    newSwingDir.Normalize();
 
                     if(newSwingDir != Vector2.zero)
-                        swingDir = newSwingDir;
+                        SwingDir = newSwingDir;
 					break;
 				}
 			case SwingDirModes.SECOND_DIRECTION:
@@ -153,7 +154,7 @@ public class InputBuffer : MonoBehaviour
 				}
 			case SwingDirModes.MOUSE_POS:
 				{
-					swingDir = Vector2.up;
+					SwingDir = Vector2.up;
 					break;
 				}
 		}
