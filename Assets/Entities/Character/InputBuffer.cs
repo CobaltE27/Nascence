@@ -18,11 +18,23 @@ public class InputBuffer : MonoBehaviour
     public Vector2 SwingDir { get; private set; }
     private enum SwingDirModes { MIRROR_MOVEMENT, SECOND_DIRECTION, MOUSE_POS}
     private SwingDirModes swingDirMode;
-    public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, ALT, JUMP};
-	private Dictionary<MovementControls, string> keyBindings = new Dictionary<MovementControls, string>();
+    public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, PLAT_PROJECTILE, JUMP, SHIFT, CTRL}; //change names of SHIFT and CTRL once there are more abilities
+	private Dictionary<MovementControls, KeyCode> keyBindings;
 
 	public InputBuffer()
 	{
+        keyBindings = new Dictionary<MovementControls, KeyCode> { //need to fetch these from some saved location in the future
+            {MovementControls.UP, KeyCode.W},
+		    {MovementControls.DOWN, KeyCode.S},
+		    {MovementControls.LEFT, KeyCode.A},
+		    {MovementControls.RIGHT, KeyCode.D},
+		    //{MovementControls.FASTFALL, },
+		    {MovementControls.SWING, KeyCode.Mouse0},
+		    {MovementControls.PLAT_PROJECTILE, KeyCode.Mouse1},
+		    {MovementControls.JUMP, KeyCode.Space},
+		    {MovementControls.SHIFT, KeyCode.LeftShift},
+		    {MovementControls.CTRL, KeyCode.LeftControl}
+		};
         swingDirMode = SwingDirModes.MIRROR_MOVEMENT;
 
         validKeyInputs = new string[] {"space", "w", "a", "s", "d"};
@@ -133,7 +145,7 @@ public class InputBuffer : MonoBehaviour
 		{
 			case SwingDirModes.MIRROR_MOVEMENT:
 				{
-					if (keyUpFor["w"] <= 1)
+                    if (keyUpFor["w"] <= 1)
 						newSwingDir += Vector2.up;
 					if (keyUpFor["a"] <= 1)
 						newSwingDir += Vector2.left;
@@ -141,15 +153,31 @@ public class InputBuffer : MonoBehaviour
 						newSwingDir += Vector2.down;
 					if (keyUpFor["d"] <= 1)
 						newSwingDir += Vector2.right;
-                    newSwingDir.Normalize();
 
-                    if(newSwingDir != Vector2.zero)
+                    if (keyUpFor["w"] <= 1 && keyUpFor["s"] <= 1)
+                    {
+                        if (keyDownFor["w"] < keyDownFor["s"])
+                            newSwingDir.y = 1;
+                        else
+                            newSwingDir.y = -1;
+                    }
+					if (keyUpFor["a"] <= 1 && keyUpFor["d"] <= 1)
+					{
+						if (keyDownFor["a"] < keyDownFor["d"])
+							newSwingDir.x = -1;
+						else
+							newSwingDir.x = 1;
+					}
+
+					newSwingDir.Normalize();
+
+					if (newSwingDir != Vector2.zero)
                         SwingDir = newSwingDir;
 					break;
 				}
 			case SwingDirModes.SECOND_DIRECTION:
 				{
-
+                    //use arrow keys or stick
 					break;
 				}
 			case SwingDirModes.MOUSE_POS:
