@@ -125,7 +125,7 @@ public class CharMovement : EntityMovement
     {
         UpdateSwingIndicator();
 
-        if (Input.GetKeyUp("space")) //use if statements instead of var = method assignment so that they only get set to false during physics frame
+        if (Input.GetKeyUp(KeyCode.Space)) //use if statements instead of var = method assignment so that they only get set to false during physics frame
             jumpKeyReleased = true;
 
         if (Input.GetMouseButtonDown(0))
@@ -134,7 +134,7 @@ public class CharMovement : EntityMovement
 		if (Input.GetMouseButtonDown(1))
 			mouse1Pressed = true;
 
-        if (Input.GetKeyDown("s"))
+        if (Input.GetKeyDown(KeyCode.S))
             downKeyPressed = true;
 	}
 
@@ -247,7 +247,7 @@ public class CharMovement : EntityMovement
                 downKeyPressed = false;
             }
 
-            if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, "space")) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
+            if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, KeyCode.Space)) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
             {
                 lastMoveAction = "jump";
                 grounded = false;
@@ -284,7 +284,7 @@ public class CharMovement : EntityMovement
 
             dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
             //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
-            if (charInputBuffer.GetInputUp(true, "mouse0"))
+            if (charInputBuffer.GetInputUp(true, KeyCode.Mouse0))
             {
                 if (swingCooldown == 0)
                 {
