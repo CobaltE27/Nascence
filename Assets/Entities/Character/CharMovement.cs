@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static EnumConstants;
+using static InputBuffer.Controls;
 
 public class CharMovement : EntityMovement
 {
@@ -45,13 +46,9 @@ public class CharMovement : EntityMovement
     public bool canWalkUnobstructedR = false;
     public bool canWalkUnobstructedL = false;
 
-    private bool jumpKeyReleased;
+    private int swingFramesHeld;
 
-    private bool mouse0Pressed;
-    private int mouse0FramesHeld;
-	private bool mouse1Pressed;
-
-	private InputBuffer charInputBuffer;
+	private InputBuffer inputBuffer;
 
     private Vector2 swingIndicatorDir;
     private float indicatorAngle;
@@ -86,8 +83,6 @@ public class CharMovement : EntityMovement
     private int framesSinceGrounded = 50;
     private int COYOTE_TIME = 5;
 
-	bool downKeyPressed = false;
-
     private Vector2 lastSafeLocation = new Vector2();
     private bool hasControl = true;
 
@@ -105,7 +100,7 @@ public class CharMovement : EntityMovement
 
         jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(GRAVITY) * JUMP_HEIGHT);// v^2 = 2a * (height) -> v = sqrt(2 * a * height)
 
-        charInputBuffer = GetComponent<InputBuffer>();
+        inputBuffer = GetComponent<InputBuffer>();
 
 
         dLog = new DebugLogger();
@@ -124,18 +119,6 @@ public class CharMovement : EntityMovement
     void Update() 
     {
         UpdateSwingIndicator();
-
-        if (Input.GetKeyUp(KeyCode.Space)) //use if statements instead of var = method assignment so that they only get set to false during physics frame
-            jumpKeyReleased = true;
-
-        if (Input.GetMouseButtonDown(0))
-            mouse0Pressed = true;
-
-		if (Input.GetMouseButtonDown(1))
-			mouse1Pressed = true;
-
-        if (Input.GetKeyDown(KeyCode.S))
-            downKeyPressed = true;
 	}
 
     void FixedUpdate()
@@ -178,10 +161,10 @@ public class CharMovement : EntityMovement
         //this may eventually be outsourced to a input handler separate from the player object once menus and stuff are made
         #region VELOCITY ADJUSTMENTS
 
-        bool tryingToStrafe = Input.GetKey("a") || Input.GetKey("d");
+        bool tryingToStrafe = inputBuffer.GetInput(LEFT) || inputBuffer.GetInput(RIGHT);
 		if (!tryingToStrafe && (grounded || Mathf.Abs(mover.persistentVel.x) <= MAX_SPEED))
         { 
-                mover.persistentVel.x *= GROUND_DRAG;
+            mover.persistentVel.x *= GROUND_DRAG;
         }
 
         if (Mathf.Abs(mover.persistentVel.x) >= MAX_SPEED)
@@ -210,17 +193,17 @@ public class CharMovement : EntityMovement
         //CONTROLS
         if (hasControl)
         {
-            if (Input.GetKey("a") || Input.GetKey("d"))
+            if (inputBuffer.GetInput(LEFT) || inputBuffer.GetInput(RIGHT))
             {
                 float xVelChange = 0.0f;
-                if (Input.GetKey("a") && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
+                if (inputBuffer.GetInput(LEFT) && canWalkUnobstructedL && postLeftWallSwingCooldown == 0)//going left
                 {
                     if (mover.persistentVel.x > -MAX_SPEED)
                         xVelChange -= RUN_SPEED;
                     if (mover.persistentVel.x > 0 && Mathf.Abs(mover.persistentVel.x) < MAX_SPEED)
                         mover.persistentVel.x -= RUN_SPEED / 2;
                 }
-                if (Input.GetKey("d") && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
+                if (inputBuffer.GetInput(RIGHT) && canWalkUnobstructedR && postRightWallSwingCooldown == 0)//going right
                 {
                     if (mover.persistentVel.x < MAX_SPEED)
                         xVelChange += RUN_SPEED;
@@ -235,7 +218,7 @@ public class CharMovement : EntityMovement
                 mover.persistentVel.x += xVelChange;
             }
 
-            if (downKeyPressed) //fastfall and cornering
+            if (inputBuffer.GetInputDown(DOWN)) //fastfall and cornering
             {
                 //if (grounded)
                 //{
@@ -244,31 +227,27 @@ public class CharMovement : EntityMovement
                 //}
                 //else
                 //    mover.persistentVel.y = Mathf.Min(MAX_FALL / 2, mover.persistentVel.y);
-                downKeyPressed = false;
             }
 
-            if (charInputBuffer.GetInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, KeyCode.Space)) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
+            if (inputBuffer.GetBufferedInputDown((grounded || framesSinceGrounded <= COYOTE_TIME) && mover.persistentVel.y <= 0, JUMP)) //velocity check prevents jumping on frame after ground swing, frames since grounded creates coyote-time
             {
                 lastMoveAction = "jump";
                 grounded = false;
                 mover.persistentVel.y = jumpVelocity;
             }
 
-            if (jumpKeyReleased)
+            if (inputBuffer.GetInputUp(JUMP))
             {
                 if (mover.persistentVel.y >= 6.0f && string.Equals(lastMoveAction, "jump"))
                 {
                     mover.persistentVel.y = 6.0f;
                 }
-                jumpKeyReleased = false;
             }
 
-            if (Input.GetMouseButton(0))
-            {
-                mouse0FramesHeld += 1;
-            }
+            if (inputBuffer.GetInput(SWING))
+                swingFramesHeld++;
 
-            if (mouse1Pressed)
+			if (inputBuffer.GetInputDown(PLAT_PROJECTILE))
             {
                 if (grounded)
                 {
@@ -279,12 +258,11 @@ public class CharMovement : EntityMovement
                     steam -= SWING_STEAM_COST;
                     CreateBubble();
                 }
-                mouse1Pressed = false;
             }
 
             dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
             //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
-            if (charInputBuffer.GetInputUp(true, KeyCode.Mouse0))
+            if (inputBuffer.GetBufferedInputUp(true, SWING))
             {
                 if (swingCooldown == 0)
                 {
@@ -302,11 +280,11 @@ public class CharMovement : EntityMovement
                     dLog.Log("on cooldown!", "swing - type");
                 }
 
-                mouse0FramesHeld = 0;
+                swingFramesHeld = 0;
             } 
         }
 		#endregion
-		if (mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+		if (swingFramesHeld >= SWING_CHARGE_FRAMES)
 		{
 			charSprite.color = Color.red;
 		}
@@ -367,7 +345,7 @@ public class CharMovement : EntityMovement
 		dLog.Log("hitAnything?: " + hitAnything + ", num hitEntities?: " + hitEntitiesHealths.Count + ", hitAnyEnemy?: " + hitAnyEnemy, "swing");
 
 		bool floorVaulted = false;
-		if (steam >= SWING_STEAM_COST && mouse0FramesHeld >= SWING_CHARGE_FRAMES)
+		if (steam >= SWING_STEAM_COST && swingFramesHeld >= SWING_CHARGE_FRAMES)
         {
             dLog.Log("SWING!", "swing - type");
             steam -= SWING_STEAM_COST;
@@ -555,7 +533,7 @@ public class CharMovement : EntityMovement
         //indicatorAngle = this.RoundAngleToEigths(angleToMouse);
         //swingIndicatorPivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
 
-        Vector2 swingDirInput = charInputBuffer.SwingDir;
+        Vector2 swingDirInput = inputBuffer.SwingDir;
         indicatorAngle = Vector2.SignedAngle(Vector2.up, swingDirInput);
 		swingIndicatorPivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
 	}

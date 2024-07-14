@@ -8,42 +8,42 @@ using UnityEngine;
 /// </summary>
 public class InputBuffer : MonoBehaviour
 {
-    private Dictionary<KeyCode, int> downBuffer = new Dictionary<KeyCode, int>();
-    private Dictionary<KeyCode, int> upBuffer = new Dictionary<KeyCode, int>();
-    private Dictionary<KeyCode, int> keyDownFor = new Dictionary<KeyCode, int>();
-	private Dictionary<KeyCode, int> keyUpFor = new Dictionary<KeyCode, int>();
+    private Dictionary<Controls, int> downBuffer = new Dictionary<Controls, int>();
+    private Dictionary<Controls, int> upBuffer = new Dictionary<Controls, int>();
+    private Dictionary<Controls, int> keyDownFor = new Dictionary<Controls, int>();
+	private Dictionary<Controls, int> keyUpFor = new Dictionary<Controls, int>();
 	public int BUFFER_FRAMES = 10;
     private KeyCode[] validKeyInputs;
     public Vector2 SwingDir { get; private set; }
     private enum SwingDirModes { MIRROR_MOVEMENT, SECOND_DIRECTION, MOUSE_POS}
     private SwingDirModes swingDirMode;
-    public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, PLAT_PROJECTILE, JUMP, SHIFT, CTRL}; //change names of SHIFT and CTRL once there are more abilities
-	public Dictionary<MovementControls, KeyCode> keyBindings;
+    public enum Controls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, PLAT_PROJECTILE, JUMP, SHIFT, CTRL}; //change names of SHIFT and CTRL once there are more abilities
+	public Dictionary<KeyCode, Controls> keyBindings;
 
 	public InputBuffer()
 	{
-        keyBindings = new Dictionary<MovementControls, KeyCode> { //need to fetch these from some saved location in the future
-            {MovementControls.UP, KeyCode.W},
-		    {MovementControls.DOWN, KeyCode.S},
-		    {MovementControls.LEFT, KeyCode.A},
-		    {MovementControls.RIGHT, KeyCode.D},
+        keyBindings = new Dictionary<KeyCode, Controls> { //need to fetch these from some saved location in the future
+            {KeyCode.W, Controls.UP},
+		    {KeyCode.S, Controls.DOWN},
+		    {KeyCode.A , Controls.LEFT},
+		    {KeyCode.D , Controls.RIGHT},
 		    //{MovementControls.FASTFALL, },
-		    {MovementControls.SWING, KeyCode.Mouse0},
-		    {MovementControls.PLAT_PROJECTILE, KeyCode.Mouse1},
-		    {MovementControls.JUMP, KeyCode.Space},
-		    {MovementControls.SHIFT, KeyCode.LeftShift},
-		    {MovementControls.CTRL, KeyCode.LeftControl}
+		    {KeyCode.Mouse0 , Controls.SWING},
+		    {KeyCode.Mouse1 , Controls.PLAT_PROJECTILE},
+		    {KeyCode.Space , Controls.JUMP},
+		    {KeyCode.LeftShift , Controls.SHIFT},
+		    {KeyCode.LeftControl , Controls.CTRL}
 		};
         swingDirMode = SwingDirModes.MIRROR_MOVEMENT;
 
-        validKeyInputs = keyBindings.Values.ToArray();
+        validKeyInputs = keyBindings.Keys.ToArray();
 
         foreach (KeyCode key in validKeyInputs)
         {
-            downBuffer.Add(key, 0);
-            upBuffer.Add(key, 0);
-			keyDownFor.Add(key, 0);
-			keyUpFor.Add(key, 0);
+            downBuffer.Add(keyBindings[key], 0);
+            upBuffer.Add(keyBindings[key], 0);
+			keyDownFor.Add(keyBindings[key], 0);
+			keyUpFor.Add(keyBindings[key], 0);
 		}
     }
 
@@ -51,22 +51,12 @@ public class InputBuffer : MonoBehaviour
     {
         foreach (KeyCode key in validKeyInputs)
 		{
-            if (Input.GetKeyDown(key))
-                downBuffer[key] = BUFFER_FRAMES;
-
-            if (Input.GetKey(key))
-            {
-                keyDownFor[key]++;
-                keyUpFor[key] = 0;
-            }
-            else
-            {
-                keyDownFor[key] = 0;
-                keyUpFor[key]++;
-            }
+			Controls control = keyBindings[key];
+			if (Input.GetKeyDown(key))
+                downBuffer[control] = BUFFER_FRAMES;
 
 			if (Input.GetKeyUp(key))
-                upBuffer[key] = BUFFER_FRAMES;
+                upBuffer[control] = BUFFER_FRAMES;
         }
 
         UpdateSwingDir();
@@ -75,30 +65,42 @@ public class InputBuffer : MonoBehaviour
     void FixedUpdate()
     {
         foreach (KeyCode key in validKeyInputs)
-        { 
-            if (downBuffer[key] > 0)
-                downBuffer[key] -= 1;
-            if (upBuffer[key] > 0)
-                upBuffer[key] -= 1;
-        }
+        {
+            Controls control = keyBindings[key];
+			if (downBuffer[control] > 0)
+                downBuffer[control] -= 1;
+            if (upBuffer[control] > 0)
+                upBuffer[control] -= 1;
+
+			if (Input.GetKey(key))
+			{
+				keyDownFor[control]++;
+				keyUpFor[control] = 0;
+			}
+			else
+			{
+				keyDownFor[control] = 0;
+				keyUpFor[control]++;
+			}
+		}
     }
 
-    public bool GetInputDown(bool precondition, KeyCode input)
+    public bool GetBufferedInputDown(bool precondition, Controls controlInput)
 	{
-        if (precondition && downBuffer[input] > 0)
+        if (precondition && downBuffer[controlInput] > 0)
 		{
-            downBuffer[input] = 0;
+            downBuffer[controlInput] = 0;
             return true;
 		}
 
         return false;
 	}
 
-    public bool GetInputUp(bool precondition, KeyCode input)
+    public bool GetBufferedInputUp(bool precondition, Controls controlInput)
     {
-        if (precondition && upBuffer[input] > 0)
+        if (precondition && upBuffer[controlInput] > 0)
         {
-            upBuffer[input] = 0;
+            upBuffer[controlInput] = 0;
             return true;
         }
 
@@ -112,25 +114,25 @@ public class InputBuffer : MonoBehaviour
 		{
 			case SwingDirModes.MIRROR_MOVEMENT:
 				{
-                    if (keyUpFor[KeyCode.W] <= 1)
+                    if (keyUpFor[Controls.UP] <= 1)
 						newSwingDir += Vector2.up;
-					if (keyUpFor[KeyCode.A] <= 1)
+					if (keyUpFor[Controls.LEFT] <= 1)
 						newSwingDir += Vector2.left;
-					if (keyUpFor[KeyCode.S] <= 1)
+					if (keyUpFor[Controls.DOWN] <= 1)
 						newSwingDir += Vector2.down;
-					if (keyUpFor[KeyCode.D] <= 1)
+					if (keyUpFor[Controls.RIGHT] <= 1)
 						newSwingDir += Vector2.right;
 
-                    if (keyUpFor[KeyCode.W] <= 1 && keyUpFor[KeyCode.S] <= 1)
+                    if (keyUpFor[Controls.UP] <= 1 && keyUpFor[Controls.DOWN] <= 1)
                     {
-                        if (keyDownFor[KeyCode.W] < keyDownFor[KeyCode.S])
+                        if (keyDownFor[Controls.UP] < keyDownFor[Controls.DOWN])
                             newSwingDir.y = 1;
                         else
                             newSwingDir.y = -1;
                     }
-					if (keyUpFor[KeyCode.A] <= 1 && keyUpFor[KeyCode.D] <= 1)
+					if (keyUpFor[Controls.LEFT] <= 1 && keyUpFor[Controls.RIGHT] <= 1)
 					{
-						if (keyDownFor[KeyCode.A] < keyDownFor[KeyCode.D])
+						if (keyDownFor[Controls.LEFT] < keyDownFor[Controls.RIGHT])
 							newSwingDir.x = -1;
 						else
 							newSwingDir.x = 1;
@@ -153,5 +155,20 @@ public class InputBuffer : MonoBehaviour
 					break;
 				}
 		}
+	}
+
+    public bool GetInput(Controls input)
+    {
+        return keyDownFor[input] > 0;
+    }
+
+	public bool GetInputDown(Controls controlInput)
+	{
+		return keyDownFor[controlInput] == 1;
+	}
+
+	public bool GetInputUp(Controls controlInput)
+	{
+		return keyUpFor[controlInput] == 1;
 	}
 }
