@@ -19,8 +19,9 @@ public class InputBuffer : MonoBehaviour
     private enum SwingDirModes { MIRROR_MOVEMENT, SECOND_DIRECTION, MOUSE_POS}
     private SwingDirModes swingDirMode;
     public enum MovementControls { UP, DOWN, RIGHT, LEFT, FASTFALL, SWING, ALT, JUMP};
+	private Dictionary<MovementControls, string> keyBindings = new Dictionary<MovementControls, string>();
 
-    public InputBuffer()
+	public InputBuffer()
 	{
         swingDirMode = SwingDirModes.MIRROR_MOVEMENT;
 
@@ -82,6 +83,8 @@ public class InputBuffer : MonoBehaviour
             if (Input.GetMouseButtonUp(buttonNum))
                 upBuffer[button] = BUFFER_FRAMES;
         }
+
+        UpdateSwingDir();
     }
 
     void FixedUpdate()
@@ -125,23 +128,34 @@ public class InputBuffer : MonoBehaviour
 
     private void UpdateSwingDir()
     {
-        switch (swingDirMode)
-        {
-        case SwingDirModes.MIRROR_MOVEMENT:
-            {
-                
-                break;
-            }
-        case SwingDirModes.SECOND_DIRECTION:
-            {
-                
-                break;
-            }
-        case SwingDirModes.MOUSE_POS:
-            {
+        Vector2 newSwingDir = Vector2.zero;
+		switch (swingDirMode)
+		{
+			case SwingDirModes.MIRROR_MOVEMENT:
+				{
+					if (keyUpFor["a"] <= 5)
+						newSwingDir += Vector2.left;
+					if (keyUpFor["s"] <= 5)
+						newSwingDir += Vector2.down;
+					if (keyUpFor["d"] <= 5)
+						newSwingDir += Vector2.right;
+					if (keyUpFor["w"] <= 5)
+						newSwingDir += Vector2.up;
 
-                break;
-            }
-        }
+                    if(newSwingDir != Vector2.zero)
+                        swingDir = newSwingDir;
+					break;
+				}
+			case SwingDirModes.SECOND_DIRECTION:
+				{
+
+					break;
+				}
+			case SwingDirModes.MOUSE_POS:
+				{
+					swingDir = Vector2.up;
+					break;
+				}
+		}
 	}
 }
