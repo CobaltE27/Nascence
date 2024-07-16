@@ -42,4 +42,21 @@ public static class VectorUtility : object
 
 		return initial + ((1 + restitution) * -dotProd * normal);
 	}
+
+	/// <summary>
+	/// Takes any angle and rounds it to the nearest 1/8 rotation
+	/// </summary>
+	/// <param name="unrounded"></param>
+	/// <returns>The nearest angle which is a multiple of 45</returns>
+	public static float RoundAngleToEigths(float unrounded)
+	{
+		for (int centerAng = 180; centerAng >= -180; centerAng -= 45)
+		{
+			if (unrounded >= centerAng - 22.5f && unrounded <= centerAng + 22.5f)
+			{
+				return centerAng;
+			}
+		}
+		return 0.0f;
+	}
 }
