@@ -5561,6 +5561,7 @@ Transform:
   - {fileID: 8293681666466941674}
   - {fileID: 8293681667459855646}
   - {fileID: 7208570442898068280}
+  - {fileID: 4834098888679709897}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5643,7 +5644,6 @@ MonoBehaviour:
   SWING_STEAM_COST: 50
   SWING_COOLDOWN_FRAMES: 15
   SWING_LENGTH: 2
-  currentCam: {fileID: 0}
   swingIndicatorPivot: {fileID: 8293681666466941674}
   charSprite: {fileID: 8293681667074079869}
   swingArea: {fileID: 8293681666352901809}
@@ -5803,7 +5803,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8293681667459855842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10.001}
+  m_LocalPosition: {x: 13.74, y: 7.5, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7426385127442330562}
@@ -6020,3 +6020,83 @@ MonoBehaviour:
   m_Text: 'Your Health I Guess
 
 '
+--- !u!1001 &8270098970791874045
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8293681667074079866}
+    m_Modifications:
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4930134731087269717, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_Name
+      value: Hurtbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 4930134731087269717, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4c03b0520e5f8bb4299925a98f819a7f, type: 3}
+--- !u!4 &4834098888679709897 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3590319301153968436, guid: 4c03b0520e5f8bb4299925a98f819a7f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8270098970791874045}
+  m_PrefabAsset: {fileID: 0}

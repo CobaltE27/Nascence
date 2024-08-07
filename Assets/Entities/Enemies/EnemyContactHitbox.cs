@@ -10,16 +10,18 @@ public class EnemyContactHitbox : MonoBehaviour
     void FixedUpdate()
     {
 		RaycastHit2D[] hitDetectResults = PhysicsCastUtility.DisplacementShapeCast((Vector2)transform.position, Vector2.zero, hitBox,
-		   new string[] { "Player" });
+		   new string[] { "Hurtbox" });
 
         foreach (RaycastHit2D hit in hitDetectResults)
         {
             if (hit.collider == null) //hit nothing
                 continue;
 
-            EntityHealth hitHealth = hit.collider.gameObject.GetComponent<EntityHealth>();
-            if (hitHealth == null)
+            if (!hit.collider.gameObject.CompareTag("Player"))
                 continue;
+
+			EntityHealth hitHealth = hit.collider.transform.parent.GetComponent<EntityHealth>();
+            
 			Vector2 hitDir = Vector2.up;
 			Vector2 dispToHit = hit.collider.transform.position - transform.position;
             if (dispToHit.x < 0) //hit entity is the the left
