@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static EnumConstants;
 using static InputBuffer.Controls;
@@ -268,27 +269,22 @@ public class CharMovement : EntityMovement
 
             dLog.Log("swing indicator direction: " + swingIndicatorDir, "swing indicator");
             //Debug.DrawRay(this.transform.position, swingIndicatorDir, Color.red);
-            if (inputBuffer.GetBufferedInputUp(true, SWING))
+            bool swingRelease = inputBuffer.GetBufferedInputUp(swingCooldown == 0, SWING);
+			if (swingRelease || inputBuffer.GetBufferedInputDown(swingCooldown == 0, SWING))
             {
-                if (swingCooldown == 0)
-                {
-                    swingCooldown = SWING_COOLDOWN_FRAMES;
+                swingCooldown = SWING_COOLDOWN_FRAMES;
 
-                    SetVelocityFromSwing();
-                    ParticleSystem.MainModule particleMain = swingParticle.main;
-                    particleMain.startRotation = -indicatorAngle * (Mathf.PI / 180.0f);
-                    swingParticlePivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
+                SetVelocityFromSwing();
+                ParticleSystem.MainModule particleMain = swingParticle.main;
+                particleMain.startRotation = -indicatorAngle * (Mathf.PI / 180.0f);
+                swingParticlePivot.transform.rotation = Quaternion.Euler(0, 0, indicatorAngle);
 
-                    swingParticle.Play();
-                }
-                else
-                {
-                    dLog.Log("on cooldown!", "swing - type");
-                }
+                swingParticle.Play();
+            }
 
-                swingFramesHeld = 0;
-            } 
-        }
+            if (swingRelease || inputBuffer.GetInputUp(SWING))
+			    swingFramesHeld = 0;
+		}
 		#endregion
 		if (swingFramesHeld >= SWING_CHARGE_FRAMES)
 		{
@@ -322,15 +318,27 @@ public class CharMovement : EntityMovement
 	{
         //Experimental change to cast from slightly above center of character to stop unwanted collisions w/ ground
         Vector2 offset = Vector2.up * 0.02f;
-		RaycastHit2D[] swingCastResults = PhysicsCastUtility.DisplacementShapeCast((Vector2)transform.position + offset, swingIndicatorDir * SWING_LENGTH + offset, swingArea,
-		   new string[] { "Environment", "Hurtbox", "Swing" });
+		List<RaycastHit2D> swingCastResults = PhysicsCastUtility.DisplacementShapeCast((Vector2)transform.position + offset, swingIndicatorDir * SWING_LENGTH + offset, swingArea,
+		   new string[] { "Environment", "Hurtbox", "Swing" }).ToList();
+
+        for (int i = 0; i < swingCastResults.Count; i++) //Filter out player hits
+        {
+            if (swingCastResults[i].collider.CompareTag("Player"))
+            {
+                swingCastResults.RemoveAt(i);
+                i--;
+            }
+        }
+        if (swingCastResults.Count == 0)
+            swingCastResults.Add(new RaycastHit2D());
+
 
 		float swingAngle = Vector2.SignedAngle(swingIndicatorDir, Vector2.up);
 		Vector2 postSwingVel = new Vector2(swingIndicatorDir.x * SWING_STRENGTH * -1, swingIndicatorDir.y * SWING_STRENGTH * -1);
 
-		float angleToHitNormal = Vector2.Angle(Vector2.up, PhysicsCastUtility.FirstCastNormal(swingCastResults));
+		float angleToHitNormal = Vector2.Angle(Vector2.up, PhysicsCastUtility.FirstCastNormal(swingCastResults.ToArray()));
 		bool wouldHitWall = angleToHitNormal >= 30 && angleToHitNormal <= 140;
-		bool wouldHitLeftWall = PhysicsCastUtility.FirstCastNormal(swingCastResults).x > 0;
+		bool wouldHitLeftWall = PhysicsCastUtility.FirstCastNormal(swingCastResults.ToArray()).x > 0;
 		bool wouldHitFloor = angleToHitNormal < 30;
 
 		bool hitAnything = swingCastResults[0].collider != null;
