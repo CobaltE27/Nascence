@@ -117,4 +117,26 @@ public class CollisionCalculator : MonoBehaviour
         return new Vector2(remDisMagnitude * Mathf.Cos(angleToRemaining - angleToCorrected) * Mathf.Cos(angleToCorrected),
             remDisMagnitude * Mathf.Cos(angleToRemaining - angleToCorrected) * Mathf.Sin(angleToCorrected));
     }
+
+	public bool OnRightLedge()
+	{
+        if (!IsOnWalkableGround())
+            return false;
+		Vector2 collBoxCornerOffset = parentCollider.bounds.extents;
+        Debug.Log(collBoxCornerOffset);
+		collBoxCornerOffset.y *= -1;
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
+		return !hit;
+	}
+
+	public bool OnLeftLedge()
+	{
+		if (!IsOnWalkableGround())
+			return false;
+		Vector2 collBoxCornerOffset = parentCollider.bounds.extents;
+		collBoxCornerOffset.y *= -1;
+		collBoxCornerOffset.x *= -1;
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
+		return !hit;
+	}
 }
