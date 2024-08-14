@@ -22,9 +22,7 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 	{
 		base.FixedUpdate();
 
-		if (collCalc.IsOnWalkableGround())
-			mover.persistentVel.y = 0;
-		else
+		if (!collCalc.IsOnWalkableGround())
 			mover.persistentVel.y += GRAVITY * Time.deltaTime;
 	}
 
@@ -81,15 +79,15 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 	{
 		yield return new WaitForFixedUpdate(); //waits until eerything finishes starting
 		Vector2 IdlingDirection = new Vector2(1, 0);
-		float IdlingDistance = 1;
+		float IdlingDistance = 3;
 		System.Random rng = new System.Random(GetInstanceID()); //seed is ensured to be unique between enemies
-		int wait = rng.Next(50);
+		int wait = rng.Next(50) + 100;
 		moveTarget = (Vector2)transform.position + (IdlingDirection * IdlingDistance);
 		while (true)
 		{
 			MoveTowardTarget();
 
-			if (Vector2.Distance(transform.position, moveTarget) < 0.1f)
+			if (Mathf.Abs(transform.position.x - moveTarget.x) < 0.1f)
 			{
 				if (wait > 0)
 				{
@@ -99,7 +97,7 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 				{
 					IdlingDirection *= -1;
 					moveTarget = (Vector2)transform.position + (IdlingDirection * IdlingDistance);
-					wait = rng.Next(50);
+					wait = rng.Next(50) + 100;
 				}
 			}
 
@@ -116,7 +114,14 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 
 	public IEnumerator DashToward(Vector2 target)
 	{
-		throw new System.NotImplementedException();
+		amAttacking = true;
+		//setup
+		//windup
+
+		//dash loop
+		//conditional wind down
+		amAttacking = false;
+		yield break;
 	}
 
 	public bool IsAttacking()

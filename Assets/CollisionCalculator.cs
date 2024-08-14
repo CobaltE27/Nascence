@@ -10,6 +10,8 @@ public class CollisionCalculator : MonoBehaviour
     private float WALKABLE_ANGLE_THRESHOLD;
     private MovementCastUtility castUtils;
     public Collider2D parentCollider;
+    private static float SKIN_THICKNESS = 0.01f;
+    private static float CONTACT_CHECK_LENGTH = SKIN_THICKNESS * 1.7f;
 
     void Start()
     {
@@ -34,7 +36,7 @@ public class CollisionCalculator : MonoBehaviour
 
 		parentVelocity = RedirectWithNormal(parentVelocity, collisionNormalAngle);
 
-		dispToCollision += collisionNormal * 0.01f;
+		dispToCollision += collisionNormal * SKIN_THICKNESS;
 
 		return dispToCollision;
 	}
@@ -57,45 +59,45 @@ public class CollisionCalculator : MonoBehaviour
 
 		Vector2 collisionNormal = castUtils.FirstCastNormal(predictCastHits);
 
-		dispToCollision += collisionNormal * 0.01f;
+		dispToCollision += collisionNormal * SKIN_THICKNESS;
 		return dispToCollision;
 	}
 
 	public bool IsOnWalkableGround()
     {
-        if (castUtils.DisplacementCast(new Vector2(0, -0.02f))[0].collider == null)
+        if (castUtils.DisplacementCast(Vector2.down * CONTACT_CHECK_LENGTH)[0].collider == null)
             return false;
-        return Vector2.Angle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(0, -0.02f)))) <= WALKABLE_ANGLE_THRESHOLD;
+        return Vector2.Angle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(Vector2.down * CONTACT_CHECK_LENGTH))) <= WALKABLE_ANGLE_THRESHOLD;
     }
 
     public bool BelowFlatCeiling()
     {
-        return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(0, 0.02f))) == Vector2.down;
+        return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(0, CONTACT_CHECK_LENGTH))) == Vector2.down;
     }
 
     public bool NextToRightWall()
     {
-        return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(0.02f, 0))) == Vector2.left;
+        return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(CONTACT_CHECK_LENGTH, 0))) == Vector2.left;
     }
 
     public bool NextToLeftWall()
     {
-		return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-0.02f, 0))) == Vector2.right;
+		return castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-CONTACT_CHECK_LENGTH, 0))) == Vector2.right;
     }
 
     public bool OnRightSlope()
     {
-        if (castUtils.DisplacementCast(new Vector2(0, -0.02f))[0].collider == null)
+        if (castUtils.DisplacementCast(Vector2.down * CONTACT_CHECK_LENGTH)[0].collider == null)
             return false;
-        float slopeNormalAngleFromUp = Vector2.SignedAngle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(0.02f, -0.02f))));
+        float slopeNormalAngleFromUp = Vector2.SignedAngle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(CONTACT_CHECK_LENGTH, -CONTACT_CHECK_LENGTH))));
         return slopeNormalAngleFromUp > WALKABLE_ANGLE_THRESHOLD && slopeNormalAngleFromUp < 90.0f;
     }
 
     public bool OnLeftSlope()
     {
-        if (castUtils.DisplacementCast(new Vector2(0, -0.02f))[0].collider == null)
+        if (castUtils.DisplacementCast(Vector2.down * CONTACT_CHECK_LENGTH)[0].collider == null)
             return false;
-        float slopeNormalAngleFromUp = Vector2.SignedAngle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-0.02f, -0.02f))));
+        float slopeNormalAngleFromUp = Vector2.SignedAngle(Vector2.up, castUtils.FirstCastNormal(castUtils.DisplacementCast(new Vector2(-CONTACT_CHECK_LENGTH, -CONTACT_CHECK_LENGTH))));
         return slopeNormalAngleFromUp < -WALKABLE_ANGLE_THRESHOLD && slopeNormalAngleFromUp > -90.0f;
     }
 
@@ -123,9 +125,8 @@ public class CollisionCalculator : MonoBehaviour
         if (!IsOnWalkableGround())
             return false;
 		Vector2 collBoxCornerOffset = parentCollider.bounds.extents;
-        Debug.Log(collBoxCornerOffset);
 		collBoxCornerOffset.y *= -1;
-		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, CONTACT_CHECK_LENGTH, LayerMask.GetMask(new string[] { "Environment" }));
 		return !hit;
 	}
 
@@ -136,7 +137,7 @@ public class CollisionCalculator : MonoBehaviour
 		Vector2 collBoxCornerOffset = parentCollider.bounds.extents;
 		collBoxCornerOffset.y *= -1;
 		collBoxCornerOffset.x *= -1;
-		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, 0.02f, LayerMask.GetMask(new string[] { "Environment" }));
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + collBoxCornerOffset, Vector2.down, CONTACT_CHECK_LENGTH, LayerMask.GetMask(new string[] { "Environment" }));
 		return !hit;
 	}
 }
