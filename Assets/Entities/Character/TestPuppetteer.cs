@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class TestPuppetteer : Puppetteer
 {
-	public GameObject player;
 	Formation fliers;
 	System.Random rng = new System.Random();
 
@@ -61,20 +60,6 @@ public class TestPuppetteer : Puppetteer
 		}
 
 		StartCoroutine(WaitAndThen(callBack));
-		yield break;
-	}
-
-	private IEnumerator WaitAndThen(Action callBack)
-	{
-		yield return new WaitForSeconds(1);
-		callBack();
-		yield break;
-	}
-
-	private IEnumerator NextFrameAndThen(Action callBack)
-	{
-		yield return new WaitForFixedUpdate();
-		callBack();
 		yield break;
 	}
 }

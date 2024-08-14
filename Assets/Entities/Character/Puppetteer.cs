@@ -5,7 +5,8 @@ using UnityEngine;
 
 public abstract class Puppetteer : MonoBehaviour
 {
-    protected List<Formation> formations = new List<Formation>();
+	public GameObject player;
+	protected List<Formation> formations = new List<Formation>();
     protected List<GroupAttack> groupAttacks = new List<GroupAttack>();
 
     protected delegate IEnumerator GroupAttack(Action callBack);
@@ -67,4 +68,18 @@ public abstract class Puppetteer : MonoBehaviour
     /// Coroutine that decides what to do between states. In many cases, will not need to execute over multiple updates, but can as a coroutine.
     /// </summary>
     protected abstract void DecideNextState();
+
+	protected IEnumerator WaitAndThen(Action callBack, float durationSec = 1.0f)
+	{
+		yield return new WaitForSeconds(durationSec);
+		callBack();
+		yield break;
+	}
+
+	protected IEnumerator NextFrameAndThen(Action callBack)
+	{
+		yield return new WaitForFixedUpdate();
+		callBack();
+		yield break;
+	}
 }

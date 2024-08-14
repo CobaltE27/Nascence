@@ -8,7 +8,7 @@ public static class DebugDrawer
     public static void DrawPoint(Vector2 pos, Color? color = null, float duration = 0.0f, float size = 0.25f)
     {
         Color drawColor = color ?? defaultDrawColor;
-        Vector2 topRight = pos + new Vector2(size, size);
+		Vector2 topRight = pos + new Vector2(size, size);
 		Vector2 topLeft = pos + new Vector2(-size, size);
 		Vector2 bottomRight = pos + new Vector2(size, -size);
 		Vector2 bottomLeft = pos + new Vector2(-size, -size);
