@@ -115,13 +115,71 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 	public IEnumerator DashToward(Vector2 target)
 	{
 		amAttacking = true;
-		//setup
 		//windup
-
+		Vector2 back = (Vector2)transform.position + ((Vector2)transform.position - target).normalized;
+		Vector2 toward = (target - (Vector2)transform.position).normalized;
+		Vector2 past = target + toward * 5.0f;
+		for (int windUpTimer = 0; windUpTimer < 25; windUpTimer++)
+		{
+			MoveTowardArbitrary(back);
+			yield return new WaitForFixedUpdate();
+		}
 		//dash loop
-		//conditional wind down
+		bool hitWall = false;
+		while (true)
+		{
+			MoveTowardArbitrary((Vector2)transform.position + toward, 7.0f);
+
+			if (transform.position.x - past.x < 0.1f) //charged past target
+			{
+				break;
+			}
+			if ((toward.x < 0 && collCalc.NextToLeftWall()) || (toward.x > 0 && collCalc.NextToRightWall())) //if hit wall
+			{
+				hitWall = true;
+				break;
+			}
+			yield return new WaitForFixedUpdate();
+		}
+
+		//conditional wind down if hit wall
+		if (hitWall)
+		{
+			mover.persistentVel = -toward * 7.0f + Vector2.up * 6.0f;
+			for (int stunTimer = 0; stunTimer < 50; stunTimer++)
+			{
+				mover.persistentVel.x *= 0.95f;
+				yield return new WaitForFixedUpdate();
+			}
+		}
+
+		//wind down
+		for (int stunTimer = 0; stunTimer < 25; stunTimer++)
+		{
+			mover.persistentVel.x *= 0.95f;
+			yield return new WaitForFixedUpdate();
+		}
+		mover.persistentVel.x = 0;
+
 		amAttacking = false;
 		yield break;
+	}
+
+	/// <summary>
+	/// Sets velocity to point toward a target position.
+	/// </summary>
+	/// <param name="target"></param>
+	public void MoveTowardArbitrary(Vector2 target, float speedMultiplier = 1.0f)
+	{
+		Vector2 targetDir = target - (Vector2)transform.position;
+		targetDir.y = 0;
+		float approachSlowFactor = 1.0f;
+		if (targetDir.sqrMagnitude < 0.5)
+			approachSlowFactor = targetDir.magnitude; //using the squared version so that movement slows less further from the target.
+
+		targetDir.Normalize();
+
+		mover.persistentVel = targetDir * (BASE_WALK_SPEED * approachSlowFactor * speedMultiplier);
 	}
 
 	public bool IsAttacking()
