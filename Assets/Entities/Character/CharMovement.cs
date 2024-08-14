@@ -479,8 +479,6 @@ public class CharMovement : EntityMovement
 				mover.constantVels["recoilVelocity"] = (postSwingVel / SWING_STRENGTH) * RECOIL_STRENGTH;
 				postSwingVel = VectorUtility.DeflectWithNormal(mover.persistentVel, postSwingVel * -1);
 				recoilDurationLeft = RECOIL_DURATION_FRAMES;
-				if (mover.constantVels["recoilVelocity"].y != 0)
-					postSwingVel.y = 0;
 
                 foreach (EntityHealth hitEntHealth in hitEntitiesHealths)
                 {
