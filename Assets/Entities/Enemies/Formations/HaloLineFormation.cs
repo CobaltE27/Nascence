@@ -51,22 +51,6 @@ public class HaloLineFormation : Formation
 			}
 		}
 
-		//Everything below here can be extracted to a helper
-		Vector2 formationCenterWorldCoords = DisplacementFromCenter + CenterOfFormations;
-		Vector2[] posCopy = new Vector2[positions.Count()];
-		positions.CopyTo(posCopy);
-		List<Vector2> positionsCopy = new List<Vector2>(posCopy);
-		List<EnemyMovement> enemiesByDistance = Puppets.OrderByDescending(o => Vector2.Distance(formationCenterWorldCoords, o.transform.position)).ToList();
-
-		EnemyMovement[] newPuppetsList = new EnemyMovement[Puppets.Count];
-		for (int i = 0; i < enemiesByDistance.Count(); i++) //Give the farthest enemy its closest position
-		{
-			positionsCopy = positionsCopy.OrderBy(o => Vector2.Distance(o + formationCenterWorldCoords, enemiesByDistance[i].transform.position)).ToList();
-			Vector2 nearestPos = positionsCopy.First();
-			positionsCopy.RemoveAt(0);
-			newPuppetsList[positions.IndexOf(nearestPos)] = enemiesByDistance[i];
-		}
-
-		Puppets = new List<EnemyMovement>(newPuppetsList);
+		ReassignPuppetPositions();
 	}
 }

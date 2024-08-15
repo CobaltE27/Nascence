@@ -28,4 +28,11 @@ public static class DebugDrawer
 		Debug.DrawLine(bottomRight, bottomLeft, drawColor, duration);
 		Debug.DrawLine(bottomLeft, topLeft, drawColor, duration);
 	}
+
+	public static void DrawToPoint(Vector2 from, Vector2 to, Color? color = null, float duration = 0.0f, float size = 0.25f)
+	{
+		Color drawColor = color ?? defaultDrawColor;
+		DrawPoint(to, drawColor, duration, size);
+		Debug.DrawLine(from, to, drawColor, duration);
+	}
 }

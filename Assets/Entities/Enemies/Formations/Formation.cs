@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Formation : MonoBehaviour
@@ -103,6 +104,39 @@ public abstract class Formation : MonoBehaviour
     private Vector2 WorldPositionOf(int index)
     {
         return CenterOfFormations + DisplacementFromCenter + positions[index];
+	}
 
+    /// <summary>
+    /// Optionally overridden method that uses a formation's current position and the player's position to choose a place where it would rather be.
+    /// If a formation isn't made for a specific position, it just returns its current position and logs it's lack of preference.
+    /// </summary>
+    public virtual Vector2 PreferredPosition(Vector2 playerPosition)
+    {
+        Debug.Log("This formation has no preference!");
+        return CenterOfFormations + DisplacementFromCenter; //if nothing else is implemented, just returns the current position
+    }
+
+    /// <summary>
+    /// Reorders the puppets list to minimize travel from puppets to positions in the list.
+    /// Good to use any time the position list changes.
+    /// </summary>
+    protected void ReassignPuppetPositions()
+    {
+		Vector2 formationCenterWorldCoords = DisplacementFromCenter + CenterOfFormations;
+		Vector2[] posCopy = new Vector2[positions.Count()];
+		positions.CopyTo(posCopy);
+		List<Vector2> positionsCopy = new List<Vector2>(posCopy);
+		List<EnemyMovement> enemiesByDistance = Puppets.OrderByDescending(o => Vector2.Distance(formationCenterWorldCoords, o.transform.position)).ToList();
+
+		EnemyMovement[] newPuppetsList = new EnemyMovement[Puppets.Count];
+		for (int i = 0; i < enemiesByDistance.Count(); i++) //Give the farthest enemy its closest position
+		{
+			positionsCopy = positionsCopy.OrderBy(o => Vector2.Distance(o + formationCenterWorldCoords, enemiesByDistance[i].transform.position)).ToList();
+			Vector2 nearestPos = positionsCopy.First();
+			positionsCopy.RemoveAt(0);
+			newPuppetsList[positions.IndexOf(nearestPos)] = enemiesByDistance[i];
+		}
+
+		Puppets = new List<EnemyMovement>(newPuppetsList);
 	}
 }

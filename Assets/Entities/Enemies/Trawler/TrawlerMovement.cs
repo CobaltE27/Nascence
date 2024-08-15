@@ -22,6 +22,7 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 	{
 		base.FixedUpdate();
 
+		DebugDrawer.DrawPoint(moveTarget);
 		if (!collCalc.IsOnWalkableGround())
 			mover.persistentVel.y += GRAVITY * Time.deltaTime;
 	}
@@ -115,6 +116,7 @@ public class TrawlerMovement : EnemyMovement, IWalker, IDasher
 	public IEnumerator DashToward(Vector2 target)
 	{
 		amAttacking = true;
+		DebugDrawer.DrawPoint(target, Color.red, 5.0f);
 		//windup
 		Vector2 back = (Vector2)transform.position + ((Vector2)transform.position - target).normalized;
 		Vector2 toward = (target - (Vector2)transform.position).normalized;
